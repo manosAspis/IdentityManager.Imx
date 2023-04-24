@@ -1,0 +1,148 @@
+@import 'variables.scss';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+
+  // Wrap deep selectors under host to quarantine them
+  // Add some padding to data-tiles
+  ::ng-deep imx-data-tiles {
+    padding-left: 10px;
+  }
+}
+
+
+
+.container {
+  margin: 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #424242;
+}
+
+.input-container {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.input-label {
+  font-size: 16px;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 5px;
+  color: #424242;
+}
+
+.input-file {
+  font-size: 14px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.preview-window {
+  height: 300px;
+  overflow: auto;
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.preview-header {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px;
+  background-color: #f6f6f6;
+  border-bottom: 1px solid #ccc;
+}
+
+.preview-body {
+  padding: 10px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.mapping-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.header-name {
+  font-weight: 500;
+  margin-right: 10px;
+  color: #424242;
+}
+
+.mapping-input {
+  flex-grow: 1;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.import-button {
+  background-color: $ING_primary;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.import-button:hover {
+  background-color: $ING_primary;
+}
+
+.import-button[disabled] {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.import-button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 1rem;
+}
+.custom-select {
+  font-size: 14px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.editable-cell {
+  width: 100%;
+  border: none;
+  padding: 5px;
+  background-color: #fff;
+  cursor: text;
+}

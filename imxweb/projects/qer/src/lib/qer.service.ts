@@ -50,6 +50,18 @@ export class QerService {
     private readonly menuService: MenuService
   ) { }
 
+  getTables(): string[] {
+    // Return mock data for tables
+    return ['table1', 'table2', 'table3'];
+  }
+
+  getMockColumns(): string[] {
+    // Return mock data for columns
+    return ['column1', 'column2', 'column3', 'column4', 'column5'];
+  }
+
+  // Add other methods for handling data imports in the future
+
   public init(): void {
     // register Starling as a 2FA provider
     this.authService.register('Starling', StarlingComponent);

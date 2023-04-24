@@ -35,6 +35,7 @@ import { PendingItemsType } from '../../user/pending-items-type.interface';
 import { ProjectConfigurationService } from '../../project-configuration/project-configuration.service';
 import { imx_SessionService, SystemInfoService } from 'qbm';
 import { SystemInfo } from 'imx-api-qbm';
+import { CsvsyncComponent } from '../../csvsync/csvsync.component';
 
 @Component({
   templateUrl: './start.component.html',
@@ -95,6 +96,10 @@ export class StartComponent implements OnInit {
 
   public GoToProductSelection(): void {
     this.router.navigate(['productselection']);
+  }
+
+  public GoToCSVsync(): void {
+    this.router.navigate(['/csvsync-component']);
   }
 
   public GoToItshopApprovals(): void {

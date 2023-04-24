@@ -1,0 +1,69 @@
+<div>
+  <h1 class="mat-headline">CSV Connector</h1>
+  <span>
+  <span class="input-container">
+    <label for="csv-file" class="input-label">Import a CSV file</label>
+    <input id="csv-file" type="file" class="input-file" (change)="onFileChange($event)" accept=".csv" />
+  </span>
+  <span>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="importToDatabase()"
+        [disabled]="!selectedTable || !isMappingComplete()"
+      >
+        Import to Database
+      </button>
+  </span>
+  </span>
+  <div *ngIf="csvData" class="preview-window">
+    <div class="preview-header">CSV Data Preview</div>
+    <div class="preview-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th *ngFor="let header of headers">{{ header }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of csvData; let rowIndex = index">
+            <td *ngFor="let cell of row; let cellIndex = index">
+              <input [(ngModel)]="csvData[rowIndex][cellIndex]" class="editable-cell" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div>
+    <label for="table-select">Select table:</label>
+    <select id="table-select" [(ngModel)]="selectedTable" class="custom-select">
+      <option value="">Choose a table</option>
+      <option *ngFor="let table of tables" [value]="table">{{ table }}</option>
+    </select>
+  </div>
+
+  <div>
+    <h3>Column Mapping</h3>
+    <div *ngFor="let header of headers" class="mapping-row">
+      <span class="header-name">{{ header }}:</span>
+      <select [(ngModel)]="columnMapping[header]" class="custom-select">
+        <option value="">Choose a column</option>
+        <option *ngFor="let column of mockColumns" [value]="column">{{ column }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="importToDatabase()"
+      [disabled]="!selectedTable || !isMappingComplete()"
+    >
+      Import to Database
+    </button>
+  </div>
+</div>
+
+

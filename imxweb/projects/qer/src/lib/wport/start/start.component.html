@@ -135,6 +135,20 @@
       </ng-template>
     </imx-icon-tile>
 
+    <imx-icon-tile
+      data-imx-identifier="import-a-csv-file"
+      [caption]="'#LDS#CSV connector' | translate"
+      [subtitle]="'#LDS#Create a CSV connector.' | translate"
+      [identifier]="'import-a-csv-file'"
+    >
+      <ng-template #ActionTemplate>
+        <button mat-button color="primary" (click)="GoToCSVsync()">
+          <span>{{ '#LDS#Import a CSV file' | translate }}</span>
+          <eui-icon size="m" icon="forward"></eui-icon>
+        </button>
+      </ng-template>
+    </imx-icon-tile>
+
     <imx-tile
       data-imx-identifier="start-tile-it-shop-approval-inquiries"
       [caption]="'#LDS#Heading Request Inquiries' | translate"
