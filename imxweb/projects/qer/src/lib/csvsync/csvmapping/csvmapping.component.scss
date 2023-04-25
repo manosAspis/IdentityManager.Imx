@@ -7,8 +7,16 @@
   justify-content: space-between;
   max-width: 800px;
   margin: 0;
-  padding: 10px;
+  padding-top: 35px;
+  padding-left: 35px;
+  padding-right: 35px;
+  padding-bottom: 10px;
   min-height: 100%;
+}
+
+.columnMapping-header {
+  margin-bottom: 20px;
+  color: $VI_Common_Color_Font;
 }
 
 .select-table,
@@ -18,13 +26,12 @@
 
     .select-label {
       font-weight: bold;
+      color: $VI_Common_Color_Font;
     }
 
     .custom-select {
       display: block;
       width: 50%;
-      margin-top: 10px;
-      padding: 5px;
       border: 1px solid $VI_Common_Color_LightGray;
       border-radius: 5px;
     }
@@ -37,6 +44,7 @@
 
     .header-name {
       font-weight: bold;
+      color: $VI_Common_Color_Font;
     }
 
     .footer {

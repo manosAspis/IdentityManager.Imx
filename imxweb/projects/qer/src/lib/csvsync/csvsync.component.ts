@@ -64,7 +64,7 @@ export class CsvsyncComponent implements OnInit {
   importToDatabase() {
     this.headerService.setHeaders(this.headers);
     const sideSheetRef = this.sideSheet.open(CsvmappingComponent, {
-      title: 'CSV Mapping',
+      title: 'Column Mapping',
       headerColour: 'iris-blue',
       panelClass: 'imx-sidesheet',
       padding: '0',

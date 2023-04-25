@@ -1,6 +1,7 @@
 <div class="container">
+
   <div class="select-table">
-    <label for="table-select" class="select-label">Select table:</label>
+    <h2 class="columnMapping-header">Table</h2>
     <select id="table-select" [(ngModel)]="selectedTable" class="custom-select">
       <option value="">Choose a table</option>
       <option *ngFor="let table of tables" [value]="table">{{ table }}</option>
@@ -8,10 +9,10 @@
   </div>
 
   <div class="mapping-section">
-    <h3>Column Mapping</h3>
+    <h2 class="columnMapping-header">Column Mapping</h2>
     <div *ngFor="let header of headers" class="mapping-row">
       <span class="header-name">{{ header }}:</span>
-      <select [(ngModel)]="columnMapping[header]" class="custom-select">
+      <select [(ngModel)]="columnMapping[header]" class="custom-select" [disabled]="!selectedTable">
         <option value="">Choose a column</option>
         <option *ngFor="let column of mockColumns" [value]="column">{{ column }}</option>
       </select>
@@ -21,7 +22,7 @@
     <button
       mat-raised-button
       color="primary" (click)="submit()" [disabled]="!isFormComplete()">
-      Sync begings
+      Import to Database
     </button>
   </div>
 </div>
