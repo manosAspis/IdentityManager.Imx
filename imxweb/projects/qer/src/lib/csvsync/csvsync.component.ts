@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { EuiLoadingService, EuiSidesheetService } from '@elemental-ui/core';
 import { QerService } from '../qer.service';
+import { CsvmappingComponent } from './csvmapping/csvmapping.component';
+import { HeaderService } from './csvmapping/header.service';
 
 @Component({
   selector: 'imx-csvsync',
@@ -8,18 +11,21 @@ import { QerService } from '../qer.service';
 })
 export class CsvsyncComponent implements OnInit {
   csvData: any[] = [];
-  headers: string[] = [];
+  fileLoaded: boolean = false;
   tables: string[] = [];
   selectedTable: string = '';
   columnMapping: { [key: string]: string } = {};
   mockColumns: string[] = [];
+  @Input() headers: string[] = [];
 
-  constructor(private importDataService: QerService) {}
+  constructor(
+    private importDataService: QerService,
+    private readonly sideSheet: EuiSidesheetService,
+    private readonly busyService: EuiLoadingService,
+    private headerService: HeaderService) {}
 
-  ngOnInit() {
-    this.tables = this.importDataService.getTables();
-    this.mockColumns = this.importDataService.getMockColumns();
-  }
+
+  ngOnInit() {}
 
   onFileChange(event: any) {
     const file = event.target.files[0];
@@ -37,6 +43,7 @@ export class CsvsyncComponent implements OnInit {
         }
       };
       reader.readAsText(file);
+      this.fileLoaded = true;
     }
   }
 
@@ -49,11 +56,29 @@ export class CsvsyncComponent implements OnInit {
     return true;
   }
 
+  onCellValueChange(event: any, rowIndex: number, cellIndex: number): void {
+    this.csvData[rowIndex][cellIndex] = event.target.value;
+  }
+
+
   importToDatabase() {
-    // Implement your logic to import the modified data to MS SQL database.
-    // You can call your API to send the data and map the headers with the database columns.
-    console.log('Selected Table:', this.selectedTable);
-    console.log('Data:', this.csvData);
-    console.log('Column Mapping:', this.columnMapping);
+    this.headerService.setHeaders(this.headers);
+    const sideSheetRef = this.sideSheet.open(CsvmappingComponent, {
+      title: 'CSV Mapping',
+      headerColour: 'iris-blue',
+      panelClass: 'imx-sidesheet',
+      padding: '0',
+      width: '600px',
+      testId: 'csv-mapping-sidesheet',
+      data: {
+        headers: this.headers // Pass the headers array here
+      }
+    });
+
+    sideSheetRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.columnMapping = result.columnMapping;
+      }
+    });
   }
 }
