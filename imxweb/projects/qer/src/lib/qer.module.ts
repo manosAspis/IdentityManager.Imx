@@ -63,6 +63,9 @@ import { UserModule } from './user/user.module';
 import { ShoppingCartValidationDetailModule } from './shopping-cart-validation-detail/shopping-cart-validation-detail.module';
 import { RoleMembershipsModule } from './role-management/role-memberships/role-memberships.module';
 import { MaintenanceBannerComponent } from './wport/start/maintenance-banner/maintenance-banner.component';
+import { CsvsyncComponent } from './csvsync/csvsync.component';
+import { CsvmappingComponent } from './csvsync/csvmapping/csvmapping.component';
+
 
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
@@ -81,11 +84,13 @@ const routes: Routes = [
     canActivate: [RouteGuardService],
     resolve: [RouteGuardService],
   },
+  { path: 'csvsync-component', component: CsvsyncComponent },
+  { path: 'csvmapping-component', component: CsvmappingComponent },
 ];
 
 // @dynamic
 @NgModule({
-  declarations: [StarlingComponent, StartComponent, BusinessOwnerChartSummaryComponent, MaintenanceBannerComponent],
+  declarations: [StarlingComponent, StartComponent, BusinessOwnerChartSummaryComponent, MaintenanceBannerComponent, CsvsyncComponent, CsvmappingComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),

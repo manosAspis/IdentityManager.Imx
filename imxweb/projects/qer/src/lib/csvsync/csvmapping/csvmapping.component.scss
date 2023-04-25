@@ -1,0 +1,55 @@
+@import '~@elemental-ui/core/src/styles/_palette.scss';
+@import 'variables.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: 800px;
+  margin: 0;
+  padding-top: 35px;
+  padding-left: 35px;
+  padding-right: 35px;
+  padding-bottom: 10px;
+  min-height: 100%;
+}
+
+.columnMapping-header {
+  margin-bottom: 20px;
+  color: $VI_Common_Color_Font;
+}
+
+.select-table,
+    .mapping-section {
+      margin-bottom: 20px;
+    }
+
+    .select-label {
+      font-weight: bold;
+      color: $VI_Common_Color_Font;
+    }
+
+    .custom-select {
+      display: block;
+      width: 50%;
+      border: 1px solid $VI_Common_Color_LightGray;
+      border-radius: 5px;
+    }
+
+    .mapping-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .header-name {
+      font-weight: bold;
+      color: $VI_Common_Color_Font;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: auto;
+      padding: 10px 0;
+    }

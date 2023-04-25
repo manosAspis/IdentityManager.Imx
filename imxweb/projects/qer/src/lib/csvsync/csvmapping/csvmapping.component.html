@@ -1,0 +1,29 @@
+<div class="container">
+
+  <div class="select-table">
+    <h2 class="columnMapping-header">Table</h2>
+    <select id="table-select" [(ngModel)]="selectedTable" class="custom-select">
+      <option value="">Choose a table</option>
+      <option *ngFor="let table of tables" [value]="table">{{ table }}</option>
+    </select>
+  </div>
+
+  <div class="mapping-section">
+    <h2 class="columnMapping-header">Column Mapping</h2>
+    <div *ngFor="let header of headers" class="mapping-row">
+      <span class="header-name">{{ header }}:</span>
+      <select [(ngModel)]="columnMapping[header]" class="custom-select" [disabled]="!selectedTable">
+        <option value="">Choose a column</option>
+        <option *ngFor="let column of mockColumns" [value]="column">{{ column }}</option>
+      </select>
+    </div>
+  </div>
+  <div class="footer">
+    <button
+      mat-raised-button
+      color="primary" (click)="submit()" [disabled]="!isFormComplete()">
+      Import to Database
+    </button>
+  </div>
+</div>
+
