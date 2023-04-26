@@ -22,6 +22,7 @@ export class CsvmappingComponent implements OnInit {
   updateColumnMapping() {
     this.columnMappingUpdated.emit(this.columnMapping);
   }
+
   columnSelectHovered: number | null = null;
   onColumnSelectHover(index: number) {
     this.columnSelectHovered = index;
@@ -30,6 +31,7 @@ export class CsvmappingComponent implements OnInit {
   onColumnSelectLeave() {
     this.columnSelectHovered = null;
   }
+
 
   constructor(
     private importDataService: QerService,
