@@ -10,14 +10,34 @@
 
   <div class="mapping-section">
     <h2 class="columnMapping-header">Column Mapping</h2>
-    <div *ngFor="let header of headers" class="mapping-row">
+
+    <div *ngFor="let header of headers; let i = index" class="mapping-row">
       <span class="header-name">{{ header }}:</span>
-      <select [(ngModel)]="columnMapping[header]" class="custom-select" [disabled]="!selectedTable">
-        <option value="">Choose a column</option>
-        <option *ngFor="let column of mockColumns" [value]="column">{{ column }}</option>
-      </select>
+      <div
+        class="select-wrapper"
+        (mouseenter)="onColumnSelectHover(i)"
+        (mouseleave)="onColumnSelectLeave()"
+      >
+        <select
+          [(ngModel)]="columnMapping[header]"
+          class="custom-select"
+          [disabled]="!selectedTable"
+        >
+          <option value="">Choose a column</option>
+          <option *ngFor="let column of mockColumns" [value]="column">{{ column }}</option>
+        </select>
+        <div
+          *ngIf="!selectedTable && columnSelectHovered === i"
+          class="select-table-warning-overlay"
+        >
+          <span class="select-table-warning">Select a table first.</span>
+        </div>
+      </div>
     </div>
+
   </div>
+
+
   <div class="footer">
     <button
       mat-raised-button
