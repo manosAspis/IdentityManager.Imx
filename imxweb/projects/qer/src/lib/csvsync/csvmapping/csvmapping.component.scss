@@ -33,6 +33,7 @@
 
     .custom-select {
       display: block;
+
       width: 200%;
       height: 30px;
       border: 1px solid $VI_Common_Color_LightGray;
@@ -45,6 +46,7 @@
 
       width: 100%;
       height: 30px;
+
       border: 1px solid $VI_Common_Color_LightGray;
       border-radius: 5px;
     }
@@ -80,12 +82,14 @@
       position: absolute;
       top: 0;
       left: 0;
+
       width: 200%;
       margin-left: -100%;
       height: 100%;
       background-color: $Imx_White-two;
       pointer-events: none;
       border-radius: 5px;
+
     }
 
     .select-table-warning {
