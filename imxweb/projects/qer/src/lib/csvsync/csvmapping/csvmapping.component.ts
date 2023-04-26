@@ -62,7 +62,6 @@ export class CsvmappingComponent implements OnInit {
   submit(): void {
     // Implement logic to save changes to the database here.
 
-    // Close the sidesheet after saving the changes.
     this.sideSheetRef.close();
   }
 
