@@ -18,6 +18,10 @@ export class CsvsyncComponent implements OnInit {
   mockColumns: string[] = [];
   @Input() headers: string[] = [];
 
+
+  public noDataText = '#LDS#No data';
+  public noDataIcon = 'table';
+
   constructor(
     private importDataService: QerService,
     private readonly sideSheet: EuiSidesheetService,
@@ -47,14 +51,14 @@ export class CsvsyncComponent implements OnInit {
     }
   }
 
-  isMappingComplete() {
+  /*isMappingComplete() {
     for (let header of this.headers) {
       if (!this.columnMapping[header]) {
         return false;
       }
     }
     return true;
-  }
+  }*/
 
   onCellValueChange(event: any, rowIndex: number, cellIndex: number): void {
     this.csvData[rowIndex][cellIndex] = event.target.value;
