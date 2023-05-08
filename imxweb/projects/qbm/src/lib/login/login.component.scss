@@ -1,4 +1,6 @@
 @import "variables.scss";
+$tangerine: #FF6200;
+
 
 $inputWidth: calc(40vw + 2px);
 
@@ -10,7 +12,7 @@ $inputWidth: calc(40vw + 2px);
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: $iris-blue;
+  background-color: $tangerine !important;
   color: $white;
   align-items: center;
 }
@@ -83,8 +85,16 @@ $inputWidth: calc(40vw + 2px);
   display: inline-block;
 
   button {
-    background-color: $VI_Common_Color_Blue_3;
+    /* background-color: $VI_Common_Color_Blue_3; */
+  background-color: $white;  
+  color: $tangerine;
   }
+}
+
+.imx-loginButtonpanel button:hover {
+  color: $white;
+  background-color: $tangerine;  
+  border: 1px solid $white;
 }
 
 .imx-loginData {
