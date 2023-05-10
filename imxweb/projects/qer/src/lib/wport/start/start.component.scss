@@ -33,8 +33,10 @@
 
 .mat-button{
   text-transform: uppercase;
+  color: $Task2_Orange;
 }
 
 .mat-button ::ng-deep eui-icon{
   margin-left: 15px;
+  color: $Task2_Orange;
 }
