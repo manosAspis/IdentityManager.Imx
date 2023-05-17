@@ -135,6 +135,21 @@
       </ng-template>
     </imx-icon-tile>
 
+    <imx-icon-tile
+      data-imx-identifier="start-tile-start-a-new-request"
+      [caption]="'#LDS# Support Information' | translate"
+      [subtitle]="'#LDS#Visit the support page for more information.' | translate"
+      [identifier]="'start-a-new-request'"
+    >
+      <ng-template #ActionTemplate>
+        <button mat-button color="primary" (click)="GoToSupportInformation()">
+          <span>{{ '#LDS#Support Information' | translate }}</span>
+          <eui-icon size="m" icon="forward"></eui-icon>
+        </button>
+      </ng-template>
+    </imx-icon-tile>
+
+
     <imx-tile
       data-imx-identifier="start-tile-it-shop-approval-inquiries"
       [caption]="'#LDS#Heading Request Inquiries' | translate"
