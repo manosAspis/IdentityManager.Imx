@@ -25,7 +25,7 @@
 
     <imx-badge-tile
       data-imx-identifier="start-tile-request-history"
-      [caption]="'#LDS#Heading My Pending Requests' | translate"
+      [caption]="'#LDS# My Pending Requests' | translate"
       [tooltip]="'#LDS#Shows your pending requests others can approve or deny.' | translate"
       *ngIf="userConfig?.IsITShopEnabled && GetCountInRequestHistory() >= 0"
       [value]="GetCountInRequestHistory()"
@@ -134,6 +134,21 @@
         </button>
       </ng-template>
     </imx-icon-tile>
+
+    <imx-icon-tile
+    data-imx-identifier="start-tile-support-information"
+    [caption]="'#LDS# Support Information' | translate"
+    [subtitle]="'#LDS#Go to the Support Information page.' | translate"
+    [identifier]="'go-to-support-information'"
+    *ngIf="ShowSupportInformation()"
+  >
+    <ng-template #ActionTemplate>
+      <button mat-button color="primary" (click)="GoToSupportInformation()">
+        <span>{{ '#LDS# See Information' | translate }}</span>
+        <eui-icon size="m" icon="forward"></eui-icon>
+      </button>
+    </ng-template>
+  </imx-icon-tile>
 
     <imx-tile
       data-imx-identifier="start-tile-it-shop-approval-inquiries"

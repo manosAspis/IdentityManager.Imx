@@ -73,6 +73,14 @@ export class StartComponent implements OnInit {
     }
   }
 
+  public ShowSupportInformation(): boolean {
+    return true;
+  }
+
+  public GoToSupportInformation(): void {
+    this.router.navigate(['supportinfo']);
+  }
+
   public ShowPasswordTile(): boolean {
     return this.userConfig.ShowPasswordTile;
   }
