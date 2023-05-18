@@ -1,0 +1,44 @@
+@import "variables.scss";
+
+
+.subtitle-title {
+  color: $charcoal;
+  font-size: 26px;
+  display: flex;
+  cursor: auto;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.subtitle-subtitle {
+  color: $tangerine;
+  font-size: 18px;
+  display: flex;
+  cursor: auto;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subtitle-text {
+  color: $granite;
+  font-size: 16px;
+  display: flex;
+  cursor: auto;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subtitle-link {
+  font-size: 16px;
+  color: $aquamarine_mist;
+  display: flex;
+  cursor: auto;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tile-content {
+  width:500px;
+}
+
+
+
