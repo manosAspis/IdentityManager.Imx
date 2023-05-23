@@ -28,9 +28,8 @@ import { NgModule, InjectionToken } from '@angular/core';
 import { Routes, RouterModule, ActivatedRouteSnapshot, Router } from '@angular/router';
 
 import { LoginComponent, RouteGuardService } from 'qbm';
-import {
-  PasswordQueryComponent
-} from 'qer';
+import { PasswordQueryComponent } from 'qer';
+import { SupportinfoComponent } from 'projects/qer/src/lib/supportinfo/supportinfo.component';
 
 const externalUrlProvider = new InjectionToken('externalUrlRedirectResolver');
 
@@ -50,6 +49,7 @@ const routes: Routes = [
     canActivate: [RouteGuardService],
     resolve: [RouteGuardService]
   },
+  { path: 'supportinfo', component: SupportinfoComponent },
   { path: '**', redirectTo: 'dashboard' }
 ];
 

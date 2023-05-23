@@ -1,0 +1,21 @@
+@import '../../../../../shared/assets/variables.scss';
+
+p {
+    font-size: 16px;
+    color: $Task3_p_color;
+}
+
+p span {
+    font-size: 18px;
+    color: $Task3_Orange;
+}
+
+.title {
+    color: $Task3_title_color;
+    font-size: 26px;
+}
+
+a {
+    color: $link;
+    font-size: 16px;
+}

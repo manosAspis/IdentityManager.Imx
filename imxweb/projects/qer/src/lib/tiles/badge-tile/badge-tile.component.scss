@@ -23,12 +23,14 @@
   }
   
   .imx-generic-tile-content >:first-child {
-    background-color: $iris-pastel;
-    color: $iris-blue;
+    background-color: transparent;
+    color: $Task2_Orange;
     width: 60px;
     height: 30px;
     font-size: 23px;
     margin: 10px;
+    border: 1px solid;
+    border-color: $Task2_Orange;
   }
   
   .imx-generic-tile-content >:nth-child(2) {
@@ -42,4 +44,5 @@
   
   .mat-button{
     text-transform: uppercase;
+    color: $Task2_Orange;
   }
