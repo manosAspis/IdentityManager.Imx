@@ -52,6 +52,7 @@ export { IRequestableEntitlementType } from './lib/itshop-config/irequestable-en
 export { DelegationModule } from './lib/delegation/delegation.module';
 export { DelegationComponent } from './lib/delegation/delegation.component';
 export { NotificationTileComponent } from './lib/tiles/notification-tile/notification-tile.component';
+export { CustomedsubtitleTileComponent } from './lib/tiles/customedsubtitle-tile/customedsubtitle-tile.component';
 export { BadgeTileComponent } from './lib/tiles/badge-tile/badge-tile.component';
 export { IconTileComponent } from './lib/tiles/icon-tile/icon-tile.component';
 export { IRoleMembershipType } from './lib/role-management/role-memberships/membership-handlers';

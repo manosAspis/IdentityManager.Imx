@@ -85,6 +85,13 @@ class MockNotificationTileComponent {
 }
 
 @Component({
+  selector: 'imx-customedsubtitle-tile',
+  template: '<p>MockCustomedsubtitleTileComponent</p>'
+})
+class MockCustomedsubtitleTileComponent {
+}
+
+@Component({
   selector: 'imx-badge-tile',
   template: '<p>MockNotificationTileComponent</p>'
 })
