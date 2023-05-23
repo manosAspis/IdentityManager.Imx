@@ -97,6 +97,10 @@ export class StartComponent implements OnInit {
     this.router.navigate(['productselection']);
   }
 
+  public GoToSupportInformation(): void {
+    this.router.navigate(['supportinformation']);
+  }
+
   public GoToItshopApprovals(): void {
     this.router.navigate(['itshop', 'approvals']);
   }

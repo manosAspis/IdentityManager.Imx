@@ -31,6 +31,7 @@ import { LoginComponent, RouteGuardService } from 'qbm';
 import {
   PasswordQueryComponent
 } from 'qer';
+import { SupportInformationComponent } from 'projects/qer/src/lib/support-information/support-information.component';
 
 const externalUrlProvider = new InjectionToken('externalUrlRedirectResolver');
 
@@ -50,6 +51,7 @@ const routes: Routes = [
     canActivate: [RouteGuardService],
     resolve: [RouteGuardService]
   },
+  { path: 'supportinformation', component: SupportInformationComponent},
   { path: '**', redirectTo: 'dashboard' }
 ];
 
