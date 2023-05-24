@@ -1,0 +1,49 @@
+
+<div class="container">
+
+  <!--Customer Support Table-->
+  <div class="col">
+    <table class="employee-table">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th> 
+          <th>Contact Number</th>
+          <th>email</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let emp of employee; let i = index;">
+          <td>{{ employee[i].firstName }}</td>
+          <td>{{ employee[i].lastName }}</td>
+          <td>{{ employee[i].contactNumber }}</td>
+          <td>{{ employee[i].email }}</td>
+        </tr>
+      </tbody>
+    </table>   
+  </div>
+
+  <!--Contact Form-->
+  <div class="col">  
+   <form class="contact-form" [formGroup]="contactForm" (ngSubmit)="SubmitForm()">
+     <div class="form-group">
+       <label for="name">Name:</label>
+       <input type="text" id="name" formControlName="name" class="form-input" required>
+     </div>
+     <div class="form-group">
+       <label for="email">Email:</label>
+       <input type="email" id="email" formControlName="email" class="form-input" required>
+     </div>
+     <div class="form-group">
+       <label for="message">Message:</label>
+       <textarea id="message" formControlName="message" rows="4" class="form-input" required></textarea>
+     </div>
+     <button type="submit" class="btn">Submit</button>
+   </form> 
+  </div>
+
+</div>
+
+
+
+

@@ -26,7 +26,7 @@
 
 import { NgModule, InjectionToken } from '@angular/core';
 import { Routes, RouterModule, ActivatedRouteSnapshot, Router } from '@angular/router';
-
+import { ContactComponent } from './contact/contact.component';
 import { LoginComponent, RouteGuardService } from 'qbm';
 import {
   PasswordQueryComponent
@@ -50,6 +50,7 @@ const routes: Routes = [
     canActivate: [RouteGuardService],
     resolve: [RouteGuardService]
   },
+  { path: 'contact', component: ContactComponent},
   { path: '**', redirectTo: 'dashboard' }
 ];
 

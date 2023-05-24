@@ -135,6 +135,21 @@
       </ng-template>
     </imx-icon-tile>
 
+    
+    <imx-icon-tile
+      data-imx-identifier="start-tile-start-a-new-request"
+      [caption]="'#LDS#Contact Us' | translate"
+      [subtitle]="'#LDS#Contact us if have any questions.' | translate"
+      [identifier]="'contact'"
+    >
+      <ng-template #ActionTemplate>
+        <button mat-button color="primary" (click)="GoToContact()">
+          <span>{{ '#LDS#More information' | translate }}</span>
+          <eui-icon size="m" icon="forward"></eui-icon>
+        </button>
+      </ng-template>
+    </imx-icon-tile>
+
     <imx-tile
       data-imx-identifier="start-tile-it-shop-approval-inquiries"
       [caption]="'#LDS#Heading Request Inquiries' | translate"

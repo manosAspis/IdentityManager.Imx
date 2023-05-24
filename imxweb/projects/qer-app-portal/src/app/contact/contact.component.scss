@@ -1,0 +1,50 @@
+@import "variables.scss";
+
+.container {
+ display: grid;
+ grid-template-columns: repeat(2, 1fr);
+ grid-gap: 20px;
+
+   @media (max-width: 768px) {
+     grid-template-columns: 1fr;
+    }
+
+   col {
+     padding: 10px;
+     box-sizing: border-box;
+    }
+
+  .employee-table {
+     background-color: $white;
+     color: $VI_Common_Color_Font;
+     margin: auto;
+     text-align: center;
+    
+     thead tr{
+       background-color: $iris-blue;
+       color: $white;
+      }
+    }
+
+ .contact-form {
+     max-width: 600px;
+     margin: auto;
+     place-items: center;
+
+    .form-input {
+       width: 100%;
+       padding: 10px;
+      }
+
+     .btn{
+       background-color: $iris-blue;
+       color: $white;
+       padding: 8px 16px;
+       border: none;
+       border-radius: 4px;
+       cursor: pointer;
+      }
+  }
+}
+
+
