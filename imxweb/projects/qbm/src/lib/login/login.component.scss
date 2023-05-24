@@ -10,7 +10,7 @@ $inputWidth: calc(40vw + 2px);
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: $iris-blue;
+  background-color: $taskOrange; //Task1 background color change
   color: $white;
   align-items: center;
 }
@@ -83,8 +83,15 @@ $inputWidth: calc(40vw + 2px);
   display: inline-block;
 
   button {
-    background-color: $VI_Common_Color_Blue_3;
+    background-color: $white; 
+    color: $taskOrange; //Task1
+  //Task1 hover effect on button
+  &:hover{
+    background-color: $taskOrange;
+    color: $white;
+    border: 1px solid $white;
   }
+}
 }
 
 .imx-loginData {
