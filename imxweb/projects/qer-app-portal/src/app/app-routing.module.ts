@@ -11,6 +11,7 @@
  *
  * Copyright 2021 One Identity LLC.
  * ALL RIGHTS RESERVED.
+ *
  * ONE IDENTITY LLC. MAKES NO REPRESENTATIONS OR
  * WARRANTIES ABOUT THE SUITABILITY OF THE SOFTWARE,
  * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
@@ -30,7 +31,6 @@ import { LoginComponent, RouteGuardService } from 'qbm';
 import {
   PasswordQueryComponent
 } from 'qer';
-import { SupportinformationComponent } from 'projects/qer/src/lib/supportinformation/supportinformation.component';
 
 const externalUrlProvider = new InjectionToken('externalUrlRedirectResolver');
 
@@ -50,8 +50,7 @@ const routes: Routes = [
     canActivate: [RouteGuardService],
     resolve: [RouteGuardService]
   },
-  { path: '**', redirectTo: 'dashboard' },
-  { path: 'supportinformation', component: SupportinformationComponent}
+  { path: '**', redirectTo: 'dashboard' }
 ];
 
 @NgModule({
