@@ -2,7 +2,7 @@
 @import "../../../../../qbm/src/lib/tile/tile-variables.scss";
 
 :host > ::ng-deep imx-tile .mat-card {
-  height: 140px;
+  height: 200px;
   display: flex;
   width: $tile-width;
   min-width: $tile-width;
@@ -10,6 +10,7 @@
   cursor: auto;
   padding: 25px;
   padding-bottom: 10px;
+  overflow: auto;
 }
 
 :host > ::ng-deep imx-tile .mat-card > .mat-card-actions:last-child {
