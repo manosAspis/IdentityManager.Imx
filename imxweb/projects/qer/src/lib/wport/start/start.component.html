@@ -145,6 +145,19 @@
     >
     </imx-tile>
 
+    <imx-icon-tile 
+    data-imx-identifier="start-tile-support-information"
+    [caption]="'#LDS#Support Information' | translate"
+    [identifier]="'support-information'"
+  >
+    <ng-template #ActionTemplate>
+      <button mat-button class="mat-button-heading-color" (click)="GoToSupport()">
+        <span>{{ '#LDS#Support Information' | translate }}</span>
+        <eui-icon size="m" icon="forward" class="mat-button-heading-color"></eui-icon>
+      </button>
+    </ng-template>
+  </imx-icon-tile>
+
     <imx-ext id="Dashboard-MediumTiles"></imx-ext>
   </div>
   <div class="imx-flexible-tile-row">
