@@ -36,6 +36,7 @@ import {
   MastHeadService,
   IeWarningService,
   ExtService,
+  MenuService
 } from 'qbm';
 import {
   EuiTopNavigationItem,
@@ -96,6 +97,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private readonly itshopReqEntlService: RequestableEntitlementTypeService,
     private readonly projectConfig: ProjectConfigurationService,
     private readonly extService: ExtService,
+    private readonly menuService: MenuService,
     requestsService: RequestsService,
     ieWarningService: IeWarningService
   ) {
@@ -351,11 +353,6 @@ export class AppComponent implements OnInit, OnDestroy {
       if (this.attConfig?.IsAttestationEnabled) {
         this.addNavMenuItem('#LDS#Attestation', '', attestationMenuItems);
       }
-
-      const csvImporterItems : { text: string; url: string } [] = [{
-        text: '#LDS#CSV Importer',
-        url: 'csvImporter',
-      }];
     }
 
     const userIsAdmin = this.userGroups.find((group) => {
@@ -392,7 +389,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this.addNavMenuItem('#LDS#Responsibilities', '', respItems);
     }
 
-    const csvImporterItems = [];
     const dataExplorerItems = [];
     const setupItems = [];
     if (userIsAdmin) {
@@ -435,6 +431,15 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     // CSV IMPORTER 
+    const csvImporterItems = [];
+
+    if (!this.isBootstrapUser) {
+      const csvImporterItems : { text: string; url: string } [] = [{
+        text: '#LDS#CSV Importer',
+        url: 'csvImporter'
+      }];
+    }
+    
     if (csvImporterItems.length >= 0) {
       this.addNavMenuItem('#LDS#CSV Importer', '', csvImporterItems);
     }
