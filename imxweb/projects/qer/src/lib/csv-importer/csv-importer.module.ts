@@ -13,7 +13,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { DataTableModule, CdrModule, LdsReplaceModule, MenuService, MenuItem } from 'qbm';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CsvImporterComponent } from './csv-importer.component';
-import { CsvImporterService } from './csv-importer.service';
 
 const routes: Routes = [
   {
@@ -43,7 +42,7 @@ const routes: Routes = [
   ],
   declarations: [
   ],
-  providers: [CsvImporterService]
+  providers: []
 })
 export class CsvImporterModule {
   constructor(
