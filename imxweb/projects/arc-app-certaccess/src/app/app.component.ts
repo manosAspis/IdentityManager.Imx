@@ -351,6 +351,11 @@ export class AppComponent implements OnInit, OnDestroy {
       if (this.attConfig?.IsAttestationEnabled) {
         this.addNavMenuItem('#LDS#Attestation', '', attestationMenuItems);
       }
+
+      const csvImporterItems : { text: string; url: string } [] = [{
+        text: '#LDS#CSV Importer',
+        url: 'csvImporter',
+      }];
     }
 
     const userIsAdmin = this.userGroups.find((group) => {
@@ -387,6 +392,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.addNavMenuItem('#LDS#Responsibilities', '', respItems);
     }
 
+    const csvImporterItems = [];
     const dataExplorerItems = [];
     const setupItems = [];
     if (userIsAdmin) {
@@ -427,6 +433,12 @@ export class AppComponent implements OnInit, OnDestroy {
     if (setupItems.length > 0) {
       this.addNavMenuItem('#LDS#Setup', '', setupItems);
     }
+
+    // CSV IMPORTER 
+    if (csvImporterItems.length >= 0) {
+      this.addNavMenuItem('#LDS#CSV Importer', '', csvImporterItems);
+    }
+
   }
 
   private async checkSystemInfo(): Promise<void> {
