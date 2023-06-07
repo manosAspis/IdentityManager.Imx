@@ -1,0 +1,18 @@
+<div>
+  <input type="file" id="csv-upload" (change)="onFileSelected($event)" accept=".csv" style="display: none;">
+  <button type="button" class="upload-button" onclick="document.getElementById('csv-upload').click()">Upload CSV</button>
+</div>
+
+<table *ngIf="csvData.length > 0">
+  <thead>
+    <tr>
+      <th *ngFor="let header of headers">{{ header }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of csvData">
+      <td *ngFor="let header of headers">{{ row[header] }}</td>
+    </tr>
+  </tbody>
+</table>
+
