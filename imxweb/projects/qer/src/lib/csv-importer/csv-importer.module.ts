@@ -61,7 +61,7 @@ export class CsvImporterModule {
           {
             id: 'QER_CSV_Importer',
             route: 'csvImporter',
-            title: '#LDS# CSV Importer',
+            title: '#LDS#CSV Importer',
             sorting: '60',
           },
         );
@@ -78,29 +78,3 @@ export class CsvImporterModule {
     );
   }
 }
-
-/* SECOND METHOD TO DISPLAY THE CSV IMPORTER */
-
-/*
-  private setupMenu(): void {
-    this.menuService.addMenuFactories(
-      (preProps: string[], groups: string[]) => {
-        const menu = {
-          id: 'ROOT_CsvImporter',
-          title: '#LDS# Csv Importer',
-          sorting: '60',
-      
-          items: [
-            {
-              id: 'QER_CSV_Importer',
-              navigationCommands: { commands: ['csvImporter'] },
-              title: '#LDS# CSV Importer',
-              sorting:'60',
-            },
-          ]
-        };
-        return menu;
-      }
-    );
-  }
-*/

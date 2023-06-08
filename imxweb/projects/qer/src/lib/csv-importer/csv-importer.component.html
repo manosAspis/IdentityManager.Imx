@@ -1,1 +1,22 @@
-<p>csv-importer works!</p>
+<div class="container">
+    <div class="fileUpload">
+        <label for="fileInput" class="uploadBtn">Upload CSV File</label>
+        <input id="fileInput" type="file" accept=".csv" (change)="validateFile($event.target)">
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Size</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let file of csvFiles">
+                <td>{{ file.name }}</td>
+                <td>{{ getFileSize(file.size) }}</td>
+                <td>{{ file.type }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
