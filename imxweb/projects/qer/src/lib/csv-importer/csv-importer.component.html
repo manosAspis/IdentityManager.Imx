@@ -1,0 +1,23 @@
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Size</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let file of csvFiles">
+        <td>{{ file.name }}</td>
+        <td>{{ formatFileSize(file.size) }}</td>
+        <td>{{ file.type }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="uploader-container">
+  <label for="fileInput" class="btn-uploader">Upload CSV</label>
+  <input id="fileInput" type="file" accept=".csv" (change)="UploadCsv($event.target.files)"/>
+</div>
