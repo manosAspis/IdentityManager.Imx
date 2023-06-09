@@ -5,7 +5,7 @@
         {{ item.title | translate }}
       </a>    
       <ng-container *ngIf="item.items">
-        <a mat-tab-link *ngIf="(item.title !== '#LDS#Setup' && item.title !== '#LDS#Responsibilities' && item.title !== '#LDS#CSV Importer')" [matMenuTriggerFor]="submenu" (keyup.tab)="submenuTrigger.openMenu()" [attr.data-imx-identifier]="item.id" (keyup.shift.tab)="submenuTrigger.openMenu()" #submenuTrigger="matMenuTrigger" [active]="isActive(item)">
+        <a mat-tab-link *ngIf="(item.id !== 'ROOT_Setup' && item.id !== 'ROOT_Responsibilities' && item.id !== 'ROOT_CsvImporter')" [matMenuTriggerFor]="submenu" (keyup.tab)="submenuTrigger.openMenu()" [attr.data-imx-identifier]="item.id" (keyup.shift.tab)="submenuTrigger.openMenu()" #submenuTrigger="matMenuTrigger" [active]="isActive(item)">
           {{ item.title | translate }}
         </a>
         <mat-menu #submenu="matMenu" yPosition="below" overlapTrigger="false">
@@ -13,7 +13,7 @@
            {{ subitem.title | translate }}  
           </button>
         </mat-menu>
-        <a mat-tab-link *ngIf="item.title == '#LDS#CSV Importer'" (click)="GoToCsvImporter()" [attr.data-imx-identifier]="item.id" [active]="isActive(item)">
+        <a mat-tab-link *ngIf="item.id === 'ROOT_CsvImporter'" (click)="GoToCsvImporter()" [attr.data-imx-identifier]="item.id" [active]="isActive(item)">
           {{ item.title | translate }}
         </a>
       </ng-container>

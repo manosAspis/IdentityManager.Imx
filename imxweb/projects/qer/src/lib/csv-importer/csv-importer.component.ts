@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'imx-csv-importer',
@@ -6,6 +7,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./csv-importer.component.scss']
 })
 export class CsvImporterComponent implements OnInit {
+
+  constructor(
+    private readonly translate: TranslateService,
+  ) { }
 
   csvFiles: File[] = [];
 
@@ -48,9 +53,6 @@ export class CsvImporterComponent implements OnInit {
     }
   }
 
-  constructor() { }
-
   ngOnInit(): void {
   }
-
 }
