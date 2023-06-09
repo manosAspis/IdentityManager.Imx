@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'imx-csv-importer',
@@ -6,6 +7,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./csv-importer.component.scss']
 })
 export class CsvImporterComponent{
+
+  constructor(private readonly translate: TranslateService,) { }
 
   csvFiles: File[] = [];
 

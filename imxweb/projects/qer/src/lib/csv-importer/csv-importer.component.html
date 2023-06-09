@@ -2,9 +2,9 @@
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Size</th>
-        <th>Type</th>
+        <th>{{ '#LDS#Name' | translate }}</th>
+        <th>{{ '#LDS#Size' | translate }}</th>
+        <th>{{ '#LDS#Type' | translate }}</th>
       </tr>
     </thead>
     <tbody>
@@ -18,6 +18,6 @@
 </div>
 
 <div class="uploader-container">
-  <label for="fileInput" class="btn-uploader">Upload CSV</label>
+  <label for="fileInput" class="btn-uploader">{{ '#LDS#Upload CSV' | translate }}</label>
   <input id="fileInput" type="file" accept=".csv" (change)="UploadCsv($event.target.files)"/>
 </div>
