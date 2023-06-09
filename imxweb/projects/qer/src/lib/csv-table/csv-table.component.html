@@ -1,18 +1,16 @@
 <div>
   <input type="file" id="csv-upload" (change)="onFileSelected($event)" accept=".csv" style="display: none;">
-  <button type="button" class="upload-button" onclick="document.getElementById('csv-upload').click()">Upload CSV</button>
+  <button type="button" class="upload-button" onclick="document.getElementById('csv-upload').click()">{{ '#LDS#Upload CSV' | translate }}</button>
 </div>
 
 <table *ngIf="csvData.length > 0">
-  <thead>
-    <tr>
-      <th *ngFor="let header of headers">{{ header }}</th>
-    </tr>
-  </thead>
   <tbody>
+    <tr>
+      <td *ngFor="let header of headers">{{ header }}</td>
+    </tr>
+    
     <tr *ngFor="let row of csvData">
       <td *ngFor="let header of headers">{{ row[header] }}</td>
     </tr>
   </tbody>
 </table>
-
