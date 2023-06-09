@@ -6,8 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./csv-table.component.scss']
 })
 export class CsvTableComponent implements OnInit {
-  csvData: any[] = []; // To store the parsed CSV data
-  headers: string[] = []; // To store the column headers
+  csvData: any[] = []; 
+  headers: string[] = []; 
 
   constructor() { }
 
@@ -27,16 +27,15 @@ export class CsvTableComponent implements OnInit {
       const csvData = reader.result as string;
       const lines = csvData.split('\n');
       this.headers = lines[0].split(',');
+
       this.csvData = [];
       for (let i = 1; i < lines.length; i++) {
         const data = lines[i].split(',');
-        if (data.length === this.headers.length) {
-          const row = {};
-          for (let j = 0; j < this.headers.length; j++) {
-            row[this.headers[j]] = data[j];
-          }
-          this.csvData.push(row);
+        const row = {};
+        for (let j = 0; j < this.headers.length; j++) {
+          row[this.headers[j]] = data[j];
         }
+        this.csvData.push(row);
       }
     };
     reader.readAsText(file);
