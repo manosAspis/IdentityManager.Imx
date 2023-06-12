@@ -24,7 +24,7 @@
           [disabled]="!selectedTable"
         >
           <option value="">Choose a column</option>
-          <option *ngFor="let column of mockColumns" [value]="column">{{ column }}</option>
+          <option *ngFor="let column of columns" [value]="column">{{ column }}</option>
         </select>
         <div
           *ngIf="!selectedTable && columnSelectHovered === i"
@@ -37,11 +37,11 @@
 
   </div>
 
-
+<!--[disabled]="!isFormComplete()"-->
   <div class="footer">
     <button
       mat-raised-button
-      color="primary" (click)="submit()" [disabled]="!isFormComplete()">
+      color="primary" (click)="submit()">
       Import to Database
     </button>
   </div>

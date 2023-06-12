@@ -50,14 +50,12 @@ export class QerService {
     private readonly menuService: MenuService
   ) { }
 
-  getTables(): string[] {
-    // Return mock data for tables
-    return ['table1', 'table2', 'table3'];
+  CCC_Tables(): string[] {
+    return ['Identities', 'Business Roles'];
   }
 
-  getMockColumns(): string[] {
-    // Return mock data for columns
-    return ['column1', 'column2', 'column3', 'column4', 'column5'];
+  CCC_BR_Columns(): string[] {
+    return ['Business Role Name', 'City', 'Description'];
   }
 
   // Add other methods for handling data imports in the future
