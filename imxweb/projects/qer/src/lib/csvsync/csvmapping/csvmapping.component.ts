@@ -24,6 +24,7 @@ export class CsvmappingComponent implements OnInit {
   @Input() headers: string[];
   @Input() csvData: any[];
   columns: string[] = [];
+  columnsID: string[] = [];
   @Output() columnMappingUpdated = new EventEmitter<any>();
 
   selectedTable: string = '';
@@ -55,6 +56,7 @@ export class CsvmappingComponent implements OnInit {
   public async ngOnInit(): Promise<void> {
     this.tables = this.importDataService.CCC_Tables();
     this.columns = this.importDataService.CCC_BR_Columns();
+    this.columnsID = this.importDataService.CCC_ID_Columns();
     this.headerService.headers$.subscribe(headers => {
       this.headers = headers;
     });
@@ -66,17 +68,12 @@ export class CsvmappingComponent implements OnInit {
       return false;
     }
 
-    /*for (let header of this.headers) {
-      if (!this.columnMapping[header]) {
-        return false;
-      }
+    else {
+      return true;
     }
-
-    return true;*/
   }
 
-
-  public async submit(): Promise<PeriodicElement[]> {
+  public async submitBR(): Promise<PeriodicElement[]> {
     const inputParameters: any[] = [];
     const csvData = this.csvDataService.csvData;
     const results: PeriodicElement[] = [];
@@ -90,8 +87,12 @@ export class CsvmappingComponent implements OnInit {
 
       for (const header of this.headers) {
         const columnIndex = this.headers.indexOf(header);
-        const columnName = this.columns[columnIndex];
-        const columnValue = csvRow[columnIndex];
+        const columnName = this.columnMapping[header];
+        let columnValue = csvRow[columnIndex];
+
+        if (columnValue && typeof columnValue === 'string') {
+          columnValue = columnValue.replace(/[\r\n]+/g, ''); // Remove line breaks
+        }
 
         if (columnName === this.columns[0]) {
           inputParameterName['Ident_Org'] = columnValue;
@@ -106,8 +107,9 @@ export class CsvmappingComponent implements OnInit {
     }
 
     for (const inputParameter of inputParameters) {
+      console.log(inputParameter)
       try {
-        const data = await this.config.apiClient.processRequest(this.PostCsv(inputParameter));
+        const data = await this.config.apiClient.processRequest(this.PostBR(inputParameter));
         results.push(data);
       } catch (error) {
         console.error(`Error submitting CSV data: ${error}`);
@@ -117,7 +119,7 @@ export class CsvmappingComponent implements OnInit {
     return results;
   }
 
-private PostCsv(inputParameterName: any): MethodDescriptor<PeriodicElement> {
+private PostBR(inputParameterName: any): MethodDescriptor<PeriodicElement> {
   return {
     path: `/portal/createBR`,
     parameters: [
@@ -135,6 +137,70 @@ private PostCsv(inputParameterName: any): MethodDescriptor<PeriodicElement> {
     observe: 'response',
     responseType: 'json'
   };
+}
+
+
+public async submitID(): Promise<PeriodicElement[]> {
+  const inputParameters: any[] = [];
+  const csvData = this.csvDataService.csvData;
+  const results: PeriodicElement[] = [];
+
+  for (const csvRow of csvData) {
+    const inputParameterName: any = {
+      "FirstName": '',
+      "LastName": ''
+    };
+
+    for (const header of this.headers) {
+      const columnIndex = this.headers.indexOf(header);
+      const columnName = this.columnMapping[header];
+      let columnValue = csvRow[columnIndex];
+
+      if (columnValue && typeof columnValue === 'string') {
+        columnValue = columnValue.replace(/[\r\n]+/g, ''); // Remove line breaks
+      }
+
+      if (columnName === this.columnsID[0]) {
+        inputParameterName['FirstName'] = columnValue;
+      } else if (columnName === this.columnsID[1]) {
+        inputParameterName['LastName'] = columnValue;
+      }
+    }
+
+    inputParameters.push(inputParameterName);
+  }
+
+  for (const inputParameter of inputParameters) {
+    console.log(inputParameter)
+    try {
+      const data = await this.config.apiClient.processRequest(this.PostID(inputParameter));
+      results.push(data);
+    } catch (error) {
+      console.error(`Error submitting CSV data: ${error}`);
+    }
+  }
+
+  return results;
+}
+
+private PostID(inputParameterName: any): MethodDescriptor<PeriodicElement> {
+return {
+  path: `/portal/createBR`,
+  parameters: [
+    {
+      name: 'inputParameterName',
+      value: inputParameterName,
+      in: 'body'
+    },
+  ],
+  method: 'POST',
+  headers: {
+    'imx-timezone': TimeZoneInfo.get(),
+  },
+  credentials: 'include',
+  observe: 'response',
+  responseType: 'json'
+};
 }
 
 

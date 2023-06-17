@@ -58,6 +58,10 @@ export class QerService {
     return ['Business Role Name', 'City', 'Description'];
   }
 
+  CCC_ID_Columns(): string[] {
+    return ['First Name', 'Last Name'];
+  }
+
   // Add other methods for handling data imports in the future
 
   public init(): void {
