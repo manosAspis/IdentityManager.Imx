@@ -1,4 +1,5 @@
 <div class="container">
+
   <div>
     <h2>Table</h2>
     <mat-form-field>
@@ -8,6 +9,7 @@
         <option *ngFor="let table of tables" [value]="table">{{ table }}</option>
       </select>
     </mat-form-field>
+
   </div>
 
   <h2 *ngIf="!selectedTable">Select a table first.</h2>

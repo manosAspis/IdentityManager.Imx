@@ -24,6 +24,10 @@ export class CsvsyncComponent implements OnInit {
   public noDataText = '#LDS#No data';
   public noDataIcon = 'table';
 
+
+  public noDataText = '#LDS#No data';
+  public noDataIcon = 'table';
+
   constructor(
     private importDataService: QerService,
     private readonly sideSheet: EuiSidesheetService,
@@ -55,6 +59,7 @@ export class CsvsyncComponent implements OnInit {
 
     }
   }
+
 
   onCellValueChange(event: any, rowIndex: number, cellIndex: number): void {
     this.csvData[rowIndex][cellIndex] = event.target.value;
