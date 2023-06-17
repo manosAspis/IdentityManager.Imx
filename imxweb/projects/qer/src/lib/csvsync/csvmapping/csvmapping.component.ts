@@ -85,20 +85,20 @@ export class CsvmappingComponent implements OnInit {
         "Description": ''
       };
 
-      for (const header of this.headers) {
-        const columnIndex = this.headers.indexOf(header);
-        const columnName = this.columnMapping[header];
+      for (const column of this.columns) {
+        const headerName = this.columnMapping[column];
+        const columnIndex = this.headers.indexOf(headerName);
         let columnValue = csvRow[columnIndex];
 
         if (columnValue && typeof columnValue === 'string') {
           columnValue = columnValue.replace(/[\r\n]+/g, ''); // Remove line breaks
         }
 
-        if (columnName === this.columns[0]) {
+        if (column === this.columns[0]) {
           inputParameterName['Ident_Org'] = columnValue;
-        } else if (columnName === this.columns[1]) {
+        } else if (column === this.columns[1]) {
           inputParameterName['City'] = columnValue;
-        } else if (columnName === this.columns[2]) {
+        } else if (column === this.columns[2]) {
           inputParameterName['Description'] = columnValue;
         }
       }
@@ -107,7 +107,7 @@ export class CsvmappingComponent implements OnInit {
     }
 
     for (const inputParameter of inputParameters) {
-      console.log(inputParameter)
+      console.log(inputParameter);
       try {
         const data = await this.config.apiClient.processRequest(this.PostBR(inputParameter));
         results.push(data);
@@ -151,18 +151,18 @@ public async submitID(): Promise<PeriodicElement[]> {
       "LastName": ''
     };
 
-    for (const header of this.headers) {
-      const columnIndex = this.headers.indexOf(header);
-      const columnName = this.columnMapping[header];
+    for (const column of this.columnsID) {
+      const headerName = this.columnMapping[column];
+      const columnIndex = this.headers.indexOf(headerName);
       let columnValue = csvRow[columnIndex];
 
       if (columnValue && typeof columnValue === 'string') {
         columnValue = columnValue.replace(/[\r\n]+/g, ''); // Remove line breaks
       }
 
-      if (columnName === this.columnsID[0]) {
+      if (column === this.columnsID[0]) {
         inputParameterName['FirstName'] = columnValue;
-      } else if (columnName === this.columnsID[1]) {
+      } else if (column === this.columnsID[1]) {
         inputParameterName['LastName'] = columnValue;
       }
     }
@@ -171,7 +171,7 @@ public async submitID(): Promise<PeriodicElement[]> {
   }
 
   for (const inputParameter of inputParameters) {
-    console.log(inputParameter)
+    console.log(inputParameter);
     try {
       const data = await this.config.apiClient.processRequest(this.PostID(inputParameter));
       results.push(data);
@@ -184,23 +184,23 @@ public async submitID(): Promise<PeriodicElement[]> {
 }
 
 private PostID(inputParameterName: any): MethodDescriptor<PeriodicElement> {
-return {
-  path: `/portal/createBR`,
-  parameters: [
-    {
-      name: 'inputParameterName',
-      value: inputParameterName,
-      in: 'body'
+  return {
+    path: `/portal/createBR`,
+    parameters: [
+      {
+        name: 'inputParameterName',
+        value: inputParameterName,
+        in: 'body'
+      },
+    ],
+    method: 'POST',
+    headers: {
+      'imx-timezone': TimeZoneInfo.get(),
     },
-  ],
-  method: 'POST',
-  headers: {
-    'imx-timezone': TimeZoneInfo.get(),
-  },
-  credentials: 'include',
-  observe: 'response',
-  responseType: 'json'
-};
+    credentials: 'include',
+    observe: 'response',
+    responseType: 'json'
+  };
 }
 
 

@@ -16,13 +16,13 @@
     <h2>Column Mapping</h2>
 
     <div>
-      <div *ngFor="let header of headers">
+      <div *ngFor="let column of selectedTable === tables[0] ? columnsID : columns">
         <mat-form-field>
-          <mat-label>{{ header }}</mat-label>
-          <select matNativeControl [(ngModel)]="columnMapping[header]" [disabled]="!selectedTable"
+          <mat-label>{{ column }}</mat-label>
+          <select matNativeControl [(ngModel)]="columnMapping[column]" [disabled]="!selectedTable"
                   (change)="updateColumnMapping()">
-            <option value="">Select a column</option>
-            <option *ngFor="let column of selectedTable === tables[0] ? columnsID : columns" [value]="column">{{ column }}</option>
+            <option value="">Select a CSV header</option>
+            <option *ngFor="let header of headers" [value]="header">{{ header }}</option>
           </select>
         </mat-form-field>
       </div>
