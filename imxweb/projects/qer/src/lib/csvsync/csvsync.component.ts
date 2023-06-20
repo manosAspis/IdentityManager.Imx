@@ -1,8 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { EuiLoadingService, EuiSidesheetService } from '@elemental-ui/core';
 import { QerService } from '../qer.service';
-import { CsvmappingComponent } from './csvmapping/csvmapping.component';
+import { CsvmappingComponent, CsvData } from './csvmapping/csvmapping.component';
 import { HeaderService } from './csvmapping/header.service';
+import { CsvDataService } from './csvmapping/csvdata.service';
 
 @Component({
   selector: 'imx-csvsync',
@@ -10,13 +11,18 @@ import { HeaderService } from './csvmapping/header.service';
   styleUrls: ['./csvsync.component.scss']
 })
 export class CsvsyncComponent implements OnInit {
-  csvData: any[] = [];
+  @Input() csvData: any[] = [];
   fileLoaded: boolean = false;
   tables: string[] = [];
   selectedTable: string = '';
   columnMapping: { [key: string]: string } = {};
   mockColumns: string[] = [];
   @Input() headers: string[] = [];
+  @Output() csvDataUpdated = new EventEmitter<any[]>();
+
+
+  public noDataText = '#LDS#No data';
+  public noDataIcon = 'table';
 
 
   public noDataText = '#LDS#No data';
@@ -26,6 +32,7 @@ export class CsvsyncComponent implements OnInit {
     private importDataService: QerService,
     private readonly sideSheet: EuiSidesheetService,
     private readonly busyService: EuiLoadingService,
+    private csvDataService: CsvDataService,
     private headerService: HeaderService) {}
 
 
@@ -45,20 +52,14 @@ export class CsvsyncComponent implements OnInit {
             this.csvData.push(row);
           }
         }
+        this.csvDataService.setCsvData(this.csvData);
+        this.fileLoaded = true;
       };
       reader.readAsText(file);
-      this.fileLoaded = true;
+
     }
   }
 
-  /*isMappingComplete() {
-    for (let header of this.headers) {
-      if (!this.columnMapping[header]) {
-        return false;
-      }
-    }
-    return true;
-  }*/
 
   onCellValueChange(event: any, rowIndex: number, cellIndex: number): void {
     this.csvData[rowIndex][cellIndex] = event.target.value;
@@ -75,7 +76,8 @@ export class CsvsyncComponent implements OnInit {
       width: '600px',
       testId: 'csv-mapping-sidesheet',
       data: {
-        headers: this.headers // Pass the headers array here
+        headers: this.headers, // Pass the headers array here
+        csvData: this.csvDataService.csvData
       }
     });
 

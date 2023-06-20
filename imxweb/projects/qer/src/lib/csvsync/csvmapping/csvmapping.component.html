@@ -1,49 +1,45 @@
 <div class="container">
 
-  <div class="select-table">
-    <h2 class="columnMapping-header">Table</h2>
-    <select id="table-select" [(ngModel)]="selectedTable" class="custom-select-2">
-      <option value="">Choose a table</option>
-      <option *ngFor="let table of tables" [value]="table">{{ table }}</option>
-    </select>
+  <div>
+    <h2>Table</h2>
+    <mat-form-field>
+      <mat-label>Database table</mat-label>
+      <select matNativeControl [(ngModel)]="selectedTable">
+        <option value="">Select a Table</option>
+        <option *ngFor="let table of tables" [value]="table">{{ table }}</option>
+      </select>
+    </mat-form-field>
+
   </div>
 
-  <div class="mapping-section">
-    <h2 class="columnMapping-header">Column Mapping</h2>
+  <h2 *ngIf="!selectedTable">Select a table first.</h2>
 
-    <div *ngFor="let header of headers; let i = index" class="mapping-row">
-      <span class="header-name">{{ header }}:</span>
-      <div
-        class="select-wrapper"
-        (mouseenter)="onColumnSelectHover(i)"
-        (mouseleave)="onColumnSelectLeave()"
-      >
-        <select
-          [(ngModel)]="columnMapping[header]"
-          class="custom-select"
-          [disabled]="!selectedTable"
-        >
-          <option value="">Choose a column</option>
-          <option *ngFor="let column of mockColumns" [value]="column">{{ column }}</option>
-        </select>
-        <div
-          *ngIf="!selectedTable && columnSelectHovered === i"
-          class="select-table-warning-overlay"
-        >
-          <span class="select-table-warning">Select a table first.</span>
-        </div>
+  <div *ngIf="selectedTable">
+    <h2>Column Mapping</h2>
+
+    <div>
+      <div *ngFor="let column of selectedTable === tables[0] ? columnsID : columns">
+        <mat-form-field>
+          <mat-label>{{ column }}</mat-label>
+          <select matNativeControl [(ngModel)]="columnMapping[column]" [disabled]="!selectedTable"
+                  (change)="updateColumnMapping()">
+            <option value="">Select a CSV header</option>
+            <option *ngFor="let header of headers" [value]="header">{{ header }}</option>
+          </select>
+        </mat-form-field>
       </div>
     </div>
 
   </div>
 
-
   <div class="footer">
     <button
       mat-raised-button
-      color="primary" (click)="submit()" [disabled]="!isFormComplete()">
+      color="primary"
+      [disabled]="!isFormComplete()"
+      (click)="selectedTable === tables[0] ? submitID() : submitBR()"
+    >
       Import to Database
     </button>
   </div>
 </div>
-
