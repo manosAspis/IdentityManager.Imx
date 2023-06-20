@@ -180,6 +180,7 @@ public async submitID(): Promise<PeriodicElement[]> {
     } catch (error) {
       console.error(`Error submitting CSV data: ${error}`);
     }
+
   }
 
   return results;
