@@ -77,6 +77,7 @@ export class CsvmappingComponent implements OnInit {
     const inputParameters: any[] = [];
     const csvData = this.csvDataService.csvData;
     const results: PeriodicElement[] = [];
+    this.sideSheetRef.close();
 
     for (const csvRow of csvData) {
       const inputParameterName: any = {
@@ -144,6 +145,7 @@ public async submitID(): Promise<PeriodicElement[]> {
   const inputParameters: any[] = [];
   const csvData = this.csvDataService.csvData;
   const results: PeriodicElement[] = [];
+  this.sideSheetRef.close();
 
   for (const csvRow of csvData) {
     const inputParameterName: any = {
