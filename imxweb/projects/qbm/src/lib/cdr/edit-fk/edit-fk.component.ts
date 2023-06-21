@@ -470,4 +470,14 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
         { checkAutocomplete: true }
     );
   }
+
+  shouldHideAssignButton(columnContainer: any): boolean {
+    return columnContainer?.name === "UID_ParentOrg" || columnContainer?.name === 'UID_RulerContainer' || columnContainer?.name === 'UID_RulerContainerIT' 
+    || columnContainer?.name === 'UID_AERoleManager';
+  }
+
+  shouldHideCross(columnContainer: any): boolean {
+    return columnContainer?.name === "UID_PersonHead" || columnContainer?.name === 'UID_ESetType' || columnContainer?.name === 'UID_PersonResponsible' ;
+  }
+
 }
