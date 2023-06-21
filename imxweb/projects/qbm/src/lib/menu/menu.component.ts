@@ -103,4 +103,12 @@ export class MenuComponent {
       this.logger.trace(this, item.navigationCommands);
     }
   }
+  
+  public navigateToCSVImporter(): void {
+    this.router.navigate(['csv-importer']);
+  }
+
+  public showCSVImporter(): boolean {
+    return true; 
+  }
 }
