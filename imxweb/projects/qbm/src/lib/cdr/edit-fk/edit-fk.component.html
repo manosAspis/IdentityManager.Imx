@@ -9,7 +9,8 @@
   <eui-icon icon="search" *ngIf="columnContainer?.canEdit && auto.isOpen" matPrefix></eui-icon>
 
   <input #inputControl matInput type="search" [formControl]="control" [matAutocomplete]="auto"
-    [readonly]="!columnContainer?.canEdit || isHierarchical" (keydown.esc)="close($event); inputControl.blur()" (focusout)="close($event)" (focus)="inputFocus()"
+  [readonly]="!columnContainer?.canEdit || isHierarchical" 
+   (keydown.esc)="close($event); inputControl.blur()" (focusout)="close($event)" (focus)="inputFocus()"
     [attr.data-imx-identifier]="'cdr-edit-fk-input-search-candidates-' + columnContainer?.name"
     [required]="columnContainer.isValueRequired">
   <mat-autocomplete #auto="matAutocomplete" [displayWith]="getDisplay" (optionSelected)="optionSelected($event); inputControl.blur()"
@@ -32,12 +33,14 @@
   <div matSuffix class="imx-suffix-container">
     <mat-spinner diameter="30" *ngIf="loading"></mat-spinner>
     <eui-icon *ngIf="columnContainer?.canEdit && control.value && !loading" icon="close" class="imx-icon-delete"
-      (click)="removeAssignment($event)"
-      [attr.data-imx-identifier]="'cdr-edit-fk-button-remove-assignment-' + columnContainer?.name"></eui-icon>
+      (click)="removeAssignment($event)" 
+      [attr.data-imx-identifier]="'cdr-edit-fk-button-remove-assignment-' + columnContainer?.name"
+      [ngClass]="{'hide-black-cross': shouldHideCross(columnContainer)}"></eui-icon>
     <div class="imx-spacer"></div>
     <button *ngIf="columnContainer?.canEdit && (isHierarchical ||columnContainer?.fkRelations?.length > 1)" mat-button
       color="primary" type="button" (click)="editAssignment($event)"
-      [attr.data-imx-identifier]="'cdr-edit-fk-button-open-picker-' + columnContainer?.name">
+      [attr.data-imx-identifier]="'cdr-edit-fk-button-open-picker-' + columnContainer?.name"
+      [ngClass]="{'hide-uid-button': shouldHideAssignButton(columnContainer)}">
       {{ columnContainer?.value?.length ? ('#LDS#Change' | translate) : ('#LDS#Assign' | translate) }}
     </button>
   </div>
