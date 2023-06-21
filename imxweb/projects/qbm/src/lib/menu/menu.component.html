@@ -4,16 +4,19 @@
       <button mat-button class="imx-mein-menu-item" *ngIf="!item.items" (click)="navigate(item)" [attr.data-imx-identifier]="item.id" (keyup.enter)="navigate(item)" [active]="isActive(item)">
         {{ item.title | translate }}
       </button>
-      <ng-container *ngIf="item.items">
+      <ng-container *ngIf="item.items && item.id !== 'ROOT_CSV_Table' && item.id !== 'ROOT_Setup' && item.id !== 'ROOT_Responsibilities'">
         <button mat-button class="imx-mein-menu-item" [attr.data-imx-identifier]="item.id" [matMenuTriggerFor]="submenu" #submenuTrigger="matMenuTrigger">
           {{ item.title | translate }}
         </button>
         <mat-menu #submenu="matMenu" yPosition="below" overlapTrigger="false">
-          <button mat-menu-item *ngFor="let subitem of item.items" (click)="navigate(subitem)" [attr.data-imx-identifier]="subitem.id" (keyup.enter)="navigate(item)">
+          <button mat-menu-item *ngFor="let subitem of item.items" (click)="navigate(subitem)" [attr.data-imx-identifier]="subitem.id" (keyup.enter)="navigate(subitem)">
             {{ subitem.title | translate }}
           </button>
         </mat-menu>
       </ng-container>
     </span>
   </ng-container>
+  <button mat-button class="imx-mein-menu-item" *ngIf="showCSVImporter()" (click)="navigateToCSVImporter()" (keyup.enter)="navigateToCSVImporter()">
+    {{ 'CSV Importer' | translate }}
+  </button>
 </nav>
