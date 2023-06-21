@@ -1,0 +1,38 @@
+@import "~@elemental-ui/core/src/styles/_palette.scss";
+@import 'variables.scss';
+
+.upload-button {
+  padding: 8px 16px;
+  border: 4px solid $iris-blue;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: $Imx_White-two;
+  color: $black-7;
+}
+
+.upload-button:focus {
+  outline: none;
+}
+
+.table-container {
+  max-height: 400px; 
+  overflow-y: auto;
+  margin-top: 30px;
+}
+
+.csv-table {
+  width: 100%;
+}
+
+.csv-header {
+  background-color: $iris-blue;
+  font-weight: bold;
+  padding: 10px;
+  color: $white;
+}
+
+.csv-cell {
+  padding: 10px;
+  background-color: $white;
+}
