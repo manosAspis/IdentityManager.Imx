@@ -1,7 +1,9 @@
 <div class="container">
 
   <div>
+
     <h2 class="H2Table">Table Selection</h2>
+
     <mat-form-field>
       <mat-label>Database table</mat-label>
       <select matNativeControl [(ngModel)]="selectedTable">
@@ -15,10 +17,12 @@
   <h2 *ngIf="!selectedTable">Select a table first.</h2>
 
   <div *ngIf="selectedTable">
+
     <h2 class="H2Table">Column Mapping</h2>
 
     <div>
       <span class="ColumnSelection" *ngFor="let column of selectedTable === tables[0] ? columnsID : columns">
+
         <mat-form-field>
           <mat-label>{{ column }}</mat-label>
           <select matNativeControl [(ngModel)]="columnMapping[column]" [disabled]="!selectedTable"
@@ -27,7 +31,9 @@
             <option *ngFor="let header of headers" [value]="header">{{ header }}</option>
           </select>
         </mat-form-field>
+
       </span>
+
     </div>
 
   </div>
