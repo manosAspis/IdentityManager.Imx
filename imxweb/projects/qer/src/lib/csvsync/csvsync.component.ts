@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { EuiLoadingService, EuiSidesheetService } from '@elemental-ui/core';
-import { QerService } from '../qer.service';
-import { CsvmappingComponent, CsvData } from './csvmapping/csvmapping.component';
+import { EuiSidesheetService } from '@elemental-ui/core';
+import { CsvmappingComponent } from './csvmapping/csvmapping.component';
 import { HeaderService } from './csvmapping/header.service';
 import { CsvDataService } from './csvmapping/csvdata.service';
 
@@ -13,10 +12,7 @@ import { CsvDataService } from './csvmapping/csvdata.service';
 export class CsvsyncComponent implements OnInit {
   @Input() csvData: any[] = [];
   fileLoaded: boolean = false;
-  tables: string[] = [];
-  selectedTable: string = '';
   columnMapping: { [key: string]: string } = {};
-  mockColumns: string[] = [];
   @Input() headers: string[] = [];
   @Output() csvDataUpdated = new EventEmitter<any[]>();
 
@@ -24,14 +20,8 @@ export class CsvsyncComponent implements OnInit {
   public noDataText = '#LDS#No data';
   public noDataIcon = 'table';
 
-
-  public noDataText = '#LDS#No data';
-  public noDataIcon = 'table';
-
   constructor(
-    private importDataService: QerService,
     private readonly sideSheet: EuiSidesheetService,
-    private readonly busyService: EuiLoadingService,
     private csvDataService: CsvDataService,
     private headerService: HeaderService) {}
 
