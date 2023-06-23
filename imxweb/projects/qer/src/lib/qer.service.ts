@@ -36,6 +36,9 @@ import { DuplicateCheckComponent } from './shopping-cart-validation-detail/dupli
 // tslint:disable-next-line: max-line-length
 import { ProductDependencyCheckComponent } from './shopping-cart-validation-detail/product-dependency-check/product-dependency-check.component';
 import { ObjectSheetService } from './object-sheet/object-sheet.service';
+import { Router } from '@angular/router';
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -46,7 +49,8 @@ export class QerService {
     private extService: ExtService,
     private objectsheetService: ObjectSheetService,
     private readonly validationDetailService: ShoppingCartValidationDetailService,
-    private readonly menuService: MenuService
+    private readonly menuService: MenuService,
+    private router: Router
   ) { }
 
   public init(): void {
@@ -79,5 +83,14 @@ export class QerService {
     //     };
     //   }
     // );
+    this.menuService.addMenuFactories(
+      (preProps: string[], _: string[]) => {
+      return {
+        id: 'ROOT_CSV_Importer',
+        title: '#LDS#CSV Importer',
+        items: [],
+        route: 'csv-importer'
+      };
+    });
   }
 }

@@ -4,7 +4,8 @@
       <form class="imx-cdr-group" [formGroup]="formGroup">
         <ng-container *ngFor="let cdr of properties">
           <imx-cdr-editor [cdr]="cdr" (valueChange)="onValueChanged()"
-            (controlCreated)="addControl(cdr.column.ColumnName, $event)">
+            (controlCreated)="addControl(cdr.column.ColumnName, $event)" 
+            class="cdr-editor">
           </imx-cdr-editor>
         </ng-container>
       </form>

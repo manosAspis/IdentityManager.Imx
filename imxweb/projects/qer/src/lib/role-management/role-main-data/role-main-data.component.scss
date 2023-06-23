@@ -37,6 +37,11 @@ form {
     flex: 1 1 auto;
     overflow: auto;
     padding-right: 10px;
+    
+    .cdr-editor {
+      pointer-events: none;
+      color: $black-7;
+    }
   }
 
   .imx-action-buttons {
