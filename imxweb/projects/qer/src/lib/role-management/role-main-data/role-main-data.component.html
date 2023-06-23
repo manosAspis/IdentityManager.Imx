@@ -3,7 +3,7 @@
     <mat-card>
       <form class="imx-cdr-group" [formGroup]="formGroup">
         <ng-container *ngFor="let cdr of properties">
-          <imx-cdr-editor [cdr]="cdr" (valueChange)="onValueChanged()"
+          <imx-cdr-editor class="cdr-editor" [cdr]="cdr" (valueChange)="onValueChanged()"
             (controlCreated)="addControl(cdr.column.ColumnName, $event)">
           </imx-cdr-editor>
         </ng-container>
