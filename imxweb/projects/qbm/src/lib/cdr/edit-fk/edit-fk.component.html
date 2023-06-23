@@ -33,11 +33,13 @@
     <mat-spinner diameter="30" *ngIf="loading"></mat-spinner>
     <eui-icon *ngIf="columnContainer?.canEdit && control.value && !loading" icon="close" class="imx-icon-delete"
       (click)="removeAssignment($event)"
-      [attr.data-imx-identifier]="'cdr-edit-fk-button-remove-assignment-' + columnContainer?.name"></eui-icon>
+      [attr.data-imx-identifier]="'cdr-edit-fk-button-remove-assignment-' + columnContainer?.name"
+      [ngClass]="{'hide-uid-icon': HideCloseIcon(columnContainer)}"></eui-icon>
     <div class="imx-spacer"></div>
     <button *ngIf="columnContainer?.canEdit && (isHierarchical ||columnContainer?.fkRelations?.length > 1)" mat-button
       color="primary" type="button" (click)="editAssignment($event)"
-      [attr.data-imx-identifier]="'cdr-edit-fk-button-open-picker-' + columnContainer?.name">
+      [attr.data-imx-identifier]="'cdr-edit-fk-button-open-picker-' + columnContainer?.name"
+      [ngClass]="{'hide-uid-button': HideAssignButton(columnContainer)}">
       {{ columnContainer?.value?.length ? ('#LDS#Change' | translate) : ('#LDS#Assign' | translate) }}
     </button>
   </div>

@@ -76,6 +76,7 @@ import { AppService } from './app.service';
 import { environment } from '../environments/environment';
 import appConfigJson from '../appconfig.json';
 import { PortalHistoryService } from './portal-history.service';
+import { CsvImporterModule } from 'projects/qer/src/lib/csv-importer/csv-importer.module';
 
 @NgModule({
   declarations: [
@@ -123,7 +124,8 @@ import { PortalHistoryService } from './portal-history.service';
     RequestConfigModule,
     RequestHistoryModule,
     ServiceCategoriesModule,
-    ServiceItemsEditModule
+    ServiceItemsEditModule,
+    CsvImporterModule
   ],
   providers: [
     { provide: 'environment', useValue: environment },
