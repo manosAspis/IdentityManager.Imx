@@ -35,6 +35,9 @@ import { PendingItemsType } from '../../user/pending-items-type.interface';
 import { ProjectConfigurationService } from '../../project-configuration/project-configuration.service';
 import { imx_SessionService, SystemInfoService } from 'qbm';
 import { SystemInfo } from 'imx-api-qbm';
+import { FeatureConfig } from 'imx-api-qer';
+import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
+import { AppConfigService } from 'qbm';
 
 @Component({
   templateUrl: './start.component.html',
@@ -48,6 +51,7 @@ export class StartComponent implements OnInit {
   public systemInfo: SystemInfo;
   public viewReady: boolean;
   public userUid: string;
+  public responseValue: any;
 
   constructor(
     public readonly router: Router,
@@ -55,7 +59,8 @@ export class StartComponent implements OnInit {
     private readonly userModelSvc: UserModelService,
     private readonly systemInfoService: SystemInfoService,
     private readonly sessionService: imx_SessionService,
-    private readonly projectConfigurationService: ProjectConfigurationService
+    private readonly projectConfigurationService: ProjectConfigurationService,
+    private readonly config: AppConfigService
   ) {}
 
   public async ngOnInit(): Promise<void> {
@@ -71,6 +76,7 @@ export class StartComponent implements OnInit {
     } finally {
       setTimeout(() => this.busyService.hide(overlayRef));
     }
+    this.HelloWorld();
   }
 
   public ShowPasswordTile(): boolean {
@@ -158,5 +164,28 @@ export class StartComponent implements OnInit {
   public ShowNewRequestLink(): boolean {
     // Starting a new request is only allowed when the session has an identity and the ITShop(Requests) feature is enabled
     return this.userConfig?.IsITShopEnabled && this.userUid && this.systemInfo.PreProps.includes('ITSHOP');
+  }
+
+
+  public async HelloWorld(): Promise<FeatureConfig> {
+    const response = await this.config.apiClient.processRequest(this.HelloWorldDescriptor());
+    this.responseValue = response;
+    console.log(response);
+    return response;
+  }
+
+  private HelloWorldDescriptor(): MethodDescriptor<FeatureConfig> {
+    const parameters = [];
+    return {
+      path: `/portal/helloworld`,
+      parameters,
+      method: 'GET',
+      headers: {
+        'imx-timezone': TimeZoneInfo.get()
+      },
+      credentials: 'include',
+      observe: 'response',
+      responseType: 'json',
+    };
   }
 }
