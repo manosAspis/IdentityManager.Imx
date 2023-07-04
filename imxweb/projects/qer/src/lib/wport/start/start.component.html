@@ -140,6 +140,7 @@
       [caption]="'#LDS#CSV connector' | translate"
       [subtitle]="'#LDS#Create a CSV connector.' | translate"
       [identifier]="'import-a-csv-file'"
+      *ngIf="CsvImporter"
     >
       <ng-template #ActionTemplate>
         <button mat-button color="primary" (click)="GoToCSVsync()">

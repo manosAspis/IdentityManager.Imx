@@ -26,6 +26,7 @@ export class CsvmappingComponent implements OnInit {
   columns: string[] = [];
   columnsID: string[] = [];
   @Output() columnMappingUpdated = new EventEmitter<any>();
+  CsvImporter: boolean;
 
   selectedTable: string = '';
   columnMapping: { [key: string]: string } = {};
@@ -50,7 +51,8 @@ export class CsvmappingComponent implements OnInit {
     private csvDataService: CsvDataService,
     private headerService: HeaderService,
     private readonly config: AppConfigService,
-    private readonly authentication: AuthenticationService
+    private readonly authentication: AuthenticationService,
+    private qerService: QerService
   ) { }
 
   public async ngOnInit(): Promise<void> {
@@ -61,6 +63,8 @@ export class CsvmappingComponent implements OnInit {
       this.headers = headers;
     });
     this.authentication.update();
+    this.CsvImporter = this.qerService.getCsvImporter();
+    console.log(this.CsvImporter)
   }
 
   isFormComplete(): boolean {

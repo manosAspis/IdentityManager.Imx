@@ -25,7 +25,6 @@
  */
 
 import { Injectable } from '@angular/core';
-
 import { TwoFactorAuthenticationService, ExtService, MenuService } from 'qbm';
 
 import { StarlingComponent } from './starling/starling.component';
@@ -42,13 +41,25 @@ import { ObjectSheetService } from './object-sheet/object-sheet.service';
   providedIn: 'root'
 })
 export class QerService {
+
+  private CsvImporter: boolean;
+
   constructor(
     private authService: TwoFactorAuthenticationService,
     private extService: ExtService,
     private objectsheetService: ObjectSheetService,
     private readonly validationDetailService: ShoppingCartValidationDetailService,
     private readonly menuService: MenuService
+
   ) { }
+
+  setCsvImporter(value: boolean) {
+    this.CsvImporter = value;
+  }
+
+  getCsvImporter() {
+    return this.CsvImporter;
+  }
 
   CCC_Tables(): string[] {
     return ['Identities', 'Business Roles'];
