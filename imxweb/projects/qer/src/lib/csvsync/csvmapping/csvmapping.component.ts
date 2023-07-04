@@ -81,7 +81,9 @@ export class CsvmappingComponent implements OnInit {
     const inputParameters: any[] = [];
     const csvData = this.csvDataService.csvData;
     const results: PeriodicElement[] = [];
+
     this.sideSheetRef.close();
+
 
     for (const csvRow of csvData) {
       const inputParameterName: any = {
@@ -118,6 +120,7 @@ export class CsvmappingComponent implements OnInit {
         results.push(data);
       } catch (error) {
         console.error(`Error submitting CSV data: ${error}`);
+
       }
     }
 
@@ -175,6 +178,7 @@ public async submitID(): Promise<PeriodicElement[]> {
 
     inputParameters.push(inputParameterName);
   }
+
 
   for (const inputParameter of inputParameters) {
     console.log(inputParameter);
