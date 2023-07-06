@@ -39,6 +39,10 @@ import { FeatureConfig } from 'imx-api-qer';
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 import { AppConfigService } from 'qbm';
 
+interface HelloWorldConfig {
+  Message: string;
+}
+
 @Component({
   templateUrl: './start.component.html',
   selector: 'imx-start',
@@ -51,7 +55,7 @@ export class StartComponent implements OnInit {
   public systemInfo: SystemInfo;
   public viewReady: boolean;
   public userUid: string;
-  public responseValue: any;
+  public apiResponse: string;
 
   constructor(
     public readonly router: Router,
@@ -167,14 +171,13 @@ export class StartComponent implements OnInit {
   }
 
 
-  public async HelloWorld(): Promise<FeatureConfig> {
+  public async HelloWorld(): Promise<HelloWorldConfig> {
     const response = await this.config.apiClient.processRequest(this.HelloWorldDescriptor());
-    this.responseValue = response;
-    console.log(response);
+    this.apiResponse = response.Message;
     return response;
   }
 
-  private HelloWorldDescriptor(): MethodDescriptor<FeatureConfig> {
+  private HelloWorldDescriptor(): MethodDescriptor<HelloWorldConfig> {
     const parameters = [];
     return {
       path: `/portal/helloworld`,
