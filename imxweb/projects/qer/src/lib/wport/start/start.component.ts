@@ -35,6 +35,8 @@ import { PendingItemsType } from '../../user/pending-items-type.interface';
 import { ProjectConfigurationService } from '../../project-configuration/project-configuration.service';
 import { imx_SessionService, SystemInfoService } from 'qbm';
 import { SystemInfo } from 'imx-api-qbm';
+import { ProjectHelloWorldService } from '../../admin/project-hello-world.service';
+import { HelloWorldConfig } from '../../admin/project-hello-world.service';
 
 @Component({
   templateUrl: './start.component.html',
@@ -48,6 +50,8 @@ export class StartComponent implements OnInit {
   public systemInfo: SystemInfo;
   public viewReady: boolean;
   public userUid: string;
+  public welcomemessage: string;
+  public helloworldConfig: HelloWorldConfig;
 
   constructor(
     public readonly router: Router,
@@ -55,7 +59,8 @@ export class StartComponent implements OnInit {
     private readonly userModelSvc: UserModelService,
     private readonly systemInfoService: SystemInfoService,
     private readonly sessionService: imx_SessionService,
-    private readonly projectConfigurationService: ProjectConfigurationService
+    private readonly projectConfigurationService: ProjectConfigurationService,
+    private projectService: ProjectHelloWorldService
   ) {}
 
   public async ngOnInit(): Promise<void> {
@@ -68,6 +73,8 @@ export class StartComponent implements OnInit {
       this.systemInfo = await this.systemInfoService.get();
       this.userUid = (await this.sessionService.getSessionState()).UserUid;
       this.viewReady = true;
+      const response: HelloWorldConfig = await this.projectService.getHelloWorld();
+      this.welcomemessage = response.Message; 
     } finally {
       setTimeout(() => this.busyService.hide(overlayRef));
     }
