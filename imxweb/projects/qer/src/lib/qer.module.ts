@@ -62,6 +62,7 @@ import { UserModule } from './user/user.module';
 import { ShoppingCartValidationDetailModule } from './shopping-cart-validation-detail/shopping-cart-validation-detail.module';
 import { RoleMembershipsModule } from './role-management/role-memberships/role-memberships.module';
 import { CsvImporterComponent } from './csv-importer/csv-importer.component';
+import { ProjectHelloWorldService } from './admin/project-hello-world.service';
 
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
@@ -131,7 +132,8 @@ const routes: Routes = [
       multi: true,
     },
     ServiceItemsService,
-    PatternItemService
+    PatternItemService,
+    ProjectHelloWorldService
   ],
 })
 export class QerModule {
