@@ -41,6 +41,9 @@ import { ObjectSheetService } from './object-sheet/object-sheet.service';
   providedIn: 'root'
 })
 export class QerService {
+
+  private CsvImporter: boolean;
+
   constructor(
     private authService: TwoFactorAuthenticationService,
     private extService: ExtService,
@@ -48,6 +51,26 @@ export class QerService {
     private readonly validationDetailService: ShoppingCartValidationDetailService,
     private readonly menuService: MenuService
   ) { }
+
+  setCsvImporter(value: boolean) {
+    this.CsvImporter = value;
+  }
+
+  getCsvImporter() {
+    return this.CsvImporter;
+  }
+
+  CCC_Tables(): string[] {
+    return ['Identities', 'Business Roles'];
+  }
+
+  CCC_BR_Columns(): string[] {
+    return ['Business Role Name', 'City', 'Description'];
+  }
+
+  CCC_ID_Columns(): string[] {
+    return ['First Name', 'Last Name'];
+  }
 
   public init(): void {
 

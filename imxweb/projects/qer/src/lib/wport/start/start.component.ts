@@ -33,8 +33,10 @@ import { UserConfig, ProjectConfig, QerProjectConfig } from 'imx-api-qer';
 import { UserModelService } from '../../user/user-model.service';
 import { PendingItemsType } from '../../user/pending-items-type.interface';
 import { ProjectConfigurationService } from '../../project-configuration/project-configuration.service';
-import { imx_SessionService, SystemInfoService } from 'qbm';
+import { AppConfigService, AuthenticationService, imx_SessionService, SystemInfoService } from 'qbm';
 import { SystemInfo } from 'imx-api-qbm';
+import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
+import { QerService } from '../../qer.service';
 
 @Component({
   templateUrl: './start.component.html',
@@ -48,6 +50,7 @@ export class StartComponent implements OnInit {
   public systemInfo: SystemInfo;
   public viewReady: boolean;
   public userUid: string;
+  CsvImporter: boolean;
 
   constructor(
     public readonly router: Router,
@@ -55,8 +58,13 @@ export class StartComponent implements OnInit {
     private readonly userModelSvc: UserModelService,
     private readonly systemInfoService: SystemInfoService,
     private readonly sessionService: imx_SessionService,
-    private readonly projectConfigurationService: ProjectConfigurationService
-  ) {}
+    private readonly projectConfigurationService: ProjectConfigurationService,
+    private readonly config: AppConfigService,
+    private readonly authentication: AuthenticationService,
+    private qerService: QerService
+  ) {
+    this.qerService.setCsvImporter(this.CsvImporter);
+  }
 
   public async ngOnInit(): Promise<void> {
     let overlayRef: OverlayRef;
@@ -68,6 +76,11 @@ export class StartComponent implements OnInit {
       this.systemInfo = await this.systemInfoService.get();
       this.userUid = (await this.sessionService.getSessionState()).UserUid;
       this.viewReady = true;
+      this.authentication.update();
+      this.getAERoleforCsvImporter().then(result => {
+        this.CsvImporter = result;
+        this.qerService.setCsvImporter(this.CsvImporter);
+      });
     } finally {
       setTimeout(() => this.busyService.hide(overlayRef));
     }
@@ -158,5 +171,30 @@ export class StartComponent implements OnInit {
   public ShowNewRequestLink(): boolean {
     // Starting a new request is only allowed when the session has an identity and the ITShop(Requests) feature is enabled
     return this.userConfig?.IsITShopEnabled && this.userUid && this.systemInfo.PreProps.includes('ITSHOP');
+  }
+
+  public GoToCSVsync(): void {
+    this.router.navigate(['/csvsync-component']);
+  }
+
+  public async getAERoleforCsvImporter(): Promise<boolean> {
+    const CsvImporter = await this.config.apiClient.processRequest(this.getWhoForCSV());
+    console.log(CsvImporter);
+    return CsvImporter;
+   }
+
+   private getWhoForCSV(): MethodDescriptor<boolean> {
+    const parameters = [];
+    return {
+      path: `/portal/forcsv`,
+      parameters,
+      method: 'GET',
+      headers: {
+        'imx-timezone': TimeZoneInfo.get(),
+      },
+      credentials: 'include',
+      observe: 'response',
+      responseType: 'json',
+    };
   }
 }

@@ -1,0 +1,139 @@
+@import '~@elemental-ui/core/src/styles/_palette.scss';
+@import 'variables.scss';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100vh;
+
+}
+
+.file-input-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: $VI_Common_Color_Font;
+}
+
+.input-container {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.input-label {
+  font-size: 16px;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 5px;
+  color: $VI_Common_Color_Font;
+}
+
+.input-file {
+  font-size: 14px;
+  padding: 5px;
+  border: 1px solid $VI_Common_Color_LightGray;
+  border-radius: 4px;
+  background-color: $white;
+  cursor: pointer;
+}
+
+.preview-window {
+  height: 600px;
+  overflow: auto;
+  margin-top: 20px;
+  border: 1px solid $VI_Common_Color_LightGray;
+  border-radius: 5px;
+  background-color: $white;
+}
+
+.preview-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  font-size: 20px;
+  font-weight: 600;
+  padding: 10px;
+  background-color: $Imx_White-two;
+  border-bottom: 1px solid $VI_Common_Color_LightGray;
+}
+
+.preview-body {
+  padding: 10px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border: 1px solid $VI_Common_Color_LightGray;
+  padding: 8px;
+  text-align: left;
+}
+
+.mapping-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.header-name {
+  font-weight: 500;
+  margin-right: 10px;
+  color: #424242;
+}
+
+.mapping-input {
+  flex-grow: 1;
+  padding: 5px;
+  border: 1px solid $VI_Common_Color_LightGray;
+  border-radius: 4px;
+  background-color: $white;
+  cursor: pointer;
+}
+
+.custom-select {
+  font-size: 14px;
+  padding: 5px;
+  border: 1px solid $VI_Common_Color_LightGray;
+  border-radius: 4px;
+  background-color: $white;
+  cursor: pointer;
+}
+
+.editable-cell {
+  width: 100%;
+  border: none;
+  padding: 5px;
+  background-color: $white;
+  cursor: text;
+}
+
+.no-results {
+  text-align: center;
+  margin: 20px 0;
+
+  .eui-icon {
+    font-size: 100px;
+    color: rgba($black-c, 0.55);
+  }
+
+  p {
+    margin: 0;
+    font-size: 18px;
+    color: $black-9;
+  }
+}

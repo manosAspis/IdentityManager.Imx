@@ -1,0 +1,46 @@
+<div *ngIf="CsvImporter">
+  <h1 class="mat-headline">CSV Connector</h1>
+  <div class="file-input-wrapper">
+  <div class="input-container">
+    <label for="csv-file" class="input-label">Upload a CSV file</label>
+    <input id="csv-file" type="file" class="input-file" (change)="onFileChange($event)" accept=".csv" />
+  </div>
+
+  <button
+        mat-raised-button
+        [disabled]="!fileLoaded"
+        color="primary"
+        (click)="importToDatabase()"
+
+      >
+      Submit
+  </button>
+
+  </div>
+  <div *ngIf="csvData" class="preview-window">
+    <div class="preview-header">Data Preview</div>
+    <div class="no-results" *ngIf="!fileLoaded">
+      <eui-icon [icon]="noDataIcon"></eui-icon>
+      <p [translate]="noDataText"></p>
+    </div>
+    <div class="preview-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th *ngFor="let header of headers">{{ header }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of csvData; let rowIndex = index">
+            <td *ngFor="let cell of row; let cellIndex = index">
+              <input [value]="csvData[rowIndex][cellIndex]" (blur)="onCellValueChange($event, rowIndex, cellIndex)" class="editable-cell" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+

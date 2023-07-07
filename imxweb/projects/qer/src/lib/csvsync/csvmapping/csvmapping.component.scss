@@ -1,0 +1,38 @@
+@import '~@elemental-ui/core/src/styles/_palette.scss';
+@import 'variables.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  max-width: 100%;
+
+  margin: 0;
+  padding-top: 35px;
+  padding-left: 35px;
+  padding-right: 35px;
+  padding-bottom: 10px;
+  min-height: 100%;
+}
+
+
+
+
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding: 10px 0;
+}
+
+
+.H2Table {
+  margin-bottom: 10px;
+}
+
+
+.ColumnSelection {
+  margin-right: 60px;
+}
