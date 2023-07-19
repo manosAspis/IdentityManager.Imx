@@ -31,6 +31,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MenuItem } from './menu-item/menu-item.interface';
 import { ClassloggerService } from '../classlogger/classlogger.service';
 
+
 /**
  * Displays a menu and provides logic for navigation
  */
@@ -110,5 +111,9 @@ export class MenuComponent {
 
   public showCSVImporter(): boolean {
     return true; 
+  }
+
+  public navigateToUsersTable() {
+    this.router.navigate(['users-table']);
   }
 }
