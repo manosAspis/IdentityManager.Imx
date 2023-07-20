@@ -19,4 +19,7 @@
   <button mat-button class="imx-mein-menu-item" *ngIf="showCSVImporter()" (click)="navigateToCSVImporter()" (keyup.enter)="navigateToCSVImporter()">
     {{ 'CSV Importer' | translate }}
   </button>
+  <button mat-button class="imx-mein-menu-item" (click)="navigateToUsersTable()" [attr.data-imx-identifier]="'ROOT_Users_Table'" (keyup.enter)="navigateToUsersTable()">
+    {{ 'Users Table' | translate }}
+  </button>
 </nav>

@@ -91,6 +91,15 @@ export class QerService {
         items: [],
         route: 'csv-importer'
       };
-    });
+    },
+    (preProps: string[], _: string[]) => {
+      return {
+        id: 'ROOT_User_Table',
+        title: '#LDS#User Table',
+        items: [],
+        route: 'users-table'
+      };
+    }
+    );
   }
 }
