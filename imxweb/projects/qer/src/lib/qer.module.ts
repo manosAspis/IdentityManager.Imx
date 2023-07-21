@@ -61,6 +61,7 @@ import { TilesModule } from './tiles/tiles.module';
 import { UserModule } from './user/user.module';
 import { ShoppingCartValidationDetailModule } from './shopping-cart-validation-detail/shopping-cart-validation-detail.module';
 import { RoleMembershipsModule } from './role-management/role-memberships/role-memberships.module';
+import { UsersTableComponent } from './users-table/users-table.component';
 
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
@@ -76,6 +77,13 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: StartComponent,
+    canActivate: [RouteGuardService],
+    resolve: [RouteGuardService],
+  },
+  // Path to Users Table
+  {
+    path: 'users-table',
+    component: UsersTableComponent,
     canActivate: [RouteGuardService],
     resolve: [RouteGuardService],
   },

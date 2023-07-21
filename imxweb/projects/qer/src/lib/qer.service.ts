@@ -63,7 +63,7 @@ export class QerService {
 
   /** This method defines the menu structure for the portal. */
   private setupMenu(): void {
-    // this.menuService.addMenuFactories(
+    this.menuService.addMenuFactories(
     //   //TODO later #206706
     //   (preProps: string[], __: string[]) => {
     //     if (!preProps.includes('ITSHOP')) {
@@ -78,6 +78,20 @@ export class QerService {
     //       items: [].map(relatedApplication => new RelatedApplicationMenuItem(relatedApplication))
     //     };
     //   }
-    // );
+
+      (preProps: string[], groups: string[]) => {
+        return {
+          id: 'ROOT_USERS_TABLE',
+          title: '#LDS#Users Table',
+          items: [
+            {
+              id: 'USERS_TABLE',
+              route: 'users-table',
+              title: '#LDS#Users Table',
+            },
+          ],
+        };
+      }
+    );
   }
 }
