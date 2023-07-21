@@ -103,4 +103,8 @@ export class MenuComponent {
       this.logger.trace(this, item.navigationCommands);
     }
   }
+
+  public GoToUsersTable(): void {
+    this.router.navigate(['users']);
+  }
 }

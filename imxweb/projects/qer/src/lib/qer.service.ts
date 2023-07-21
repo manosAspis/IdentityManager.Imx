@@ -63,6 +63,7 @@ export class QerService {
 
   /** This method defines the menu structure for the portal. */
   private setupMenu(): void {
+    this.menuService.addMenuFactories(
     // this.menuService.addMenuFactories(
     //   //TODO later #206706
     //   (preProps: string[], __: string[]) => {
@@ -79,5 +80,19 @@ export class QerService {
     //     };
     //   }
     // );
+    (preProps: string[], __: string[]) =>{
+      return{
+        id: 'ROOT_UsersTable',
+        title: '#LDS#Users Table',
+        items: [
+          {
+            id: 'users',
+            route: 'users',
+            title: '#LDS#Users Table',
+          },
+        ],
+      };
+    }
+    );
   }
 }
