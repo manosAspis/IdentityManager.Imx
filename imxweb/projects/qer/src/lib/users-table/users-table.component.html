@@ -1,0 +1,25 @@
+<div class="users-table">
+  <table>
+    <thead>
+      <tr>
+        <th>{{ '#LDS#First Name' | translate }}</th>
+        <th>{{ '#LDS#Last Name' | translate }}</th>
+        <th>{{ '#LDS#Roles' | translate }}</th>
+        <th>{{ '#LDS#Departments' | translate }}</th>
+      </tr>
+    </thead>
+     <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.FirstNames }}</td>
+        <td>{{ user.LastNames }}</td>
+        <td>{{ user.Roles }}</td>
+        <td>{{ user.Departments }}</td>
+      </tr>
+    </tbody>
+  </table>
+<!-- 
+  <div class="imx-data-table-no-results" *ngIf=" ">
+    <eui-icon [icon]="noDataIcon"></eui-icon>
+    <p [translate]="noDataText"></p>
+  </div> -->
+</div>
