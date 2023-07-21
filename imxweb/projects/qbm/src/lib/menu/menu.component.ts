@@ -23,7 +23,6 @@
  * THIS SOFTWARE OR ITS DERIVATIVES.
  *
  */
-
 import { Component, ErrorHandler, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -75,6 +74,11 @@ export class MenuComponent {
     }
 
     return itemIsActive;
+  }
+
+  //Routing to the csv importer component
+  public GoToCsvImporter(): void {
+    this.router.navigate(['csv-importer']);
   }
 
   public navigate(item: MenuItem): void {

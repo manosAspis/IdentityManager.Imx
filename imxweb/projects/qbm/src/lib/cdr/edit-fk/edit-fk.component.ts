@@ -129,7 +129,13 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
     }));
   }
 
+  HideCloseIcon(columnContainer: any){
+    return columnContainer?.name === 'UID_PersonHead' ||  columnContainer?.name === 'UID_ESetType' || columnContainer?.name === 'UID_PersonResponsible';
+  }
 
+  HideAssignButton(columnContainer: any){ 
+    return columnContainer?.name === 'UID_ParentOrg' || columnContainer?.name === 'UID_RulerContainer' || columnContainer?.name === 'UID_RulerContainerIT' || columnContainer?.name === 'UID_AERoleManager';
+  }
   public async ngOnInit(): Promise<void> {
     return this.initCandidates();
     // Muss leider immer gemacht werden, damit klar ist, ob es sich um eine hierarchische Ansicht handelt oder nicht
