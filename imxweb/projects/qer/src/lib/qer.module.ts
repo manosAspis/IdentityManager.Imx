@@ -66,6 +66,7 @@ import { ProjectHelloWorldService } from './admin/project-hello-world.service';
 import { UsersTableComponent } from './users-table/users-table.component';
 import { UsersRetrieveServiceService } from './admin/users-retrieve-service.service';
 
+
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
     new Promise<any>(async (resolve: any) => {
@@ -89,12 +90,14 @@ const routes: Routes = [
     canActivate: [RouteGuardService],
     resolve: [RouteGuardService],
   },
+
   {
     path: 'users-table',
     component: UsersTableComponent,
     canActivate: [RouteGuardService],
     resolve: [RouteGuardService],
   }
+
 ];
 
 // @dynamic
