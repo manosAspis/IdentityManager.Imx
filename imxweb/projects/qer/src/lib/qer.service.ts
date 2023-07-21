@@ -78,7 +78,6 @@ export class QerService {
     //       items: [].map(relatedApplication => new RelatedApplicationMenuItem(relatedApplication))
     //     };
     //   }
-
       (preProps: string[], groups: string[]) => {
         return {
           id: 'ROOT_USERS_TABLE',
