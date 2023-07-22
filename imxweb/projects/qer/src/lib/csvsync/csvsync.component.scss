@@ -4,14 +4,14 @@
 :host {
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  height: 100vh;
+  overflow: auto;
+  height: 100%;
 }
 
 th.mat-header-cell {
   position: sticky;
   top: 0;
-  background-color: white;
+  background-color: $white;
   z-index: 1;
 }
 
@@ -19,22 +19,21 @@ th.mat-header-cell {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
 }
 
-
 .preview-window {
-  height: 160%;
+  height: 550px;
   background-color: $white;
 }
 
 .preview-window:hover {
-  background-color: #f5f5f5;
+  background-color: $asher-gray;
 }
 
 .scrollable-table {
   overflow-y: auto;
-  max-height: 500px;
+  flex-grow: 1;
+  max-height: 550px;
 }
 
 .editable-cell {

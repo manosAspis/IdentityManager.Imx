@@ -1,10 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
-import { EuiSidesheetService } from '@elemental-ui/core';
-import { HeaderService } from './csvmapping/header.service';
-import { CsvDataService } from './csvmapping/csvdata.service';
 import { QerService } from '../qer.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
+import { AppConfigService, AuthenticationService } from 'qbm';
+
+export interface PeriodicElement {}
 
 @Component({
   selector: 'imx-csvsync',
@@ -14,28 +15,23 @@ import { MatTableDataSource } from '@angular/material/table';
 export class CsvsyncComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   csvDataSource: MatTableDataSource<any> = new MatTableDataSource();
-  @Input() csvData: any[] = [];
+  csvData: any[] = [];
   fileLoaded: boolean = false;
   columnMapping: { [key: string]: string } = {};
-  @Input() headers: string[] = [];
-  @Output() csvDataUpdated = new EventEmitter<any[]>();
+  headers: string[] = [];
+  csvDataUpdated = new EventEmitter<any[]>();
   CsvImporter: boolean;
-
-
-
   public noDataText = '#LDS#No data';
   public noDataIcon = 'table';
 
   constructor(
-    private readonly sideSheet: EuiSidesheetService,
-
-    private csvDataService: CsvDataService,
-    private headerService: HeaderService,
+    private readonly config: AppConfigService,
+    private readonly authentication: AuthenticationService,
     private qerService: QerService) {}
 
-
-  ngOnInit() {
+  public async ngOnInit(): Promise<void>  {
     this.CsvImporter = this.qerService.getCsvImporter();
+    this.authentication.update();
     console.log(this.CsvImporter)
   }
 
@@ -95,7 +91,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
         }
       }
       this.csvDataSource.data = this.csvData;
-      this.csvDataService.setCsvData(this.csvData);
       this.fileLoaded = true;
     };
     reader.readAsText(file);
@@ -114,25 +109,59 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.csvDataSource.data = [];
   }
 
-  importToDatabase() {
-    /*this.headerService.setHeaders(this.headers);
-    const sideSheetRef = this.sideSheet.open(CsvmappingComponent, {
-      title: 'Column Mapping',
-      headerColour: 'iris-blue',
-      panelClass: 'imx-sidesheet',
-      padding: '0',
-      width: '600px',
-      testId: 'csv-mapping-sidesheet',
-      data: {
-        headers: this.headers, // Pass the headers array here
-        csvData: this.csvDataService.csvData
-      }
-    });
+  public async importToDatabase(): Promise<PeriodicElement[]> {
+    const inputParameters: any[] = [];
+    const csvData = this.csvDataSource.data;
+    const results: PeriodicElement[] = [];
 
-    sideSheetRef.afterClosed().subscribe((result: any) => {
-      if (result) {
-        this.columnMapping = result.columnMapping;
+    for (const csvRow of csvData) {
+      const inputParameterName: any = {
+        "Ident_Org": '',
+        "City": '',
+        "Description": ''
+      };
+
+      // Remove line breaks and leading/trailing spaces
+      const cleanRow = csvRow.map(cell => typeof cell === 'string' ? cell.replace(/[\r\n]+/g, '').trim() : cell);
+
+      inputParameterName['Ident_Org'] = cleanRow[0];
+      inputParameterName['City'] = cleanRow[4];
+      inputParameterName['Description'] = cleanRow[3];
+
+      inputParameters.push(inputParameterName);
+    }
+
+    for (const inputParameter of inputParameters) {
+      console.log(inputParameter);
+      try {
+        const data = await this.config.apiClient.processRequest(this.PostBR(inputParameter));
+        results.push(data);
+      } catch (error) {
+        console.error(`Error submitting CSV data: ${error}`);
       }
-    });*/
+    }
+
+    return results;
   }
+
+
+private PostBR(inputParameterName: any): MethodDescriptor<PeriodicElement> {
+  return {
+    path: `/portal/createBR`,
+    parameters: [
+      {
+        name: 'inputParameterName',
+        value: inputParameterName,
+        in: 'body'
+      },
+    ],
+    method: 'POST',
+    headers: {
+      'imx-timezone': TimeZoneInfo.get(),
+    },
+    credentials: 'include',
+    observe: 'response',
+    responseType: 'json'
+  };
+}
 }
