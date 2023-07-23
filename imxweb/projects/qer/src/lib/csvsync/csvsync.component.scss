@@ -36,14 +36,6 @@ th.mat-header-cell {
   max-height: 550px;
 }
 
-.editable-cell {
-  width: 100%;
-  border: none;
-  padding: 5px;
-  background-color: $white;
-  cursor: text;
-}
-
 .no-results {
   display: flex;
   flex-direction: column;
@@ -74,4 +66,12 @@ th.mat-header-cell {
     margin-left: 10px;
     margin-top: 20px;
   }
+}
+
+.validation-result {
+  display: block;
+}
+
+.error {
+  color: red;
 }

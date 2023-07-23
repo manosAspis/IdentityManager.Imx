@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { QerService } from '../qer.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -6,6 +6,10 @@ import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 import { AppConfigService, AuthenticationService } from 'qbm';
 
 export interface PeriodicElement {}
+export interface ValidationElement{
+  rowIndex: number;
+  message: string;
+}
 
 @Component({
   selector: 'imx-csvsync',
@@ -17,17 +21,19 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   csvDataSource: MatTableDataSource<any> = new MatTableDataSource();
   csvData: any[] = [];
   fileLoaded: boolean = false;
-  columnMapping: { [key: string]: string } = {};
   headers: string[] = [];
-  csvDataUpdated = new EventEmitter<any[]>();
+  validationResponses: any[] = [];
+  validationResults: ValidationElement[] = [];
   CsvImporter: boolean;
+  allvalidated: boolean = false;
   public noDataText = '#LDS#No data';
   public noDataIcon = 'table';
 
   constructor(
     private readonly config: AppConfigService,
     private readonly authentication: AuthenticationService,
-    private qerService: QerService) {}
+    private qerService: QerService,
+    private cdr: ChangeDetectorRef) {}
 
   public async ngOnInit(): Promise<void>  {
     this.CsvImporter = this.qerService.getCsvImporter();
@@ -44,6 +50,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     if (file) {
       this.processFile(file);
     }
+    this.cdr.detectChanges();
   }
 
   onDragOver(event: any) {
@@ -94,20 +101,81 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
       this.fileLoaded = true;
     };
     reader.readAsText(file);
+    this.allvalidated = false;
   }
-
-  onCellValueChange(event: any, rowIndex: number, cellIndex: number): void {
-    this.csvData[rowIndex][cellIndex] = event.target.value;
-  }
-
-  validate() {}
 
   replaceCsv() {
     this.fileLoaded = false;
+    this.allvalidated = false;
     this.csvData = [];
     this.headers = [];
     this.csvDataSource.data = [];
+    this.validationResponses = [];
+    this.validationResults = [];
   }
+
+  getValidationResult(rowIndex: number): string | undefined {
+    const validationResult = this.validationResults.find(result => result.rowIndex === rowIndex);
+    return validationResult?.message;
+  }
+
+  isValidationError(rowIndex: number): boolean {
+    return this.getValidationResult(rowIndex) !== undefined;
+  }
+
+
+
+  public async validate(): Promise<void> {
+    this.validationResults = [];
+    this.allvalidated = true;  // start with the assumption that all rows are valid
+    const csvData = this.csvDataSource.data;
+
+    for (const [rowIndex, csvRow] of csvData.entries()) {
+      const rowToValidate: any = {
+        "Ident_Org": csvRow[0],
+        "City": csvRow[4],
+        "Description": csvRow[3]
+      };
+      try {
+        const validationResponse = await this.config.apiClient.processRequest(this.ValidateRow(rowToValidate));
+        console.log(validationResponse);
+
+        if (validationResponse.message && validationResponse.message !== "Ok") {
+          this.validationResults.push({ rowIndex, message: validationResponse.message });
+          this.allvalidated = false;  // set the flag to false as soon as a row is found to be invalid
+        }
+      } catch (error) {
+        console.error(`Error validating row ${rowIndex}: ${error}`);
+        this.allvalidated = false;  // also set the flag to false if there was an error in validation
+
+      }
+    }
+    console.log(this.allvalidated);
+    this.cdr.detectChanges();
+  }
+
+
+
+  private ValidateRow(rowToValidate: any): MethodDescriptor<ValidationElement> {
+    return {
+      path: `/portal/validateBR`,
+      parameters: [
+        {
+          name: 'rowToValidate',
+          value: rowToValidate,
+          in: 'body'
+        },
+      ],
+      method: 'POST',
+      headers: {
+        'imx-timezone': TimeZoneInfo.get(),
+      },
+      credentials: 'include',
+      observe: 'response',
+      responseType: 'json'
+    };
+  }
+
 
   public async importToDatabase(): Promise<PeriodicElement[]> {
     const inputParameters: any[] = [];

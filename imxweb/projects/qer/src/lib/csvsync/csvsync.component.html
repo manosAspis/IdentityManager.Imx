@@ -18,10 +18,14 @@
         <!-- Table Columns -->
         <ng-container *ngFor="let header of headers; let colIndex = index" matColumnDef="{{header}}">
           <th mat-header-cell *matHeaderCellDef> {{header}} </th>
-          <td mat-cell *matCellDef="let row">
-            <input [value]="row[colIndex]" (blur)="onCellValueChange($event, row, colIndex)" class="editable-cell" />
+          <td mat-cell *matCellDef="let row; let rowIndex = index">
+            {{row[colIndex]}}
+            <span class="validation-result" *ngIf="getValidationResult(rowIndex)" [class.error]="isValidationError(rowIndex)">
+              {{getValidationResult(rowIndex)}}
+            </span>
           </td>
         </ng-container>
+
 
         <!-- Header and Rows -->
         <tr mat-header-row *matHeaderRowDef="headers"></tr>
@@ -49,7 +53,7 @@
     </button>
     <button
         mat-raised-button
-        [disabled]="!fileLoaded"
+        [disabled]="!allvalidated"
         color="primary"
         (click)="importToDatabase()"
       >
