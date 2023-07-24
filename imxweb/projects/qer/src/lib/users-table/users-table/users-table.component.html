@@ -1,14 +1,14 @@
 <h1 class="mat-headline">{{ '#LDS#Users Table' | translate }}</h1>
 
 <div class="users-table">
-  <ng-container *ngIf="users.length > 0; else noData">
   <table>
+  <ng-container *ngIf="users.length > 0; else noData">
     <thead>
       <tr>
         <th>{{ '#LDS#First Name' | translate }}</th>
         <th>{{ '#LDS#Last Name' | translate }}</th>
-        <th>{{ '#LDS#Roles' | translate }}</th>
-        <th>{{ '#LDS#Departments' | translate }}</th>
+        <th>{{ '#LDS#Role' | translate }}</th>
+        <th>{{ '#LDS#Department' | translate }}</th>
       </tr>
     </thead>
      <tbody>
@@ -19,10 +19,14 @@
         <td>{{ user.Department }}</td>
       </tr>
     </tbody>
+  </ng-container>
+    <ng-template #noData>
+      <div class="nodata-icon">
+        <eui-icon [icon]="'table'" size="100px"></eui-icon>
+      </div>
+      <div class="nodata-message">
+        <p> {{ '#LDS#No data' | translate }} </p>
+      </div>
+    </ng-template>
   </table>
-</ng-container>
-<ng-template #noData>
-  <eui-icon [icon]="'table'" size="100px"></eui-icon>
-  <p>No data</p>
-</ng-template>
 </div>
