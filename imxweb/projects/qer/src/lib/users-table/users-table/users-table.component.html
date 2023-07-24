@@ -14,7 +14,7 @@
      <tbody>
       <tr *ngFor="let user of users">
         <td>{{ user.FirstName}}</td>
-        <td>{{ user.LastName }}</td>
+        <td>{{ user.LastName }}</td> 
         <td>{{ user.Role }}</td>
         <td>{{ user.Department }}</td>
       </tr>
@@ -23,7 +23,7 @@
     <ng-template #noData>
       <div class="nodata-icon">
         <eui-icon [icon]="'table'" size="100px"></eui-icon>
-      </div>
+      </div> 
       <div class="nodata-message">
         <p> {{ '#LDS#No data' | translate }} </p>
       </div>
