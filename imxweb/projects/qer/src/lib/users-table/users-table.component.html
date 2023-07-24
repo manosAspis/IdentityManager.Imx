@@ -1,0 +1,31 @@
+<h1 class="mat-headline">{{ '#LDS#Users Table' | translate }}</h1>
+<div class="users-table">  
+  <table>
+    <ng-container *ngIf="users.length > 0; else noData">
+      <thead>
+        <tr>
+          <th>{{ '#LDS#First Name' | translate }}</th>
+          <th>{{ '#LDS#Last Name' | translate }}</th>
+          <th>{{ '#LDS#Roles' | translate }}</th>
+          <th>{{ '#LDS#Departments' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.FirstNames }}</td>
+          <td>{{ user.LastNames }}</td>
+          <td>{{ user.Roles }}</td>
+          <td>{{ user.Departments }}</td>
+        </tr>
+      </tbody>
+    </ng-container>
+    <ng-template #noData>
+      <div class="no-data-icon">
+        <eui-icon [icon]="'table'" size="100px"></eui-icon>
+      </div>
+      <div class="no-data-text">
+        {{ '#LDS#No Data' | translate }}
+      </div>
+    </ng-template>
+  </table>
+</div>

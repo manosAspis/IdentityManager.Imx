@@ -78,18 +78,18 @@ export class QerService {
     //       items: [].map(relatedApplication => new RelatedApplicationMenuItem(relatedApplication))
     //     };
     //   }
-      (preProps: string[], _: string[]) => {
+      (preProps: string[], groups: string[]) => {
         return {
-          id: 'ROOT_CsvImporter',
-          title: '#LDS#CSV Importer',
+          id: 'ROOT_USERS_TABLE',
+          title: '#LDS#Users Table',
           items: [
             {
-              id: 'CSV_IMPORTER',
-              title: '#LDS#CSV Importer',
-              route: 'csv-importer'
-            }
-          ]
-        }
+              id: 'USERS_TABLE',
+              route: 'users-table',
+              title: '#LDS#Users Table',
+            },
+          ],
+        };
       }
     );
   }

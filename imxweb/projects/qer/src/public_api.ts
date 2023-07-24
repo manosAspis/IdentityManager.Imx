@@ -156,5 +156,5 @@ export { FeatureConfigService } from './lib/admin/feature-config.service';
 export { ItshopRequest } from './lib/request-history/itshop-request';
 export { RequestParameterDataEntity } from './lib/itshop/request-info/request-parameter-data-entity.interface';
 export { BaseTreeRoleRestoreHandler } from './lib/role-management/restore/restore-handler';
-export { CsvImporterModule } from './lib/csv-importer/csv-importer.module';
-export { CsvImporterComponent } from './lib/csv-importer/csv-importer.component';
+export { UsersTableComponent } from './lib/users-table/users-table.component';
+export { UsersTableModule } from './lib/users-table/users-table.module';
