@@ -63,6 +63,7 @@ import { ShoppingCartValidationDetailModule } from './shopping-cart-validation-d
 import { RoleMembershipsModule } from './role-management/role-memberships/role-memberships.module';
 import { UsersTableComponent } from './users-table/users-table/users-table.component';
 
+
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
     new Promise<any>(async (resolve: any) => {
@@ -93,6 +94,7 @@ const routes: Routes = [
   declarations: [
     StartComponent,
     BusinessOwnerChartSummaryComponent,
+    CsvImporterComponent
   ],
   imports: [
     CommonModule,

@@ -47,7 +47,7 @@ export class QerService {
     private objectsheetService: ObjectSheetService,
     private readonly validationDetailService: ShoppingCartValidationDetailService,
     private readonly menuService: MenuService
-  ) { }
+  ) { this.setupMenu(); }
 
   public init(): void {
 
