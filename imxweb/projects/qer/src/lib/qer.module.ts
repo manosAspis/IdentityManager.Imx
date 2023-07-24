@@ -61,7 +61,8 @@ import { TilesModule } from './tiles/tiles.module';
 import { UserModule } from './user/user.module';
 import { ShoppingCartValidationDetailModule } from './shopping-cart-validation-detail/shopping-cart-validation-detail.module';
 import { RoleMembershipsModule } from './role-management/role-memberships/role-memberships.module';
-import { CsvImporterComponent } from './csv-importer/csv-importer.component';
+import { UsersTableComponent } from './users-table/users-table/users-table.component';
+
 
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
@@ -80,6 +81,12 @@ const routes: Routes = [
     canActivate: [RouteGuardService],
     resolve: [RouteGuardService],
   },
+  {
+    path: 'users',
+    component: UsersTableComponent,
+    canActivate: [RouteGuardService],
+    resolve: [RouteGuardService]
+  }
 ];
 
 // @dynamic
@@ -114,7 +121,7 @@ const routes: Routes = [
     ShoppingCartValidationDetailModule,
     FkAdvancedPickerModule,
     OpsModule,
-    DataExplorerViewModule,
+    DataExplorerViewModule
   ],
   exports: [PasscodeViewerComponent, ObjectOverviewPersonComponent],
   providers: [
