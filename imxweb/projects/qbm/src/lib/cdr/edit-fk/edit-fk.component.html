@@ -35,7 +35,7 @@
       (click)="removeAssignment($event)"
       [attr.data-imx-identifier]="'cdr-edit-fk-button-remove-assignment-' + columnContainer?.name"></eui-icon>
     <div class="imx-spacer"></div>
-    <button *ngIf="columnContainer?.canEdit && (isHierarchical ||columnContainer?.fkRelations?.length > 1)" mat-button
+    <button *ngIf="columnContainer?.canEdit && (isHierarchical ||columnContainer?.fkRelations?.length > 1)" class="hideButton" mat-button
       color="primary" type="button" (click)="editAssignment($event)"
       [attr.data-imx-identifier]="'cdr-edit-fk-button-open-picker-' + columnContainer?.name">
       {{ columnContainer?.value?.length ? ('#LDS#Change' | translate) : ('#LDS#Assign' | translate) }}

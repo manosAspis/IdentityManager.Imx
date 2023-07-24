@@ -54,7 +54,6 @@ export class MenuComponent {
     translator: TranslateService) {
     translator.get('#LDS#the route does not exist').subscribe(value => this.errorMessageNonExistingRoute = value);
   }
-
     /* Go to Users Table */
     public GoToUsersTable(): void {
       this.router.navigate(['users-table']);

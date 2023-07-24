@@ -73,6 +73,10 @@
     margin-right: 5px;
     margin-top: 0;
   }
+
+  .hideButton {
+    display: none;
+  }
 }
 
 .imx-icon-delete {
@@ -80,4 +84,5 @@
   margin-top: 0;
   display: inline;
   line-height: 35px;
+  display: none;
 }
