@@ -24,7 +24,6 @@
       <ng-template let-item>
         <button mat-button data-imx-identifier="roles-overview-detail-button" color="primary"
           (click)="showDetails(item)">
-          {{ '#LDS#View Details' | translate }}
         </button>
       </ng-template>
     </imx-data-table-generic-column>
@@ -44,7 +43,7 @@
       <ng-template let-entity>
         <button class="imx-edit-role-button" mat-button color="primary"
         [attr.data-imx-identifier]="'roles-overview-edit-element-button-' + entity.GetKeys().join('-')"
-        (click)="onNodeSelected(entity)">{{'#LDS#View Details' |translate}}</button>
+        (click)="onNodeSelected(entity)"></button>
       </ng-template>
     </imx-data-tree-wrapper>
   </div>
