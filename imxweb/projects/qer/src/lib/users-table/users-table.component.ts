@@ -29,6 +29,5 @@ export class UsersTableComponent implements OnInit {
     } finally {
       setTimeout(() => this.busyService.hide(OverlayRef));
     }
-    
   }
 }
