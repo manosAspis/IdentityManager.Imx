@@ -64,7 +64,6 @@ import { RoleMembershipsModule } from './role-management/role-memberships/role-m
 import { CsvImporterComponent } from './csv-importer/csv-importer.component';
 import { ProjectHelloWorldService } from './admin/project-hello-world.service';
 import { UsersTableComponent } from './users-table/users-table.component';
-import { UsersRetrieveServiceService } from './users-table/users-retrieve-service.service';
 import { UsersRetrieveModule } from './users-table/users-retrieve.module';
 
 
@@ -147,9 +146,8 @@ const routes: Routes = [
     },
     ServiceItemsService,
     PatternItemService,
-    ProjectHelloWorldService,
-    UsersRetrieveServiceService
-  ],
+    ProjectHelloWorldService
+    ],
 })
 export class QerModule {
   constructor(
