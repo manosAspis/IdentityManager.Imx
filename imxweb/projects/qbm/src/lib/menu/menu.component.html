@@ -5,7 +5,7 @@
         {{ item.title | translate }}
       </button>
       <ng-container *ngIf="item.items">
-        <button *ngIf="(item.id !== 'ROOT_Setup' && item.id !== 'ROOT_Responsibilities' && item.id !== 'ROOT_CsvImporter')" mat-button class="imx-mein-menu-item" [attr.data-imx-identifier]="item.id" [matMenuTriggerFor]="submenu" #submenuTrigger="matMenuTrigger">
+        <button mat-button class="imx-mein-menu-item" [attr.data-imx-identifier]="item.id" [matMenuTriggerFor]="submenu" #submenuTrigger="matMenuTrigger">
           {{ item.title | translate }}
         </button>
         <mat-menu #submenu="matMenu" yPosition="below" overlapTrigger="false">
@@ -14,9 +14,6 @@
           </button>
         </mat-menu>
       </ng-container>
-      <button mat-button class="imx-mein-menu-item" *ngIf="item.id === 'ROOT_CsvImporter'" (click)="GoToCsvImporter()" [attr.data-imx-identifier]="item.id" [active]="isActive(item)">
-        {{ item.title | translate }}
-      </button>
     </span>
   </ng-container>
 </nav>
