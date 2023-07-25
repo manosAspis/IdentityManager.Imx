@@ -127,7 +127,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
 
   public async validate(): Promise<void> {
     this.validationResults = [];
-    this.allvalidated = true;  // start with the assumption that all rows are valid
+    this.allvalidated = true;
     const csvData = this.csvDataSource.data;
 
     for (const [rowIndex, csvRow] of csvData.entries()) {
@@ -137,22 +137,22 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
         "Description": csvRow[3]
       };
       try {
-        const validationResponse = await this.config.apiClient.processRequest(this.ValidateRow(rowToValidate));
+        const validationResponse: any = await this.config.apiClient.processRequest(this.ValidateRow(rowToValidate));
         console.log(validationResponse);
 
-        if (validationResponse.message && validationResponse.message !== "Ok") {
-          this.validationResults.push({ rowIndex, message: validationResponse.message });
-          this.allvalidated = false;  // set the flag to false as soon as a row is found to be invalid
+        if (validationResponse.Ident_Org && validationResponse.Ident_Org !== "ok") {
+          this.validationResults.push({ rowIndex, message: validationResponse.Ident_Org });
+          this.allvalidated = false;
         }
       } catch (error) {
         console.error(`Error validating row ${rowIndex}: ${error}`);
-        this.allvalidated = false;  // also set the flag to false if there was an error in validation
-
+        this.allvalidated = false;
       }
     }
     console.log(this.allvalidated);
     this.cdr.detectChanges();
   }
+
 
 
 
