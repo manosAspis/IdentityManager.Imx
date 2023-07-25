@@ -7,10 +7,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { DataSourceToolbarModule, DataTableModule, LdsReplaceModule, QbmModule } from 'qbm';
 import { EuiCoreModule, EuiMaterialModule } from '@elemental-ui/core';
+import { UsersTableService } from './users-table.service';
 
 @NgModule({
   declarations: [
-    UsersTableComponent
+    UsersTableComponent,
   ],
   imports: [
     CommonModule,
@@ -23,10 +24,13 @@ import { EuiCoreModule, EuiMaterialModule } from '@elemental-ui/core';
     EuiMaterialModule,
     DataSourceToolbarModule,
     DataTableModule,
-    QbmModule
+    QbmModule,
   ],
   exports: [
-    UsersTableComponent
+    UsersTableComponent,
+  ],
+  providers: [
+    UsersTableService
   ]
 })
 export class UsersTableModule { }

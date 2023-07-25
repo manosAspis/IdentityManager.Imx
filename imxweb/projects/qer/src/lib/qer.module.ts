@@ -62,6 +62,7 @@ import { UserModule } from './user/user.module';
 import { ShoppingCartValidationDetailModule } from './shopping-cart-validation-detail/shopping-cart-validation-detail.module';
 import { RoleMembershipsModule } from './role-management/role-memberships/role-memberships.module';
 import { UsersTableComponent } from './users-table/users-table.component';
+import { UsersTableModule } from './users-table/users-table.module';
 
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
@@ -121,6 +122,7 @@ const routes: Routes = [
     FkAdvancedPickerModule,
     OpsModule,
     DataExplorerViewModule,
+    UsersTableModule
   ],
   exports: [PasscodeViewerComponent, ObjectOverviewPersonComponent],
   providers: [

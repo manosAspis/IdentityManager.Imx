@@ -1,14 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
-import { AppConfigService } from 'qbm';
 import { TranslateService } from '@ngx-translate/core';
-
-interface UsersTableDataConfig {
-  FirstNames: string;
-  LastNames: string;
-  Roles: string;
-  Departments: string;
-}
+import { UsersTableService } from './users-table.service';
+import { OverlayRef } from '@angular/cdk/overlay';
+import { UsersTableDataConfig } from './users-table.service';
+import { EuiLoadingService } from '@elemental-ui/core';
 
 @Component({
   selector: 'imx-users-table',
@@ -17,35 +12,23 @@ interface UsersTableDataConfig {
 })
 
 export class UsersTableComponent implements OnInit {
-  users: UsersTableDataConfig[] = [];
+  
+  public users: UsersTableDataConfig[] = [];
 
-  constructor(private readonly config: AppConfigService, private readonly translate: TranslateService) {}
+  constructor(
+    private readonly translate: TranslateService, 
+    private UsersTableService: UsersTableService,
+    private readonly busyService: EuiLoadingService,
+  ) {}
 
-  ngOnInit(): void {
-    this.getUsersTableData();
-  }
-
-  public async getUsersTableData(): Promise<void> {
+  public async ngOnInit(): Promise<void> {
+    let OverlayRef: OverlayRef;
+    setTimeout(() => (OverlayRef = this.busyService.show()));
     try {
-      const response = await this.config.apiClient.processRequest<UsersTableDataConfig[]>(this.getUsersTableDataDescriptor());
-      this.users = response;
-    } catch (error) {
-      console.error('Error fetching users data:', error);
+      this.users = await this.UsersTableService.getUsersTableData();
+    } finally {
+      setTimeout(() => this.busyService.hide(OverlayRef));
     }
-  }
-
-  private getUsersTableDataDescriptor(): MethodDescriptor<UsersTableDataConfig> {
-    const parameters = [];
-    return {
-      path: `/portal/userstable`,
-      parameters,
-      method: 'GET',
-      headers: {
-        'imx-timezone': TimeZoneInfo.get()
-      },
-      credentials: 'include',
-      observe: 'response',
-      responseType: 'json',
-    };
+    
   }
 }
