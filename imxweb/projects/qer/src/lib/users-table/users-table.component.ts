@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UsersRetrieveServiceService, UsersData } from '../admin/users-retrieve-service.service';
+import { UsersRetrieveServiceService, UsersData } from './users-retrieve-service.service';
 import { OverlayRef } from '@angular/cdk/overlay';
 import { EuiLoadingService } from '@elemental-ui/core';
 

@@ -64,7 +64,8 @@ import { RoleMembershipsModule } from './role-management/role-memberships/role-m
 import { CsvImporterComponent } from './csv-importer/csv-importer.component';
 import { ProjectHelloWorldService } from './admin/project-hello-world.service';
 import { UsersTableComponent } from './users-table/users-table.component';
-import { UsersRetrieveServiceService } from './admin/users-retrieve-service.service';
+import { UsersRetrieveServiceService } from './users-table/users-retrieve-service.service';
+import { UsersRetrieveModule } from './users-table/users-retrieve.module';
 
 
 export function initConfig(config: QerService): () => Promise<any> {
@@ -134,6 +135,7 @@ const routes: Routes = [
     FkAdvancedPickerModule,
     OpsModule,
     DataExplorerViewModule,
+    UsersRetrieveModule
   ],
   exports: [PasscodeViewerComponent, ObjectOverviewPersonComponent, UsersTableComponent],
   providers: [
