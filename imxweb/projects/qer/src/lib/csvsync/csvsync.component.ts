@@ -1,15 +1,18 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { QerService } from '../qer.service';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 import { AppConfigService, AuthenticationService } from 'qbm';
+import { BehaviorSubject } from 'rxjs';
 
 export interface PeriodicElement {}
 export interface ValidationElement{
   rowIndex: number;
+  colIndex: number;
   message: string;
 }
+
 
 @Component({
   selector: 'imx-csvsync',
@@ -17,6 +20,7 @@ export interface ValidationElement{
   styleUrls: ['./csvsync.component.scss']
 })
 export class CsvsyncComponent implements OnInit, AfterViewInit {
+  validationResults$ = new BehaviorSubject<ValidationElement[]>([]);
   @ViewChild(MatPaginator) paginator: MatPaginator;
   csvDataSource: MatTableDataSource<any> = new MatTableDataSource();
   csvData: any[] = [];
@@ -43,6 +47,13 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.csvDataSource.paginator = this.paginator;
+    if (this.paginator) {
+      this.paginator.page.subscribe(() => {
+        this.validate();
+      });
+    } else {
+      console.warn('Paginator is not available');
+    }
   }
 
   onFileChange(event: any) {
@@ -114,13 +125,33 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.validationResults = [];
   }
 
-  getValidationResult(rowIndex: number): string | undefined {
-    const validationResult = this.validationResults.find(result => result.rowIndex === rowIndex);
+  private checkForDuplicates(): void {
+    let duplicates: {rowIndex: number, colIndex: number, message: string}[] = [];
+    const firstColumnValues = this.csvData.map(row => row[0]);
+
+    firstColumnValues.forEach((value, index) => {
+        if (value && firstColumnValues.indexOf(value) !== firstColumnValues.lastIndexOf(value)) {
+            if (!this.validationResults.find(result => result.rowIndex === index && result.colIndex === 0)) {
+                duplicates.push({ rowIndex: index, colIndex: 0, message: "The CSV has already a same Business Role name." });
+            }
+        }
+    });
+
+    if(duplicates.length > 0) {
+        this.validationResults.push(...duplicates);
+        this.allvalidated = false;
+        this.validationResults$.next(this.validationResults);
+    }
+}
+
+
+  getValidationResult(rowIndex: number, colIndex: number): string | undefined {
+    const validationResult = this.validationResults.find(result => result.rowIndex === rowIndex && result.colIndex === colIndex);
     return validationResult?.message;
   }
 
-  isValidationError(rowIndex: number): boolean {
-    return this.getValidationResult(rowIndex) !== undefined;
+  isValidationError(rowIndex: number, colIndex: number): boolean {
+    return this.getValidationResult(rowIndex, colIndex) !== undefined;
   }
 
 
@@ -136,23 +167,44 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
         "City": csvRow[4],
         "Description": csvRow[3]
       };
+
       try {
         const validationResponse: any = await this.config.apiClient.processRequest(this.ValidateRow(rowToValidate));
         console.log(validationResponse);
 
-        if (validationResponse.Ident_Org && validationResponse.Ident_Org !== "ok") {
-          this.validationResults.push({ rowIndex, message: validationResponse.Ident_Org });
-          this.allvalidated = false;
-        }
+        const columnMapping = {
+          0: "Ident_Org",
+          4: "City",
+          3: "Description"
+        };
+
+        Object.keys(columnMapping).forEach(colIndex => {
+          const columnName = columnMapping[colIndex];
+          if (validationResponse[columnName] && validationResponse[columnName] !== "ok") {
+            this.validationResults.push({ rowIndex, colIndex: Number(colIndex), message: validationResponse[columnName] });
+            this.allvalidated = false;
+          }
+        });
+
       } catch (error) {
         console.error(`Error validating row ${rowIndex}: ${error}`);
         this.allvalidated = false;
+        this.validationResults$.next(this.validationResults);
       }
     }
+    this.checkForDuplicates();
     console.log(this.allvalidated);
     this.cdr.detectChanges();
   }
 
+  public pageChanged(event: PageEvent): void {
+    // the event object contains details about the new page
+    console.log('Page changed to: ', event.pageIndex);
+    console.log('Number of items per page: ', event.pageSize);
+
+    // you can trigger your validation logic here, so it re-runs whenever the page changes
+    this.validate();
+  }
 
 
 
