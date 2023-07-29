@@ -63,6 +63,7 @@ import { ShoppingCartValidationDetailModule } from './shopping-cart-validation-d
 import { RoleMembershipsModule } from './role-management/role-memberships/role-memberships.module';
 import { CsvsyncComponent } from './csvsync/csvsync.component';
 import { CsvmappingComponent } from './csvsync/csvmapping/csvmapping.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
@@ -93,6 +94,7 @@ const routes: Routes = [
     CsvsyncComponent, CsvmappingComponent,
   ],
   imports: [
+    MatProgressSpinnerModule,
     CommonModule,
     RouterModule.forChild(routes),
     QbmModule,

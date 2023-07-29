@@ -47,13 +47,13 @@
         mat-raised-button
         [disabled]="!fileLoaded"
         color="warn"
-        (click)="validate()"
+        (click)="onValidateClicked()"
       >
         Validate
     </button>
     <button
         mat-raised-button
-        [disabled]="!allvalidated"
+        [disabled]="!allvalidated || validating || initializing"
         color="primary"
         (click)="importToDatabase()"
       >

@@ -32,6 +32,11 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   allvalidated: boolean = false;
   public noDataText = '#LDS#No data';
   public noDataIcon = 'table';
+  public visibleRows: any[] = [];
+  validating: boolean;
+  initializing: boolean = false;
+  shouldValidate: boolean = false;
+
 
   constructor(
     private readonly config: AppConfigService,
@@ -40,21 +45,41 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef) {}
 
   public async ngOnInit(): Promise<void>  {
+
+    this.validating = true;
+    this.allvalidated = false;
     this.CsvImporter = this.qerService.getCsvImporter();
     this.authentication.update();
+    this.cdr.detectChanges();
     console.log(this.CsvImporter)
+    console.log(this.allvalidated)
+    console.log(this.validating)
   }
 
   ngAfterViewInit() {
+    this.initializing = true;
     this.csvDataSource.paginator = this.paginator;
+    this.validating = true;
+    this.cdr.detectChanges();
     if (this.paginator) {
-      this.paginator.page.subscribe(() => {
-        this.validate();
+      // Create a new PageEvent and manually trigger the page change event
+      const initialPageEvent = new PageEvent();
+      initialPageEvent.pageIndex = 0;
+      initialPageEvent.pageSize = this.paginator.pageSize;
+      initialPageEvent.length = this.csvDataSource.data.length;
+
+      this.pageChanged(initialPageEvent);
+
+      // Subscribe to future page changes
+      this.paginator.page.subscribe((event) => {
+        this.pageChanged(event);
       });
     } else {
       console.warn('Paginator is not available');
     }
+    this.initializing = false;
   }
+
 
   onFileChange(event: any) {
     const file = event.target.files[0];
@@ -98,7 +123,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
 
   private processFile(file: File) {
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       const data = reader.result as string;
       const lines = data.split('\n');
       this.headers = lines[0].split(',');
@@ -113,7 +138,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     };
     reader.readAsText(file);
     this.allvalidated = false;
-  }
+}
+
 
   replaceCsv() {
     this.fileLoaded = false;
@@ -123,6 +149,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.csvDataSource.data = [];
     this.validationResponses = [];
     this.validationResults = [];
+    this.validating = true;
   }
 
   private checkForDuplicates(): void {
@@ -154,14 +181,26 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     return this.getValidationResult(rowIndex, colIndex) !== undefined;
   }
 
+  public async onValidateClicked(): Promise<void> {
+    this.shouldValidate = true;
+    this.validate();
+  }
+
 
 
   public async validate(): Promise<void> {
+    if(this.initializing) {
+      return;
+    }
+    if(!this.shouldValidate) {
+      return;
+    }
     this.validationResults = [];
     this.allvalidated = true;
-    const csvData = this.csvDataSource.data;
+    this.validating = true;
+    this.visibleRows = this.csvDataSource.data.slice(this.paginator.pageIndex * this.paginator.pageSize, (this.paginator.pageIndex + 1) * this.paginator.pageSize);
 
-    for (const [rowIndex, csvRow] of csvData.entries()) {
+    for (const [rowIndex, csvRow] of this.visibleRows.entries()) {
       const rowToValidate: any = {
         "Ident_Org": csvRow[0],
         "City": csvRow[4],
@@ -192,19 +231,27 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
         this.validationResults$.next(this.validationResults);
       }
     }
+
     this.checkForDuplicates();
+    this.validating = false;
     console.log(this.allvalidated);
     this.cdr.detectChanges();
   }
 
   public pageChanged(event: PageEvent): void {
-    // the event object contains details about the new page
-    console.log('Page changed to: ', event.pageIndex);
-    console.log('Number of items per page: ', event.pageSize);
+    const startIndex = event.pageIndex * event.pageSize;
+    let endIndex = startIndex + event.pageSize;
 
-    // you can trigger your validation logic here, so it re-runs whenever the page changes
-    this.validate();
+    if (endIndex > this.csvDataSource.data.length) {
+      endIndex = this.csvDataSource.data.length;
+    }
+
+    this.visibleRows = this.csvDataSource.data.slice(startIndex, endIndex);
+    if(this.shouldValidate) {
+      this.validate();
+    }
   }
+
 
 
 
@@ -233,6 +280,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     const inputParameters: any[] = [];
     const csvData = this.csvDataSource.data;
     const results: PeriodicElement[] = [];
+    this.validating = true;
 
     for (const csvRow of csvData) {
       const inputParameterName: any = {
@@ -260,8 +308,9 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
         console.error(`Error submitting CSV data: ${error}`);
       }
     }
-
+    this.validating = false;
     return results;
+
   }
 
 
