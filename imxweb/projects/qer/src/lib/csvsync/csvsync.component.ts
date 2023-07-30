@@ -37,6 +37,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   validating: boolean;
   initializing: boolean = false;
   shouldValidate: boolean = false;
+  numberOfErrors: number;
+
 
 
   constructor(
@@ -46,7 +48,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef) {}
 
   public async ngOnInit(): Promise<void>  {
-
+    this.numberOfErrors = 0;
     this.validating = true;
     this.allvalidated = false;
     this.CsvImporter = this.qerService.getCsvImporter();
@@ -58,19 +60,10 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   }
 
   checkAllRowsValidated(): boolean {
-    // Iterate through all rows and check if each one is validated
-    for (const row of this.csvDataSource.data) {
-      // Logic to check if a row is validated
-      // Assuming your csvDataSource.data structure is the same as csvData
-      const validationResult = this.validationResults.find(result => result.rowIndex === row[0] && result.colIndex === row[1]);
-      if (!validationResult) {
-        // If a row is not validated, return false
-        return false;
-      }
-    }
-    // If all rows are validated, return true
-    return true;
+    // All rows are validated if there are no errors
+    return this.numberOfErrors === 0;
   }
+
 
 
   ngAfterViewInit() {
@@ -168,13 +161,16 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.validationResponses = [];
     this.validationResults = [];
     this.validating = true;
+    this.numberOfErrors = 0;
   }
 
 
   getValidationResult(rowIndex: number, colIndex: number): string | undefined {
-    const validationResult = this.validationResults.find(result => result.rowIndex === rowIndex && result.colIndex === colIndex);
+    const adjustedRowIndex = rowIndex + (this.paginator.pageIndex * this.paginator.pageSize);
+    const validationResult = this.validationResults.find(result => result.rowIndex === adjustedRowIndex && result.colIndex === colIndex);
     return validationResult?.message;
   }
+
 
   isValidationError(rowIndex: number, colIndex: number): boolean {
     return this.getValidationResult(rowIndex, colIndex) !== undefined;
@@ -195,14 +191,14 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     if(!this.shouldValidate) {
       return;
     }
-    this.validationResults = [];
+    this.validationResults = [];  // Clear the previous validation results
     this.allvalidated = true;
     this.validating = true;
-    this.visibleRows = this.csvDataSource.data.slice(this.paginator.pageIndex * this.paginator.pageSize, (this.paginator.pageIndex + 1) * this.paginator.pageSize);
+    this.numberOfErrors = 0;  // Reset the error count before new validation
 
     const firstColumnValues = this.csvDataSource.data.map(row => row[0]);
 
-    for (const [rowIndex, csvRow] of this.visibleRows.entries()) {
+    for (const [rowIndex, csvRow] of this.csvDataSource.data.entries()) {  // Validate all rows
       const rowToValidate: any = {
           "Ident_Org": csvRow[0].trim(), // Trim the values here
           "City": csvRow[4].trim(),
@@ -230,13 +226,14 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
           if (validationResponse[columnName] && validationResponse[columnName] !== "ok") {
             this.validationResults.push({ rowIndex, colIndex: Number(colIndex), message: validationResponse[columnName] });
             this.allvalidated = false;
+            this.numberOfErrors++;
           }
         });
 
       } catch (error) {
-          console.error(`Error validating row ${rowIndex}: ${error}`);
-          this.allvalidated = false;
-          this.validationResults$.next(this.validationResults);
+        console.error(`Error validating row ${rowIndex}: ${error}`);
+        this.allvalidated = false;
+        this.validationResults$.next(this.validationResults);
       }
     }
 
@@ -254,9 +251,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     }
 
     this.visibleRows = this.csvDataSource.data.slice(startIndex, endIndex);
-    if(this.shouldValidate) {
-      this.validate();
-    }
   }
 
 
