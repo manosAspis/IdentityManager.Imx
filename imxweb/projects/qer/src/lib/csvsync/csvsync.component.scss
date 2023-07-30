@@ -22,7 +22,7 @@ th.mat-header-cell {
 }
 
 .preview-window {
-  height: 550px;
+  height: 500px;
   background-color: $white;
 }
 
@@ -33,7 +33,7 @@ th.mat-header-cell {
 .scrollable-table {
   overflow-y: auto;
   flex-grow: 1;
-  max-height: 550px;
+  max-height: 500px;
 }
 
 .no-results {
@@ -74,4 +74,10 @@ th.mat-header-cell {
 
 .error {
   color: red;
+}
+
+
+.imx-helper-alert {
+  display: block;
+  margin-bottom: 1em;
 }

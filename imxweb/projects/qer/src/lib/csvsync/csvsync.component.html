@@ -1,5 +1,9 @@
 <div *ngIf="CsvImporter">
   <h1 class="mat-headline">CSV Connector</h1>
+  <eui-alert class="imx-helper-alert" type="info" condensed="true" [colored]="true" [dismissable]="true">
+    <span *ngIf="!fileLoaded">Drag & drop or upload a CSV file.</span>
+    <span *ngIf="fileLoaded && (!allRowsValidated || validating || initializing)">Validate your CSV data.</span>
+  </eui-alert>
   <div class="file-input-wrapper">
   <input style="display: none;" id="csv-file" type="file" (change)="onFileChange($event)" accept=".csv" />
 
