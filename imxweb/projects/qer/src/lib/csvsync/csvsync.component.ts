@@ -20,6 +20,7 @@ export interface ValidationElement{
   styleUrls: ['./csvsync.component.scss']
 })
 export class CsvsyncComponent implements OnInit, AfterViewInit {
+  allRowsValidated: boolean = false;
   validationResults$ = new BehaviorSubject<ValidationElement[]>([]);
   @ViewChild(MatPaginator) paginator: MatPaginator;
   csvDataSource: MatTableDataSource<any> = new MatTableDataSource();
@@ -55,6 +56,22 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     console.log(this.allvalidated)
     console.log(this.validating)
   }
+
+  checkAllRowsValidated(): boolean {
+    // Iterate through all rows and check if each one is validated
+    for (const row of this.csvDataSource.data) {
+      // Logic to check if a row is validated
+      // Assuming your csvDataSource.data structure is the same as csvData
+      const validationResult = this.validationResults.find(result => result.rowIndex === row[0] && result.colIndex === row[1]);
+      if (!validationResult) {
+        // If a row is not validated, return false
+        return false;
+      }
+    }
+    // If all rows are validated, return true
+    return true;
+  }
+
 
   ngAfterViewInit() {
     this.initializing = true;
@@ -124,21 +141,22 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   private processFile(file: File) {
     const reader = new FileReader();
     reader.onload = async () => {
-      const data = reader.result as string;
-      const lines = data.split('\n');
-      this.headers = lines[0].split(',');
-      for (let i = 1; i < lines.length; i++) {
-        const row = lines[i].split(',');
-        if (row.length > 1) {
-            this.csvData.push(row);
+        const data = reader.result as string;
+        const lines = data.split('\n');
+        this.headers = lines[0].split(',').map(header => header.trim());
+        for (let i = 1; i < lines.length; i++) {
+            const row = lines[i].split(',').map(cell => cell.trim()); // Trim the values here
+            if (row.length > 1) {
+                this.csvData.push(row);
+            }
         }
-      }
-      this.csvDataSource.data = this.csvData;
-      this.fileLoaded = true;
+        this.csvDataSource.data = this.csvData;
+        this.fileLoaded = true;
     };
     reader.readAsText(file);
     this.allvalidated = false;
 }
+
 
 
   replaceCsv() {
@@ -152,25 +170,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.validating = true;
   }
 
-  private checkForDuplicates(): void {
-    let duplicates: {rowIndex: number, colIndex: number, message: string}[] = [];
-    const firstColumnValues = this.csvData.map(row => row[0]);
-
-    firstColumnValues.forEach((value, index) => {
-        if (value && firstColumnValues.indexOf(value) !== firstColumnValues.lastIndexOf(value)) {
-            if (!this.validationResults.find(result => result.rowIndex === index && result.colIndex === 0)) {
-                duplicates.push({ rowIndex: index, colIndex: 0, message: "The CSV has already a same Business Role name." });
-            }
-        }
-    });
-
-    if(duplicates.length > 0) {
-        this.validationResults.push(...duplicates);
-        this.allvalidated = false;
-        this.validationResults$.next(this.validationResults);
-    }
-}
-
 
   getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     const validationResult = this.validationResults.find(result => result.rowIndex === rowIndex && result.colIndex === colIndex);
@@ -183,7 +182,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
 
   public async onValidateClicked(): Promise<void> {
     this.shouldValidate = true;
-    this.validate();
+    await this.validate();
+    this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
   }
 
 
@@ -200,15 +200,23 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.validating = true;
     this.visibleRows = this.csvDataSource.data.slice(this.paginator.pageIndex * this.paginator.pageSize, (this.paginator.pageIndex + 1) * this.paginator.pageSize);
 
+    const firstColumnValues = this.csvDataSource.data.map(row => row[0]);
+
     for (const [rowIndex, csvRow] of this.visibleRows.entries()) {
       const rowToValidate: any = {
-        "Ident_Org": csvRow[0],
-        "City": csvRow[4],
-        "Description": csvRow[3]
+          "Ident_Org": csvRow[0].trim(), // Trim the values here
+          "City": csvRow[4].trim(),
+          "Description": csvRow[3].trim()
       };
 
       try {
-        const validationResponse: any = await this.config.apiClient.processRequest(this.ValidateRow(rowToValidate));
+        let validationResponse: any = await this.config.apiClient.processRequest(this.ValidateRow(rowToValidate));
+
+        // Check for duplicate Ident_Org here
+        if (firstColumnValues.indexOf(csvRow[0]) !== firstColumnValues.lastIndexOf(csvRow[0])) {
+          validationResponse["Ident_Org"] = "The CSV has already a same Business Role name.";
+        }
+
         console.log(validationResponse);
 
         const columnMapping = {
@@ -226,13 +234,12 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
         });
 
       } catch (error) {
-        console.error(`Error validating row ${rowIndex}: ${error}`);
-        this.allvalidated = false;
-        this.validationResults$.next(this.validationResults);
+          console.error(`Error validating row ${rowIndex}: ${error}`);
+          this.allvalidated = false;
+          this.validationResults$.next(this.validationResults);
       }
     }
 
-    this.checkForDuplicates();
     this.validating = false;
     console.log(this.allvalidated);
     this.cdr.detectChanges();
