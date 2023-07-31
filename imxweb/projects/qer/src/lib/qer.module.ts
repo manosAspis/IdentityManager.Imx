@@ -82,7 +82,12 @@ const routes: Routes = [
     canActivate: [RouteGuardService],
     resolve: [RouteGuardService],
   },
-  { path: 'csvsync-component', component: CsvsyncComponent },
+  {
+    path: 'csvsync-component',
+    component: CsvsyncComponent,
+    canActivate: [RouteGuardService],
+    resolve: [RouteGuardService],
+  },
   { path: 'csvmapping-component', component: CsvmappingComponent },
 ];
 

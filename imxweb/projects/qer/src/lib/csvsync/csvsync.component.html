@@ -1,5 +1,6 @@
 <div *ngIf="CsvImporter">
-  <h1 class="mat-headline">CSV Connector</h1>
+  <h1 *ngIf="menuAttr === 'IDENTITIES_IMPORT'" class="mat-headline">Bulk imports for Identities</h1>
+  <h1 *ngIf="menuAttr === 'BUSINESS_ROLES_IMPORT'" class="mat-headline">Bulk imports for Business Roles</h1>
   <eui-alert class="imx-helper-alert" type="info" condensed="true" [colored]="true" [dismissable]="true">
     <span *ngIf="!fileLoaded">Drag & drop or upload a CSV file.</span>
     <span *ngIf="fileLoaded && numberOfErrors === 0 && (!allRowsValidated || validating || initializing) && numberOfErrors === 0">Validate your CSV data.</span>
@@ -41,7 +42,7 @@
     </div>
     <mat-paginator #paginator [pageSizeOptions]="[20, 50, 100, 200]" showFirstLastButtons (page)="pageChanged($event)"></mat-paginator>
   <div class="button-bar">
-    <button
+    <button *ngIf="menuAttr === 'IDENTITIES_IMPORT'"
         mat-raised-button
         [disabled]="!fileLoaded"
         color="accent"
@@ -49,7 +50,7 @@
       >
         Remove CSV
     </button>
-    <button
+    <button *ngIf="menuAttr === 'IDENTITIES_IMPORT'"
         mat-raised-button
         [disabled]="!fileLoaded"
         color="warn"
@@ -57,13 +58,37 @@
       >
         Validate
     </button>
-    <button
+    <button *ngIf="menuAttr === 'IDENTITIES_IMPORT'"
         mat-raised-button
         [disabled]="!allRowsValidated || validating || initializing"
         color="primary"
         (click)="importToDatabase()"
       >
-        Submit
+        Import Identities
+    </button>
+    <button *ngIf="menuAttr === 'BUSINESS_ROLES_IMPORT'"
+        mat-raised-button
+        [disabled]="!fileLoaded"
+        color="accent"
+        (click)="replaceCsv()"
+      >
+        Remove CSV
+    </button>
+    <button *ngIf="menuAttr === 'BUSINESS_ROLES_IMPORT'"
+        mat-raised-button
+        [disabled]="!fileLoaded"
+        color="warn"
+        (click)="onValidateClicked()"
+      >
+        Validate
+    </button>
+    <button *ngIf="menuAttr === 'BUSINESS_ROLES_IMPORT'"
+        mat-raised-button
+        [disabled]="!allRowsValidated || validating || initializing"
+        color="primary"
+        (click)="importToDatabase()"
+      >
+        Import Business Roles
     </button>
   </div>
 </div>

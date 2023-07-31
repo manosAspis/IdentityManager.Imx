@@ -3,8 +3,8 @@ import { QerService } from '../qer.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
-import { AppConfigService, AuthenticationService } from 'qbm';
-import { BehaviorSubject } from 'rxjs';
+import { AppConfigService, AuthenticationService, MenuService  } from 'qbm';
+import { BehaviorSubject, Subscription  } from 'rxjs';
 
 export interface PeriodicElement {}
 export interface ValidationElement{
@@ -20,6 +20,8 @@ export interface ValidationElement{
   styleUrls: ['./csvsync.component.scss']
 })
 export class CsvsyncComponent implements OnInit, AfterViewInit {
+  _subscription: Subscription;
+  menuAttr: string;
   allRowsValidated: boolean = false;
   validationResults$ = new BehaviorSubject<ValidationElement[]>([]);
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -40,24 +42,55 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   numberOfErrors: number;
 
 
-
   constructor(
+    private menuService: MenuService,
     private readonly config: AppConfigService,
     private readonly authentication: AuthenticationService,
     private qerService: QerService,
     private cdr: ChangeDetectorRef) {}
 
   public async ngOnInit(): Promise<void>  {
+    this._subscription = this.menuService.submenuAttr.subscribe(
+      value => {
+        this.menuAttr = value;
+        console.log(this.menuAttr);
+      }
+    )
     this.numberOfErrors = 0;
     this.validating = true;
     this.allvalidated = false;
     this.CsvImporter = this.qerService.getCsvImporter();
     this.authentication.update();
     this.cdr.detectChanges();
+    console.log(this.menuAttr);
     console.log(this.CsvImporter)
     console.log(this.allvalidated)
     console.log(this.validating)
   }
+
+  ngOnDestroy() {
+    // Unsubscribe from all subscriptions
+    this._subscription.unsubscribe();
+
+    // Reset variables
+    this.menuAttr = '';
+    this.allRowsValidated = false;
+    this.validationResults$.next([]);
+    this.csvDataSource = new MatTableDataSource();
+    this.csvData = [];
+    this.fileLoaded = false;
+    this.headers = [];
+    this.validationResponses = [];
+    this.validationResults = [];
+    this.CsvImporter = false;
+    this.allvalidated = false;
+    this.visibleRows = [];
+    this.validating = false;
+    this.initializing = false;
+    this.shouldValidate = false;
+    this.numberOfErrors = 0;
+  }
+
 
   checkAllRowsValidated(): boolean {
     // All rows are validated if there are no errors
@@ -152,17 +185,20 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
 
 
 
-  replaceCsv() {
-    this.fileLoaded = false;
-    this.allvalidated = false;
-    this.csvData = [];
-    this.headers = [];
-    this.csvDataSource.data = [];
-    this.validationResponses = [];
-    this.validationResults = [];
-    this.validating = true;
-    this.numberOfErrors = 0;
-  }
+replaceCsv() {
+  this.fileLoaded = false;
+  this.allvalidated = false;
+  this.csvData = [];
+  this.headers = [];
+  this.csvDataSource.data = [];
+  this.validationResponses = [];
+  this.validationResults = [];
+  this.validationResults$.next([]);
+  this.validating = true;
+  this.numberOfErrors = 0;
+  this.visibleRows = [];
+  this.shouldValidate = false;
+}
 
 
   getValidationResult(rowIndex: number, colIndex: number): string | undefined {
