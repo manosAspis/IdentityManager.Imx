@@ -14,7 +14,7 @@
   </eui-alert>
 
   <eui-alert *ngIf="numberOfErrors > 0" class="imx-helper-alert" type="error" condensed="true" [colored]="true" [dismissable]="true">
-    <span>There are errors in your CSV data. Please select another CSV file.</span>
+    <span>There are errors in your CSV data at: {{ getErrorRowsAndHeaders() }}. Please select another CSV file.</span>
   </eui-alert>
 
   <div>

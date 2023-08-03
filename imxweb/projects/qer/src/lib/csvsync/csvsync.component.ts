@@ -136,6 +136,15 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     }
   }
 
+  getErrorRowsAndHeaders(): string {
+    const errorInfos = this.validationResults.map(result => {
+      const headerName = this.headers[result.colIndex];
+      return `At row ${result.rowIndex + 1} the value of ${headerName}`;
+    });
+    return errorInfos.join(', ');
+  }
+
+
 
   onFileChange(event: any) {
     const file = event.target.files[0];
