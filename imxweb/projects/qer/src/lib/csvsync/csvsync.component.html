@@ -17,11 +17,19 @@
     <span>There are errors in your CSV data. Please select another CSV file.</span>
   </eui-alert>
 
-  <div class="search-bar">
-    <mat-form-field class="full-width">
-      <input matInput (keyup)="applyFilter($event)" placeholder="Search">
+  <div>
+    <mat-form-field appearance="outline" class="search-width">
+        <mat-label>Search</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput (keyup)="applyFilter()" [formControl]="searchControl" [disabled]="!fileLoaded">
+        <button mat-icon-button matSuffix *ngIf="searchControl.value" (click)="searchControl.setValue('')">
+            <mat-icon>close</mat-icon>
+        </button>
     </mat-form-field>
-  </div>
+</div>
+
+
+
 
   <div class="file-input-wrapper">
   <input style="display: none;" id="csv-file" type="file" (change)="onFileChange($event)" accept=".csv" />

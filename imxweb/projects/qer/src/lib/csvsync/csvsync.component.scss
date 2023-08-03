@@ -22,7 +22,7 @@ th.mat-header-cell {
 }
 
 .preview-window {
-  height: 500px;
+  height: 420px;
   background-color: $white;
 }
 
@@ -33,7 +33,7 @@ th.mat-header-cell {
 .scrollable-table {
   overflow-y: auto;
   flex-grow: 1;
-  max-height: 500px;
+  max-height: 420px;
 }
 
 .no-results {
@@ -83,10 +83,30 @@ th.mat-header-cell {
 }
 
 
-.full-width {
+.search-width {
   width: 100%;
 }
 
-.search-bar {
-  margin-bottom: 20px;
+.matff {
+  display: flex;
+}
+
+:host .mat-form-field {
+  font-size: 0.8rem;
+}
+
+:host .mat-form-field .mat-form-field-wrapper {
+  padding-bottom: 0.25em;
+}
+
+:host .mat-form-field .mat-form-field-flex {
+  padding: 0.5em 0em;
+}
+
+:host .mat-form-field .mat-form-field-infix {
+  padding: 0.25em 0em;
+}
+
+:host ::ng-deep .mat-form-field {
+  font-size: 0.8rem;
 }

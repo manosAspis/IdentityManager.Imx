@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 import { AppConfigService, AuthenticationService, MenuService  } from 'qbm';
 import { BehaviorSubject, Subscription  } from 'rxjs';
+import { FormControl } from '@angular/forms';
 
 export interface PeriodicElement {}
 export interface ValidationElement{
@@ -40,6 +41,9 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   initializing: boolean = false;
   shouldValidate: boolean = false;
   numberOfErrors: number;
+  searchControl = new FormControl({value: '', disabled: true});
+
+
 
 
   constructor(
@@ -123,8 +127,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.initializing = false;
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
+  applyFilter() {
+    const filterValue = this.searchControl.value;
     this.csvDataSource.filter = filterValue.trim().toLowerCase();
 
     if (this.csvDataSource.paginator) {
@@ -186,6 +190,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
         this.csvDataSource.data = this.csvData;
         this.fileLoaded = true;
     };
+    this.searchControl.enable();
     reader.readAsText(file);
     this.allvalidated = false;
   }
@@ -207,6 +212,7 @@ replaceCsv() {
   this.numberOfErrors = 0;
   this.visibleRows = [];
   this.shouldValidate = false;
+  this.searchControl.disable();
 }
 
 
