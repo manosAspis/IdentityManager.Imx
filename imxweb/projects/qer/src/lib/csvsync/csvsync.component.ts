@@ -168,20 +168,20 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     const reader = new FileReader();
     reader.onload = async () => {
         const data = reader.result as string;
-        const lines = data.split('\n');
-        this.headers = lines[0].split(',').map(header => header.trim());
+        const lines = data.split('\n').filter(line => line.trim().length > 0);  // Filter out empty lines
+        this.headers = ['Index', ...lines[0].split(',').map(header => header ? header.trim() : '')];
         for (let i = 1; i < lines.length; i++) {
-            const row = lines[i].split(',').map(cell => cell.trim()); // Trim the values here
-            if (row.length > 1) {
-                this.csvData.push(row);
-            }
+            const row = [i, ...lines[i].split(',').map(cell => cell ? cell.trim() : '')];
+            this.csvData.push(row);
         }
         this.csvDataSource.data = this.csvData;
         this.fileLoaded = true;
     };
     reader.readAsText(file);
     this.allvalidated = false;
-}
+  }
+
+
 
 
 
@@ -232,29 +232,29 @@ replaceCsv() {
     this.validating = true;
     this.numberOfErrors = 0;  // Reset the error count before new validation
 
-    const firstColumnValues = this.csvDataSource.data.map(row => row[0]);
+    const firstColumnValues = this.csvDataSource.data.map(row => row[1]);
 
     for (const [rowIndex, csvRow] of this.csvDataSource.data.entries()) {  // Validate all rows
       const rowToValidate: any = {
-          "Ident_Org": csvRow[0].trim(), // Trim the values here
-          "City": csvRow[4].trim(),
-          "Description": csvRow[3].trim()
+          "Ident_Org": csvRow[1].trim(), // Trim the values here
+          "City": csvRow[5].trim(),
+          "Description": csvRow[4].trim()
       };
 
       try {
         let validationResponse: any = await this.config.apiClient.processRequest(this.ValidateRow(rowToValidate));
 
         // Check for duplicate Ident_Org here
-        if (firstColumnValues.indexOf(csvRow[0]) !== firstColumnValues.lastIndexOf(csvRow[0])) {
+        if (firstColumnValues.indexOf(csvRow[1]) !== firstColumnValues.lastIndexOf(csvRow[1])) {
           validationResponse["Ident_Org"] = "The CSV has already a same Business Role name.";
         }
 
         console.log(validationResponse);
 
         const columnMapping = {
-          0: "Ident_Org",
-          4: "City",
-          3: "Description"
+          1: "Ident_Org",
+          5: "City",
+          4: "Description"
         };
 
         Object.keys(columnMapping).forEach(colIndex => {
@@ -329,9 +329,9 @@ replaceCsv() {
       // Remove line breaks and leading/trailing spaces
       const cleanRow = csvRow.map(cell => typeof cell === 'string' ? cell.replace(/[\r\n]+/g, '').trim() : cell);
 
-      inputParameterName['Ident_Org'] = cleanRow[0];
-      inputParameterName['City'] = cleanRow[4];
-      inputParameterName['Description'] = cleanRow[3];
+      inputParameterName['Ident_Org'] = cleanRow[1];
+      inputParameterName['City'] = cleanRow[5];
+      inputParameterName['Description'] = cleanRow[4];
 
       inputParameters.push(inputParameterName);
     }
@@ -345,7 +345,7 @@ replaceCsv() {
         console.error(`Error submitting CSV data: ${error}`);
       }
     }
-    this.validating = false;
+    this.allRowsValidated = false;
     return results;
 
   }
