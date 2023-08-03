@@ -134,6 +134,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     if (this.csvDataSource.paginator) {
       this.csvDataSource.paginator.firstPage();
     }
+    this.cdr.detectChanges();
   }
 
   getErrorRowsAndHeaders(): string {
@@ -143,6 +144,12 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     });
     return errorInfos.join(', ');
   }
+
+  isRowError(rowIndex: number): boolean {
+    const actualRowIndex = this.paginator.pageIndex * this.paginator.pageSize + rowIndex;
+    return this.validationResults.some(result => result.rowIndex === actualRowIndex);
+  }
+
 
 
 
@@ -311,6 +318,7 @@ replaceCsv() {
     }
 
     this.visibleRows = this.csvDataSource.data.slice(startIndex, endIndex);
+    this.cdr.detectChanges();
   }
 
 

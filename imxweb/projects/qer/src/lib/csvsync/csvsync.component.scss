@@ -110,3 +110,7 @@ th.mat-header-cell {
 :host ::ng-deep .mat-form-field {
   font-size: 0.8rem;
 }
+
+.error-row {
+  background-color: #ffe5e5 /* light red */
+}

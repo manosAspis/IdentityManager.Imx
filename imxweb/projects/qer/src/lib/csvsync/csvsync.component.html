@@ -64,7 +64,9 @@
 
         <!-- Header and Rows -->
         <tr mat-header-row *matHeaderRowDef="headers"></tr>
-        <tr mat-row *matRowDef="let row; columns: headers;"></tr>
+        <tr mat-row *matRowDef="let row; columns: headers; let rowIndex = index" [class.error-row]="isRowError(rowIndex)">
+        </tr>
+
 
       </table>
     </div>
