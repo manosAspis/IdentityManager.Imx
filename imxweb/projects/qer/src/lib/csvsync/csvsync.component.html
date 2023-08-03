@@ -1,12 +1,28 @@
 <div *ngIf="CsvImporter">
   <h1 *ngIf="menuAttr === 'IDENTITIES_IMPORT'" class="mat-headline">Bulk imports for Identities</h1>
   <h1 *ngIf="menuAttr === 'BUSINESS_ROLES_IMPORT'" class="mat-headline">Bulk imports for Business Roles</h1>
-  <eui-alert class="imx-helper-alert" type="info" condensed="true" [colored]="true" [dismissable]="true">
-    <span *ngIf="!fileLoaded">Drag & drop or upload a CSV file.</span>
-    <span *ngIf="fileLoaded && numberOfErrors === 0 && (!allRowsValidated || validating || initializing) && numberOfErrors === 0">Validate your CSV data.</span>
-    <span *ngIf="fileLoaded && allRowsValidated && !validating && !initializing && numberOfErrors === 0">You can submit your CSV to the database.</span>
-    <span *ngIf="numberOfErrors > 0">There are errors in your CSV data. Please select another CSV file.</span>
+  <eui-alert *ngIf="!fileLoaded" class="imx-helper-alert" type="info" condensed="true" [colored]="true" [dismissable]="true">
+    <span>Drag & drop or upload a CSV file.</span>
   </eui-alert>
+
+  <eui-alert *ngIf="fileLoaded && numberOfErrors === 0 && (!allRowsValidated || validating || initializing) && numberOfErrors === 0" class="imx-helper-alert" type="warning" condensed="true" [colored]="true" [dismissable]="true">
+    <span>Validate your CSV data.</span>
+  </eui-alert>
+
+  <eui-alert *ngIf="fileLoaded && allRowsValidated && !validating && !initializing && numberOfErrors === 0" class="imx-helper-alert" type="success" condensed="true" [colored]="true" [dismissable]="true">
+    <span>You can submit your CSV to the database.</span>
+  </eui-alert>
+
+  <eui-alert *ngIf="numberOfErrors > 0" class="imx-helper-alert" type="error" condensed="true" [colored]="true" [dismissable]="true">
+    <span>There are errors in your CSV data. Please select another CSV file.</span>
+  </eui-alert>
+
+  <div class="search-bar">
+    <mat-form-field class="full-width">
+      <input matInput (keyup)="applyFilter($event)" placeholder="Search">
+    </mat-form-field>
+  </div>
+
   <div class="file-input-wrapper">
   <input style="display: none;" id="csv-file" type="file" (change)="onFileChange($event)" accept=".csv" />
 
@@ -20,6 +36,10 @@
     </div>
   </div>
   <div *ngIf="fileLoaded" class="scrollable-table">
+
+
+
+
     <table mat-table [dataSource]="csvDataSource">
 
         <!-- Table Columns -->

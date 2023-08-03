@@ -123,6 +123,15 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.initializing = false;
   }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.csvDataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.csvDataSource.paginator) {
+      this.csvDataSource.paginator.firstPage();
+    }
+  }
+
 
   onFileChange(event: any) {
     const file = event.target.files[0];
