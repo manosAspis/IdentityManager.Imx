@@ -146,9 +146,11 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   }
 
   isRowError(rowIndex: number): boolean {
-    const actualRowIndex = this.paginator.pageIndex * this.paginator.pageSize + rowIndex;
-    return this.validationResults.some(result => result.rowIndex === actualRowIndex);
+    // Get the row index in the filtered data
+    const adjustedRowIndex = this.csvDataSource.filteredData[rowIndex + (this.paginator.pageIndex * this.paginator.pageSize)]?.[0] - 1;
+    return this.validationResults.some(result => result.rowIndex === adjustedRowIndex);
   }
+
 
 
 
