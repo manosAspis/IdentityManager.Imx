@@ -13,7 +13,15 @@ export interface ValidationElement{
   colIndex: number;
   message: string;
 }
+export interface ConfigElement {
+  Person: string;
+  Org: string;
+}
 
+let ConfigParam: ConfigElement[] = [
+  {Person: '', Org: ''},
+
+];
 
 @Component({
   selector: 'imx-csvsync',
@@ -44,6 +52,12 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   searchControl = new FormControl({value: '', disabled: true});
   loading = false;
 
+  displayedParams: string[] = ['Person', 'Org'];
+  configSource = ConfigParam;
+  Person: string;
+  Org: string;
+  selectedOption: string;
+
 
 
 
@@ -61,6 +75,12 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
         console.log(this.menuAttr);
       }
     )
+    await this.getCustom();
+      if (this.configSource && this.configSource.length > 0) {
+        this.Person = this.configSource[0].Person;
+        this.Org = this.configSource[0].Org;
+
+      }
     this.numberOfErrors = 0;
     this.loading = false;
     this.validating = true;
@@ -68,6 +88,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.CsvImporter = this.qerService.getCsvImporter();
     this.authentication.update();
     this.cdr.detectChanges();
+    console.warn(this.Person, this.Org)
     console.log(this.menuAttr);
     console.log(this.CsvImporter)
     console.log(this.allvalidated)
@@ -429,6 +450,29 @@ private PostBR(inputParameterName: any): MethodDescriptor<PeriodicElement> {
     credentials: 'include',
     observe: 'response',
     responseType: 'json'
+  };
+}
+
+
+public async getCustom(): Promise<ConfigElement> {
+  const data = await this.config.apiClient.processRequest(this.getConfigCsv());
+  ConfigParam = [data];
+  this.configSource = ConfigParam;
+  return data;
+ }
+
+ private getConfigCsv(): MethodDescriptor<ConfigElement> {
+  const parameters = [];
+  return {
+    path: `/portal/ConfigCsv`,
+    parameters,
+    method: 'GET',
+    headers: {
+      'imx-timezone': TimeZoneInfo.get(),
+    },
+    credentials: 'include',
+    observe: 'response',
+    responseType: 'json',
   };
 }
 }

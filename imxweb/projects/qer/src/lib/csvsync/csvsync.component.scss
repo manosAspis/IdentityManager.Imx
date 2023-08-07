@@ -138,3 +138,14 @@ th.mat-header-cell {
   align-items: center;
 }
 
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 1%
+}
+.flex-container > div:first-child {
+  width: 79%;
+}
+.flex-container > div:last-child {
+  width: 20%;
+}
