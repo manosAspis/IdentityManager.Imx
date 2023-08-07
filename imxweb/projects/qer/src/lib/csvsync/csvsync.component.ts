@@ -98,9 +98,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   ngOnDestroy() {
     // Unsubscribe from all subscriptions
     this._subscription.unsubscribe();
-
-    // Reset variables
-    this.menuAttr = '';
+    this.Person = '';
+    this.Org = '';
     this.allRowsValidated = false;
     this.validationResults$.next([]);
     this.csvDataSource = new MatTableDataSource();
