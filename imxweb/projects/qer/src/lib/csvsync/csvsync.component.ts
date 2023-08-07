@@ -42,6 +42,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   shouldValidate: boolean = false;
   numberOfErrors: number;
   searchControl = new FormControl({value: '', disabled: true});
+  loading = false;
 
 
 
@@ -61,6 +62,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
       }
     )
     this.numberOfErrors = 0;
+    this.loading = false;
     this.validating = true;
     this.allvalidated = false;
     this.CsvImporter = this.qerService.getCsvImporter();
@@ -218,6 +220,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
 
 
 replaceCsv() {
+  this.loading = true;
   this.fileLoaded = false;
   this.allvalidated = false;
   this.csvData = [];
@@ -231,6 +234,9 @@ replaceCsv() {
   this.visibleRows = [];
   this.shouldValidate = false;
   this.searchControl.disable();
+  setTimeout(() => {
+    this.loading = false;
+  });
 }
 
 getValidationResult(rowIndex: number, colIndex: number): string | undefined {
@@ -257,10 +263,17 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
 
 
   public async validate(): Promise<void> {
+    this.loading = true;
     if(this.initializing) {
+      setTimeout(() => {
+        this.loading = false;
+      });
       return;
     }
     if(!this.shouldValidate) {
+      setTimeout(() => {
+        this.loading = false;
+      });
       return;
     }
     this.validationResults = [];  // Clear the previous validation results
@@ -312,9 +325,13 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     this.validating = false;
     console.log(this.allvalidated);
     this.cdr.detectChanges();
+    setTimeout(() => {
+      this.loading = false;
+    });
   }
 
   public pageChanged(event: PageEvent): void {
+    this.loading = true;
     const startIndex = event.pageIndex * event.pageSize;
     let endIndex = startIndex + event.pageSize;
 
@@ -324,6 +341,9 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
 
     this.visibleRows = this.csvDataSource.data.slice(startIndex, endIndex);
     this.cdr.detectChanges();
+    setTimeout(() => {
+      this.loading = false;
+    });
   }
 
 
@@ -351,6 +371,7 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
 
 
   public async importToDatabase(): Promise<PeriodicElement[]> {
+    this.loading = true;
     const inputParameters: any[] = [];
     const csvData = this.csvDataSource.data;
     const results: PeriodicElement[] = [];
@@ -383,6 +404,9 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
       }
     }
     this.allRowsValidated = false;
+    setTimeout(() => {
+      this.loading = false;
+    });
     return results;
 
   }

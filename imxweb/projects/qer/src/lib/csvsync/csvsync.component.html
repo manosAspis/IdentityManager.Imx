@@ -1,6 +1,6 @@
+<div class="overlay" *ngIf="loading"></div>
 <div *ngIf="CsvImporter">
-  <h1 *ngIf="menuAttr === 'IDENTITIES_IMPORT'" class="mat-headline">Bulk imports for Identities</h1>
-  <h1 *ngIf="menuAttr === 'BUSINESS_ROLES_IMPORT'" class="mat-headline">Bulk imports for Business Roles</h1>
+  <h1 class="mat-headline">Bulk Imports</h1>
   <eui-alert *ngIf="!fileLoaded" class="imx-helper-alert" type="info" condensed="true" [colored]="true" [dismissable]="true">
     <span>Drag & drop or upload a CSV file.</span>
   </eui-alert>
@@ -40,7 +40,7 @@
     <div for="file" class="no-results" (click)="triggerFileUpload()">
       <eui-icon [icon]="noDataIcon"></eui-icon>
       <p>Drag and drop a CSV file here</p>
-        <p>Or click here to browse</p>
+        <p>or click here to browse.</p>
     </div>
   </div>
   <div *ngIf="fileLoaded" class="scrollable-table">
@@ -121,6 +121,12 @@
         Import Business Roles
     </button>
   </div>
+  <div *ngIf="loading" class="spinner-container">
+    <div class="spinner-wrapper">
+      <mat-spinner mode="indeterminate"></mat-spinner>
+    </div>
+  </div>
+
 </div>
 
 

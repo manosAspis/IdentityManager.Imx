@@ -114,3 +114,27 @@ th.mat-header-cell {
 .error-row {
   background-color: #ffe5e5 /* light red */
 }
+
+.spinner-container {
+  background-color: rgba(0, 0, 0, 0.3); /* Dark background for the whole page */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner-wrapper {
+  background-color: white;
+  border-radius: 5px;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
