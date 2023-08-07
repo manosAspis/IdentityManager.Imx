@@ -231,12 +231,15 @@ replaceCsv() {
   this.searchControl.disable();
 }
 
+getValidationResult(rowIndex: number, colIndex: number): string | undefined {
+  // Get the row index in the filtered data
+  const adjustedRowIndex = this.csvDataSource.filteredData[rowIndex + (this.paginator.pageIndex * this.paginator.pageSize)]?.[0] - 1;
 
-  getValidationResult(rowIndex: number, colIndex: number): string | undefined {
-    const adjustedRowIndex = rowIndex + (this.paginator.pageIndex * this.paginator.pageSize);
-    const validationResult = this.validationResults.find(result => result.rowIndex === adjustedRowIndex && result.colIndex === colIndex);
-    return validationResult?.message;
-  }
+  // Find the validation result using the adjusted row index
+  const validationResult = this.validationResults.find(result => result.rowIndex === adjustedRowIndex && result.colIndex === colIndex);
+  return validationResult?.message;
+}
+
 
 
   isValidationError(rowIndex: number, colIndex: number): boolean {
