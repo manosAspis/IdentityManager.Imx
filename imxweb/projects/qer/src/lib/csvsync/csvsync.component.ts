@@ -4,7 +4,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 import { AppConfigService, AuthenticationService, MenuService  } from 'qbm';
-import { BehaviorSubject, Subscription  } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
 
 export interface PeriodicElement {}
@@ -29,8 +29,6 @@ let ConfigParam: ConfigElement[] = [
   styleUrls: ['./csvsync.component.scss']
 })
 export class CsvsyncComponent implements OnInit, AfterViewInit {
-  _subscription: Subscription;
-  menuAttr: string;
   allRowsValidated: boolean = false;
   validationResults$ = new BehaviorSubject<ValidationElement[]>([]);
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -58,9 +56,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   Org: string;
   selectedOption: string;
 
-
-
-
   constructor(
     private menuService: MenuService,
     private readonly config: AppConfigService,
@@ -69,18 +64,13 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef) {}
 
   public async ngOnInit(): Promise<void>  {
-    this._subscription = this.menuService.submenuAttr.subscribe(
-      value => {
-        this.menuAttr = value;
-        console.log(this.menuAttr);
-      }
-    )
     await this.getCustom();
       if (this.configSource && this.configSource.length > 0) {
         this.Person = this.configSource[0].Person;
         this.Org = this.configSource[0].Org;
 
       }
+
     this.selectedOption = null;
     this.numberOfErrors = 0;
     this.loading = false;
@@ -90,7 +80,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.authentication.update();
     this.cdr.detectChanges();
     console.warn(this.Person, this.Org)
-    console.log(this.menuAttr);
     console.log(this.CsvImporter)
     console.log(this.allvalidated)
     console.log(this.validating)
@@ -98,7 +87,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
 
   ngOnDestroy() {
     this.selectedOption = null;
-    this._subscription.unsubscribe();
     this.Person = '';
     this.Org = '';
     this.allRowsValidated = false;
@@ -124,31 +112,32 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     return this.numberOfErrors === 0;
   }
 
-
-
   ngAfterViewInit() {
     this.initializing = true;
-    this.csvDataSource.paginator = this.paginator;
-    this.validating = true;
-    this.cdr.detectChanges();
-    if (this.paginator) {
-      // Create a new PageEvent and manually trigger the page change event
-      const initialPageEvent = new PageEvent();
-      initialPageEvent.pageIndex = 0;
-      initialPageEvent.pageSize = this.paginator.pageSize;
-      initialPageEvent.length = this.csvDataSource.data.length;
+    setTimeout(() => {
+      this.csvDataSource.paginator = this.paginator;
+      this.validating = true;
+      this.cdr.detectChanges();
+      if (this.paginator) {
+        // Create a new PageEvent and manually trigger the page change event
+        const initialPageEvent = new PageEvent();
+        initialPageEvent.pageIndex = 0;
+        initialPageEvent.pageSize = this.paginator.pageSize;
+        initialPageEvent.length = this.csvDataSource.data.length;
 
-      this.pageChanged(initialPageEvent);
+        this.pageChanged(initialPageEvent);
 
-      // Subscribe to future page changes
-      this.paginator.page.subscribe((event) => {
-        this.pageChanged(event);
-      });
-    } else {
-      console.warn('Paginator is not available');
-    }
-    this.initializing = false;
+        // Subscribe to future page changes
+        this.paginator.page.subscribe((event) => {
+          this.pageChanged(event);
+        });
+      } else {
+        console.warn('Paginator is not available');
+      }
+      this.initializing = false;
+    }, 100); // Adjust the delay as needed, typically a small value like 100ms should be sufficient
   }
+
 
   applyFilter() {
     const filterValue = this.searchControl.value;
@@ -173,10 +162,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     const adjustedRowIndex = this.csvDataSource.filteredData[rowIndex + (this.paginator.pageIndex * this.paginator.pageSize)]?.[0] - 1;
     return this.validationResults.some(result => result.rowIndex === adjustedRowIndex);
   }
-
-
-
-
 
   onFileChange(event: any) {
     const file = event.target.files[0];
@@ -236,10 +221,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.allvalidated = false;
   }
 
-
-
-
-
 replaceCsv() {
   this.loading = true;
   this.fileLoaded = false;
@@ -269,21 +250,17 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
   return validationResult?.message;
 }
 
-
-
   isValidationError(rowIndex: number, colIndex: number): boolean {
     return this.getValidationResult(rowIndex, colIndex) !== undefined;
   }
 
-  public async onValidateClicked(): Promise<void> {
+  public async onValidateClickedBR(): Promise<void> {
     this.shouldValidate = true;
-    await this.validate();
+    await this.validateBR();
     this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
   }
 
-
-
-  public async validate(): Promise<void> {
+  public async validateBR(): Promise<void> {
     this.loading = true;
     if(this.initializing) {
       setTimeout(() => {
@@ -312,7 +289,7 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
       };
 
       try {
-        let validationResponse: any = await this.config.apiClient.processRequest(this.ValidateRow(rowToValidate));
+        let validationResponse: any = await this.config.apiClient.processRequest(this.ValidateRowBR(rowToValidate));
 
         // Check for duplicate Ident_Org here
         if (firstColumnValues.indexOf(csvRow[1]) !== firstColumnValues.lastIndexOf(csvRow[1])) {
@@ -325,6 +302,75 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
           1: "Ident_Org",
           5: "City",
           4: "Description"
+        };
+
+        Object.keys(columnMapping).forEach(colIndex => {
+          const columnName = columnMapping[colIndex];
+          if (validationResponse[columnName] && validationResponse[columnName] !== "ok") {
+            this.validationResults.push({ rowIndex, colIndex: Number(colIndex), message: validationResponse[columnName] });
+            this.allvalidated = false;
+            this.numberOfErrors++;
+          }
+        });
+
+      } catch (error) {
+        console.error(`Error validating row ${rowIndex}: ${error}`);
+        this.allvalidated = false;
+        this.validationResults$.next(this.validationResults);
+      }
+    }
+
+    this.validating = false;
+    console.log(this.allvalidated);
+    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.loading = false;
+    });
+  }
+
+  public async onValidateClickedID(): Promise<void> {
+    this.shouldValidate = true;
+    await this.validateID();
+    this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
+  }
+
+  public async validateID(): Promise<void> {
+    this.loading = true;
+    if(this.initializing) {
+      setTimeout(() => {
+        this.loading = false;
+      });
+      return;
+    }
+    if(!this.shouldValidate) {
+      setTimeout(() => {
+        this.loading = false;
+      });
+      return;
+    }
+    this.validationResults = [];  // Clear the previous validation results
+    this.allvalidated = true;
+    this.validating = true;
+    this.numberOfErrors = 0;  // Reset the error count before new validation
+
+    for (const [rowIndex, csvRow] of this.csvDataSource.data.entries()) {  // Validate all rows
+      const rowToValidate: any = {
+          "FirstName": csvRow[1].trim(), // Trim the values here
+          "LastName": csvRow[2].trim(),
+          "Manager": csvRow[3].trim(),
+          "Department": csvRow[5].trim()
+      };
+
+      try {
+        let validationResponse: any = await this.config.apiClient.processRequest(this.ValidateRowID(rowToValidate));
+
+        console.log(validationResponse);
+
+        const columnMapping = {
+          1: "FirstName",
+          2: "LastName",
+          3: "Manager",
+          5: "Department"
         };
 
         Object.keys(columnMapping).forEach(colIndex => {
@@ -367,10 +413,7 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     });
   }
 
-
-
-
-  private ValidateRow(rowToValidate: any): MethodDescriptor<ValidationElement> {
+  private ValidateRowBR(rowToValidate: any): MethodDescriptor<ValidationElement> {
     return {
       path: `/portal/validateBR`,
       parameters: [
@@ -390,8 +433,27 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     };
   }
 
+  private ValidateRowID(rowToValidate: any): MethodDescriptor<ValidationElement> {
+    return {
+      path: `/portal/validateID`,
+      parameters: [
+        {
+          name: 'rowToValidate',
+          value: rowToValidate,
+          in: 'body'
+        },
+      ],
+      method: 'POST',
+      headers: {
+        'imx-timezone': TimeZoneInfo.get(),
+      },
+      credentials: 'include',
+      observe: 'response',
+      responseType: 'json'
+    };
+  }
 
-  public async importToDatabase(): Promise<PeriodicElement[]> {
+  public async importToDatabaseBR(): Promise<PeriodicElement[]> {
     this.loading = true;
     const inputParameters: any[] = [];
     const csvData = this.csvDataSource.data;

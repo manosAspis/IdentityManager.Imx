@@ -83,7 +83,7 @@
     </div>
     <mat-paginator #paginator [pageSizeOptions]="[20, 50, 100, 200]" showFirstLastButtons (page)="pageChanged($event)"></mat-paginator>
   <div class="button-bar">
-    <button *ngIf="selectedOption === 'Identities'"
+    <button
         mat-raised-button
         [disabled]="!fileLoaded"
         color="accent"
@@ -95,59 +95,45 @@
         mat-raised-button
         [disabled]="!fileLoaded"
         color="warn"
-        (click)="onValidateClicked()"
+        (click)="onValidateClickedID()"
       >
         Validate
     </button>
     <button *ngIf="selectedOption === 'Identities'"
         mat-raised-button
-        [disabled]="!allRowsValidated || validating || initializing"
+        [disabled]="!allRowsValidated || validating || initializing || !fileLoaded"
         color="primary"
-        (click)="importToDatabase()"
       >
         Import to database
     </button>
-    <button *ngIf="selectedOption === 'Business roles'"
-        mat-raised-button
-        [disabled]="!fileLoaded"
-        color="accent"
-        (click)="replaceCsv()"
-      >
-        Remove CSV
-    </button>
+
     <button *ngIf="selectedOption === 'Business roles'"
         mat-raised-button
         [disabled]="!fileLoaded"
         color="warn"
-        (click)="onValidateClicked()"
+        (click)="onValidateClickedBR()"
       >
         Validate
     </button>
     <button *ngIf="selectedOption === 'Business roles'"
         mat-raised-button
-        [disabled]="!allRowsValidated || validating || initializing"
+        [disabled]="!allRowsValidated || validating || initializing || !fileLoaded"
         color="primary"
-        (click)="importToDatabase()"
+        (click)="importToDatabaseBR()"
       >
       Import to database
     </button>
-    <button *ngIf="!fileLoaded && selectedOption === null"
+
+    <button *ngIf="selectedOption === null"
         mat-raised-button
-        [disabled]="!fileLoaded"
-        color="accent"
-      >
-        Remove CSV
-    </button>
-    <button *ngIf="!fileLoaded && selectedOption === null"
-        mat-raised-button
-        [disabled]="!fileLoaded"
+        [disabled]="1===1"
         color="warn"
       >
         Validate
     </button>
-    <button *ngIf="!fileLoaded && selectedOption === null"
+    <button *ngIf="selectedOption === null"
         mat-raised-button
-        [disabled]="!fileLoaded"
+        [disabled]="1===1"
         color="primary"
       >
       Import to database

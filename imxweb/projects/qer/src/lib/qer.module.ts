@@ -65,6 +65,7 @@ import { CsvsyncComponent } from './csvsync/csvsync.component';
 import { CsvmappingComponent } from './csvsync/csvmapping/csvmapping.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
 
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
@@ -100,6 +101,7 @@ const routes: Routes = [
     CsvsyncComponent, CsvmappingComponent,
   ],
   imports: [
+    MatTableModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
     CommonModule,
