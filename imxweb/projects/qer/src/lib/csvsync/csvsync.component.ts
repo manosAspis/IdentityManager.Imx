@@ -81,6 +81,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
         this.Org = this.configSource[0].Org;
 
       }
+    this.selectedOption = null;
     this.numberOfErrors = 0;
     this.loading = false;
     this.validating = true;
@@ -96,7 +97,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   }
 
   ngOnDestroy() {
-    // Unsubscribe from all subscriptions
+    this.selectedOption = null;
     this._subscription.unsubscribe();
     this.Person = '';
     this.Org = '';

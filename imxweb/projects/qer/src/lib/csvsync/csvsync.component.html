@@ -131,6 +131,27 @@
       >
       Import to database
     </button>
+    <button *ngIf="!fileLoaded && selectedOption === null"
+        mat-raised-button
+        [disabled]="!fileLoaded"
+        color="accent"
+      >
+        Remove CSV
+    </button>
+    <button *ngIf="!fileLoaded && selectedOption === null"
+        mat-raised-button
+        [disabled]="!fileLoaded"
+        color="warn"
+      >
+        Validate
+    </button>
+    <button *ngIf="!fileLoaded && selectedOption === null"
+        mat-raised-button
+        [disabled]="!fileLoaded"
+        color="primary"
+      >
+      Import to database
+    </button>
   </div>
   <div *ngIf="loading" class="spinner-container">
     <div class="spinner-wrapper">
