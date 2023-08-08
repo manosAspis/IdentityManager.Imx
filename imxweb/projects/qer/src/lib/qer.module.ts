@@ -64,6 +64,7 @@ import { RoleMembershipsModule } from './role-management/role-memberships/role-m
 import { CsvsyncComponent } from './csvsync/csvsync.component';
 import { CsvmappingComponent } from './csvsync/csvmapping/csvmapping.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
@@ -99,6 +100,7 @@ const routes: Routes = [
     CsvsyncComponent, CsvmappingComponent,
   ],
   imports: [
+    MatPaginatorModule,
     MatProgressSpinnerModule,
     CommonModule,
     RouterModule.forChild(routes),

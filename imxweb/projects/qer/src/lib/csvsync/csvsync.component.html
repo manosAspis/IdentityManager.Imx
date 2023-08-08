@@ -22,7 +22,7 @@
     <mat-form-field appearance="outline" class="search-width">
         <mat-label>Search</mat-label>
         <mat-icon matPrefix>search</mat-icon>
-        <input matInput (keyup)="applyFilter()" [formControl]="searchControl" [disabled]="!fileLoaded">
+        <input matInput (keyup)="applyFilter()" [formControl]="searchControl">
         <button mat-icon-button matSuffix *ngIf="searchControl.value" (click)="searchControl.setValue('')">
             <mat-icon>close</mat-icon>
         </button>
