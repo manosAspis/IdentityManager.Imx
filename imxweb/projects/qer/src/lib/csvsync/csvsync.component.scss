@@ -9,10 +9,15 @@
 }
 
 th.mat-header-cell {
+  min-width: 100px;
   position: sticky;
   top: 0;
   background-color: $white;
   z-index: 1;
+}
+
+td.mat-cell {
+  min-width: 100px;
 }
 
 .file-input-wrapper {
