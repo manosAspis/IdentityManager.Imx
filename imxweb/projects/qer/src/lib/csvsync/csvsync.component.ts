@@ -64,6 +64,13 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef) {}
 
   public async ngOnInit(): Promise<void>  {
+    console.log(this.val('person', {
+      "FirstName": "sdfs",
+      "LastName": "Sdfsdfs",
+      "Manager": "dftgy",
+      "Department": "fgytjc"
+  }));
+    console.log(this.mapping('person'));
     await this.getCustom();
       if (this.configSource && this.configSource.length > 0) {
         this.Person = this.configSource[0].Person;
@@ -254,149 +261,6 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     return this.getValidationResult(rowIndex, colIndex) !== undefined;
   }
 
-  public async onValidateClickedBR(): Promise<void> {
-    this.shouldValidate = true;
-    await this.validateBR();
-    this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
-  }
-
-  public async validateBR(): Promise<void> {
-    this.loading = true;
-    if(this.initializing) {
-      setTimeout(() => {
-        this.loading = false;
-      });
-      return;
-    }
-    if(!this.shouldValidate) {
-      setTimeout(() => {
-        this.loading = false;
-      });
-      return;
-    }
-    this.validationResults = [];  // Clear the previous validation results
-    this.allvalidated = true;
-    this.validating = true;
-    this.numberOfErrors = 0;  // Reset the error count before new validation
-
-    const firstColumnValues = this.csvDataSource.data.map(row => row[1]);
-
-    for (const [rowIndex, csvRow] of this.csvDataSource.data.entries()) {  // Validate all rows
-      const rowToValidate: any = {
-          "Ident_Org": csvRow[1].trim(), // Trim the values here
-          "City": csvRow[5].trim(),
-          "Description": csvRow[4].trim()
-      };
-
-      try {
-        let validationResponse: any = await this.config.apiClient.processRequest(this.ValidateRowBR(rowToValidate));
-
-        // Check for duplicate Ident_Org here
-        if (firstColumnValues.indexOf(csvRow[1]) !== firstColumnValues.lastIndexOf(csvRow[1])) {
-          validationResponse["Ident_Org"] = "The CSV has already a same Business Role name.";
-        }
-
-        console.log(validationResponse);
-
-        const columnMapping = {
-          1: "Ident_Org",
-          5: "City",
-          4: "Description"
-        };
-
-        Object.keys(columnMapping).forEach(colIndex => {
-          const columnName = columnMapping[colIndex];
-          if (validationResponse[columnName] && validationResponse[columnName] !== "ok") {
-            this.validationResults.push({ rowIndex, colIndex: Number(colIndex), message: validationResponse[columnName] });
-            this.allvalidated = false;
-            this.numberOfErrors++;
-          }
-        });
-
-      } catch (error) {
-        console.error(`Error validating row ${rowIndex}: ${error}`);
-        this.allvalidated = false;
-        this.validationResults$.next(this.validationResults);
-      }
-    }
-
-    this.validating = false;
-    console.log(this.allvalidated);
-    this.cdr.detectChanges();
-    setTimeout(() => {
-      this.loading = false;
-    });
-  }
-
-  public async onValidateClickedID(): Promise<void> {
-    this.shouldValidate = true;
-    await this.validateID();
-    this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
-  }
-
-  public async validateID(): Promise<void> {
-    this.loading = true;
-    if(this.initializing) {
-      setTimeout(() => {
-        this.loading = false;
-      });
-      return;
-    }
-    if(!this.shouldValidate) {
-      setTimeout(() => {
-        this.loading = false;
-      });
-      return;
-    }
-    this.validationResults = [];  // Clear the previous validation results
-    this.allvalidated = true;
-    this.validating = true;
-    this.numberOfErrors = 0;  // Reset the error count before new validation
-
-    for (const [rowIndex, csvRow] of this.csvDataSource.data.entries()) {  // Validate all rows
-      const rowToValidate: any = {
-          "FirstName": csvRow[1].trim(), // Trim the values here
-          "LastName": csvRow[2].trim(),
-          "Manager": csvRow[3].trim(),
-          "Department": csvRow[5].trim()
-      };
-
-      try {
-        let validationResponse: any = await this.config.apiClient.processRequest(this.ValidateRowID(rowToValidate));
-
-        console.log(validationResponse);
-
-        const columnMapping = {
-          1: "FirstName",
-          2: "LastName",
-          3: "Manager",
-          5: "Department"
-        };
-
-        Object.keys(columnMapping).forEach(colIndex => {
-          const columnName = columnMapping[colIndex];
-          if (validationResponse[columnName] && validationResponse[columnName] !== "ok") {
-            this.validationResults.push({ rowIndex, colIndex: Number(colIndex), message: validationResponse[columnName] });
-            this.allvalidated = false;
-            this.numberOfErrors++;
-          }
-        });
-
-      } catch (error) {
-        console.error(`Error validating row ${rowIndex}: ${error}`);
-        this.allvalidated = false;
-        this.validationResults$.next(this.validationResults);
-      }
-    }
-
-    this.validating = false;
-    console.log(this.allvalidated);
-    this.cdr.detectChanges();
-    setTimeout(() => {
-      this.loading = false;
-    });
-  }
-
   public pageChanged(event: PageEvent): void {
     this.loading = true;
     const startIndex = event.pageIndex * event.pageSize;
@@ -411,46 +275,6 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     setTimeout(() => {
       this.loading = false;
     });
-  }
-
-  private ValidateRowBR(rowToValidate: any): MethodDescriptor<ValidationElement> {
-    return {
-      path: `/portal/validateBR`,
-      parameters: [
-        {
-          name: 'rowToValidate',
-          value: rowToValidate,
-          in: 'body'
-        },
-      ],
-      method: 'POST',
-      headers: {
-        'imx-timezone': TimeZoneInfo.get(),
-      },
-      credentials: 'include',
-      observe: 'response',
-      responseType: 'json'
-    };
-  }
-
-  private ValidateRowID(rowToValidate: any): MethodDescriptor<ValidationElement> {
-    return {
-      path: `/portal/validateID`,
-      parameters: [
-        {
-          name: 'rowToValidate',
-          value: rowToValidate,
-          in: 'body'
-        },
-      ],
-      method: 'POST',
-      headers: {
-        'imx-timezone': TimeZoneInfo.get(),
-      },
-      credentials: 'include',
-      observe: 'response',
-      responseType: 'json'
-    };
   }
 
   public async importToDatabaseBR(): Promise<PeriodicElement[]> {
@@ -537,4 +361,114 @@ public async getCustom(): Promise<ConfigElement> {
     responseType: 'json',
   };
 }
+
+public async mapping(endpoint: string): Promise<object> {
+  const mapping = await this.config.apiClient.processRequest(this.getMapping(endpoint));
+  console.log(mapping);
+  return mapping;
+ }
+
+private getMapping(endpoint: string): MethodDescriptor<object> {
+  const parameters = [];
+  return {
+    path: `/portal/bulkimports/${endpoint}/mapping`,
+    parameters,
+    method: 'GET',
+    headers: {
+      'imx-timezone': TimeZoneInfo.get(),
+    },
+    credentials: 'include',
+    observe: 'response',
+    responseType: 'json',
+  };
 }
+
+
+public async onValidateClicked(endpoint: string): Promise<void> {
+  this.shouldValidate = true;
+  const mapping = await this.mapping(endpoint); // Fetch the mapping from API
+  await this.validate(endpoint, mapping);
+  this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
+}
+
+public async validate(endpoint: string, columnMapping: any): Promise<void> {
+  this.loading = true;
+  if(this.initializing || !this.shouldValidate) {
+    setTimeout(() => {
+      this.loading = false;
+    });
+    return;
+  }
+  this.validationResults = []; // Clear the previous validation results
+  this.allvalidated = true;
+  this.validating = true;
+  this.numberOfErrors = 0; // Reset the error count before new validation
+
+  for (const [rowIndex, csvRow] of this.csvDataSource.data.entries()) { // Validate all rows
+    const rowToValidate: any = {};
+    Object.keys(columnMapping).forEach(colIndex => {
+      const columnName = columnMapping[colIndex];
+      rowToValidate[columnName] = csvRow[colIndex].trim(); // Trim the values here
+    });
+
+    try {
+      let validationResponse: any = await this.config.apiClient.processRequest(this.validateRow(endpoint, rowToValidate));
+
+      // Additional logic if needed (e.g. check for duplicates)
+      // ...
+
+      console.log(validationResponse);
+
+      Object.keys(columnMapping).forEach(colIndex => {
+        const columnName = columnMapping[colIndex];
+        if (validationResponse[columnName] && validationResponse[columnName] !== "ok") {
+          this.validationResults.push({ rowIndex, colIndex: Number(colIndex), message: validationResponse[columnName] });
+          this.allvalidated = false;
+          this.numberOfErrors++;
+        }
+      });
+
+    } catch (error) {
+      console.error(`Error validating row ${rowIndex}: ${error}`);
+      this.allvalidated = false;
+      this.validationResults$.next(this.validationResults);
+    }
+  }
+
+  this.validating = false;
+  console.log(this.allvalidated);
+  this.cdr.detectChanges();
+  setTimeout(() => {
+    this.loading = false;
+  });
+}
+
+public async val(endpoint: string, rowToValidate: any): Promise<object> {
+  const val = await this.config.apiClient.processRequest(this.validateRow(endpoint, rowToValidate));
+  console.log(val);
+  return val;
+ }
+
+private validateRow(endpoint: string, rowToValidate: any): MethodDescriptor<ValidationElement> {
+  return {
+    path: `/portal/bulkimports/${endpoint}/validate`,
+    parameters: [
+      {
+        name: 'rowToValidate',
+        value: rowToValidate,
+        in: 'body'
+      },
+    ],
+    method: 'POST',
+    headers: {
+      'imx-timezone': TimeZoneInfo.get(),
+    },
+    credentials: 'include',
+    observe: 'response',
+    responseType: 'json'
+  };
+}
+
+}
+
+
