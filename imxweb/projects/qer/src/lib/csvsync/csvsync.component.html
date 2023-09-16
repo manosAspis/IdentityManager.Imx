@@ -31,11 +31,14 @@
 <div>
   <mat-form-field appearance="outline" class="search-width">
     <mat-label>Select a Table</mat-label>
-    <mat-select [(value)]="selectedOption">
-      <mat-option *ngIf="Org === '1'" [value]="'Business roles'">Business roles</mat-option>
-      <mat-option *ngIf="Person === '1'" [value]="'Identities'">Identities</mat-option>
+    <mat-select [(ngModel)]="selectedOptionKey">
+      <mat-option *ngFor="let value of getObjectValues(configParams)" [value]="getReversedKey(value)">{{ value }}</mat-option>
     </mat-select>
   </mat-form-field>
+
+
+
+
 
 </div>
 </div>
@@ -91,7 +94,7 @@
       >
         Remove CSV
     </button>
-    <button *ngIf="selectedOption === 'Identities'"
+    <button *ngIf="selectedOptionKey === 'Person'"
         mat-raised-button
         [disabled]="!fileLoaded"
         color="warn"
@@ -99,7 +102,7 @@
       >
         Validate
     </button>
-    <button *ngIf="selectedOption === 'Identities'"
+    <button *ngIf="selectedOptionKey === 'Person'"
         mat-raised-button
         [disabled]="!allRowsValidated || validating || initializing || !fileLoaded"
         color="primary"
@@ -107,7 +110,7 @@
         Import to database
     </button>
 
-    <button *ngIf="selectedOption === 'Business roles'"
+    <button *ngIf="selectedOptionKey === 'Org'"
         mat-raised-button
         [disabled]="!fileLoaded"
         color="warn"
@@ -115,7 +118,7 @@
       >
         Validate
     </button>
-    <button *ngIf="selectedOption === 'Business roles'"
+    <button *ngIf="selectedOptionKey === 'Org'"
         mat-raised-button
         [disabled]="!allRowsValidated || validating || initializing || !fileLoaded"
         color="primary"

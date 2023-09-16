@@ -13,15 +13,6 @@ export interface ValidationElement{
   colIndex: number;
   message: string;
 }
-export interface ConfigElement {
-  Person: string;
-  Org: string;
-}
-
-let ConfigParam: ConfigElement[] = [
-  {Person: '', Org: ''},
-
-];
 
 @Component({
   selector: 'imx-csvsync',
@@ -49,36 +40,32 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   numberOfErrors: number;
   searchControl = new FormControl({value: '', disabled: true});
   loading = false;
-
-  displayedParams: string[] = ['Person', 'Org'];
-  configSource = ConfigParam;
-  Person: string;
-  Org: string;
-  selectedOption: string;
+  configParams: { [key: string]: string } = {};
+  selectedOptionKey: string;
 
   constructor(
     private menuService: MenuService,
     private readonly config: AppConfigService,
     private readonly authentication: AuthenticationService,
     private qerService: QerService,
-    private cdr: ChangeDetectorRef) {}
+    private cdr: ChangeDetectorRef) {
+      this.ConfigurationParameters().then((configParams) => {
+        if (configParams) {
+          this.configParams = this.convertObjectValuesToStrings(configParams);
+        } else {
+          console.error('ConfigurationParameters() returned an undefined or null object.');
+        }
+      });
+
+    }
 
   public async ngOnInit(): Promise<void>  {
-    console.log(this.val('person', {
-      "FirstName": "sdfs",
-      "LastName": "Sdfsdfs",
-      "Manager": "dftgy",
-      "Department": "fgytjc"
-  }));
+    this.ConfigurationParameters();
+
     console.log(this.mapping('person'));
-    await this.getCustom();
-      if (this.configSource && this.configSource.length > 0) {
-        this.Person = this.configSource[0].Person;
-        this.Org = this.configSource[0].Org;
 
-      }
 
-    this.selectedOption = null;
+    this.selectedOptionKey = null;
     this.numberOfErrors = 0;
     this.loading = false;
     this.validating = true;
@@ -86,16 +73,13 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.CsvImporter = this.qerService.getCsvImporter();
     this.authentication.update();
     this.cdr.detectChanges();
-    console.warn(this.Person, this.Org)
     console.log(this.CsvImporter)
     console.log(this.allvalidated)
     console.log(this.validating)
   }
 
   ngOnDestroy() {
-    this.selectedOption = null;
-    this.Person = '';
-    this.Org = '';
+    this.selectedOptionKey = null;
     this.allRowsValidated = false;
     this.validationResults$.next([]);
     this.csvDataSource = new MatTableDataSource();
@@ -155,6 +139,26 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     }
     this.cdr.detectChanges();
   }
+
+  getObjectValues(obj: any): string[] {
+    return Object.values(obj);
+  }
+
+  getReversedKey(value: string): string {
+    return this.getReversedConfigParams()[value];
+  }
+
+  getReversedConfigParams(): { [key: string]: string } {
+    // Reverse the key-value pairs of the configParams object
+    const reversedObject: { [key: string]: string } = {};
+    for (const key in this.configParams) {
+      if (this.configParams.hasOwnProperty(key)) {
+        reversedObject[this.configParams[key]] = key;
+      }
+    }
+    return reversedObject;
+  }
+
 
   getErrorRowsAndHeaders(): string {
     const errorInfos = this.validationResults.map(result => {
@@ -340,14 +344,13 @@ private PostBR(inputParameterName: any): MethodDescriptor<PeriodicElement> {
 }
 
 
-public async getCustom(): Promise<ConfigElement> {
-  const data = await this.config.apiClient.processRequest(this.getConfigCsv());
-  ConfigParam = [data];
-  this.configSource = ConfigParam;
-  return data;
+public async ConfigurationParameters(): Promise<object> {
+  const ConfigurationParameters = await this.config.apiClient.processRequest(this.getConfigCsv());
+  console.log(ConfigurationParameters);
+  return ConfigurationParameters;
  }
 
- private getConfigCsv(): MethodDescriptor<ConfigElement> {
+ private getConfigCsv(): MethodDescriptor<object> {
   const parameters = [];
   return {
     path: `/portal/ConfigCsv`,
@@ -360,6 +363,17 @@ public async getCustom(): Promise<ConfigElement> {
     observe: 'response',
     responseType: 'json',
   };
+}
+
+convertObjectValuesToStrings(obj: { [key: string]: any }): { [key: string]: string } {
+  const convertedObj: { [key: string]: string } = {};
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      // Convert the value to a string, or use a default string if it's not a string
+      convertedObj[key] = String(obj[key]);
+    }
+  }
+  return convertedObj;
 }
 
 public async mapping(endpoint: string): Promise<object> {
