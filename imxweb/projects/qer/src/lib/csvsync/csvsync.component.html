@@ -30,7 +30,7 @@
 </div>
 <div>
   <mat-form-field appearance="outline" class="search-width">
-    <mat-label>Select a Table</mat-label>
+    <mat-label>Select a Function</mat-label>
     <mat-select [(ngModel)]="selectedOptionKey">
       <mat-option *ngFor="let value of getObjectValues(configParams)" [value]="getReversedKey(value)">{{ value }}</mat-option>
     </mat-select>
@@ -54,7 +54,7 @@
     <div for="file" class="no-results" (click)="triggerFileUpload()">
       <eui-icon [icon]="noDataIcon"></eui-icon>
       <p>Drag and drop a CSV file here</p>
-        <p>or click here to browse.</p>
+        <p>or click to browse.</p>
     </div>
   </div>
   <div *ngIf="fileLoaded" class="scrollable-table">
@@ -106,6 +106,7 @@
         mat-raised-button
         [disabled]="!allRowsValidated || validating || initializing || !fileLoaded"
         color="primary"
+        (click)="importToDatabase(selectedOptionKey)"
       >
         Import to database
     </button>

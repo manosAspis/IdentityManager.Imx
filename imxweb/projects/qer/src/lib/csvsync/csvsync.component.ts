@@ -61,10 +61,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
 
   public async ngOnInit(): Promise<void>  {
     this.ConfigurationParameters();
-
-    console.log(this.mapping('person'));
-
-
     this.selectedOptionKey = null;
     this.numberOfErrors = 0;
     this.loading = false;
@@ -281,26 +277,27 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     });
   }
 
-  public async importToDatabaseBR(): Promise<PeriodicElement[]> {
+  public async importToDatabase(endpoint: string): Promise<PeriodicElement[]> {
     this.loading = true;
     const inputParameters: any[] = [];
     const csvData = this.csvDataSource.data;
     const results: PeriodicElement[] = [];
     this.validating = true;
 
+    // Get the mapping object from the mapping function
+    const mappingObject = await this.mapping(endpoint);
+
     for (const csvRow of csvData) {
-      const inputParameterName: any = {
-        "Ident_Org": '',
-        "City": '',
-        "Description": ''
-      };
+      const inputParameterName: any = {};
 
-      // Remove line breaks and leading/trailing spaces
-      const cleanRow = csvRow.map(cell => typeof cell === 'string' ? cell.replace(/[\r\n]+/g, '').trim() : cell);
+      for (const csvColumn in mappingObject) {
+        const dbColumn = mappingObject[csvColumn];
+        const cleanCellValue = typeof csvRow[csvColumn] === 'string'
+          ? csvRow[csvColumn].replace(/[\r\n]+/g, '').trim()
+          : csvRow[csvColumn];
 
-      inputParameterName['Ident_Org'] = cleanRow[1];
-      inputParameterName['City'] = cleanRow[5];
-      inputParameterName['Description'] = cleanRow[4];
+        inputParameterName[dbColumn] = cleanCellValue;
+      }
 
       inputParameters.push(inputParameterName);
     }
@@ -308,24 +305,25 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     for (const inputParameter of inputParameters) {
       console.log(inputParameter);
       try {
-        const data = await this.config.apiClient.processRequest(this.PostBR(inputParameter));
+        const data = await this.config.apiClient.processRequest(this.PostObject(endpoint, inputParameter));
         results.push(data);
       } catch (error) {
         console.error(`Error submitting CSV data: ${error}`);
       }
     }
+
     this.allRowsValidated = false;
+
     setTimeout(() => {
       this.loading = false;
     });
-    return results;
 
+    return results;
   }
 
-
-private PostBR(inputParameterName: any): MethodDescriptor<PeriodicElement> {
+private PostObject(endpoint: string, inputParameterName: any): MethodDescriptor<PeriodicElement> {
   return {
-    path: `/portal/createBR`,
+    path: `/portal/bulkactions/${endpoint}/import`,
     parameters: [
       {
         name: 'inputParameterName',
