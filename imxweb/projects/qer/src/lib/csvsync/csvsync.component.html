@@ -1,6 +1,6 @@
 <div class="overlay" *ngIf="loading"></div>
 <div *ngIf="CsvImporter">
-  <h1 class="mat-headline">Bulk Imports</h1>
+  <h1 class="mat-headline">Bulk Actions</h1>
   <eui-alert *ngIf="!fileLoaded" class="imx-helper-alert" type="info" condensed="true" [colored]="true" [dismissable]="true">
     <span>Drag & drop or upload a CSV file.</span>
   </eui-alert>
@@ -94,52 +94,20 @@
       >
         Remove CSV
     </button>
-    <button *ngIf="selectedOptionKey === 'Person'"
+    <button
         mat-raised-button
-        [disabled]="!fileLoaded"
+        [disabled]="!fileLoaded || selectedOptionKey === null"
         color="warn"
-        (click)="onValidateClicked('person')"
+        (click)="onValidateClicked(selectedOptionKey)"
       >
         Validate
     </button>
-    <button *ngIf="selectedOptionKey === 'Person'"
+    <button
         mat-raised-button
         [disabled]="!allRowsValidated || validating || initializing || !fileLoaded"
         color="primary"
       >
         Import to database
-    </button>
-
-    <button *ngIf="selectedOptionKey === 'Org'"
-        mat-raised-button
-        [disabled]="!fileLoaded"
-        color="warn"
-        (click)="onValidateClicked()"
-      >
-        Validate
-    </button>
-    <button *ngIf="selectedOptionKey === 'Org'"
-        mat-raised-button
-        [disabled]="!allRowsValidated || validating || initializing || !fileLoaded"
-        color="primary"
-
-      >
-      Import to database
-    </button>
-
-    <button *ngIf="selectedOption === null"
-        mat-raised-button
-        [disabled]="1===1"
-        color="warn"
-      >
-        Validate
-    </button>
-    <button *ngIf="selectedOption === null"
-        mat-raised-button
-        [disabled]="1===1"
-        color="primary"
-      >
-      Import to database
     </button>
   </div>
   <div *ngIf="loading" class="spinner-container">

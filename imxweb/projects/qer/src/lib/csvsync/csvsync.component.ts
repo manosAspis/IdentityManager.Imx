@@ -385,7 +385,7 @@ public async mapping(endpoint: string): Promise<object> {
 private getMapping(endpoint: string): MethodDescriptor<object> {
   const parameters = [];
   return {
-    path: `/portal/bulkimports/${endpoint}/mapping`,
+    path: `/portal/bulkactions/${endpoint}/mapping`,
     parameters,
     method: 'GET',
     headers: {
@@ -465,7 +465,7 @@ public async val(endpoint: string, rowToValidate: any): Promise<object> {
 
 private validateRow(endpoint: string, rowToValidate: any): MethodDescriptor<ValidationElement> {
   return {
-    path: `/portal/bulkimports/${endpoint}/validate`,
+    path: `/portal/bulkactions/${endpoint}/validate`,
     parameters: [
       {
         name: 'rowToValidate',
