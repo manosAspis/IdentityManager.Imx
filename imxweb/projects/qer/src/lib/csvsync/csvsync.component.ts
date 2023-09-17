@@ -29,7 +29,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   headers: string[] = [];
   validationResponses: any[] = [];
   validationResults: ValidationElement[] = [];
-  CsvImporter: boolean;
   allvalidated: boolean = false;
   public noDataText = '#LDS#No data';
   public noDataIcon = 'table';
@@ -42,6 +41,9 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   loading = false;
   configParams: { [key: string]: string } = {};
   selectedOptionKey: string;
+  dataSource: string[] = [];
+  CsvImporter: any;
+  functionObjectsCount: number = 0;
 
   constructor(
     private menuService: MenuService,
@@ -60,16 +62,22 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     }
 
   public async ngOnInit(): Promise<void>  {
-    this.ConfigurationParameters();
+
     this.selectedOptionKey = null;
     this.numberOfErrors = 0;
     this.loading = false;
     this.validating = true;
     this.allvalidated = false;
-    this.CsvImporter = this.qerService.getCsvImporter();
+    await this.ConfigurationParameters();
+    await this.getAERoleforCsvImporter(); // Wait for data to be fetched
+    await this.filterConfigParams();
+    console.log(this.configParams);
+    this.functionObjectsCount = this.countObjectsWithFunctionKey(this.dataSource);
+    console.log("Number of objects with 'Function' property:", this.functionObjectsCount);
+
     this.authentication.update();
     this.cdr.detectChanges();
-    console.log(this.CsvImporter)
+
     console.log(this.allvalidated)
     console.log(this.validating)
   }
@@ -84,7 +92,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.headers = [];
     this.validationResponses = [];
     this.validationResults = [];
-    this.CsvImporter = false;
+    this.CsvImporter = [];
     this.allvalidated = false;
     this.visibleRows = [];
     this.validating = false;
@@ -93,6 +101,25 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.numberOfErrors = 0;
   }
 
+  filterConfigParams() {
+    // Create a set to store the values from the dataSource array
+    const dataSourceValues = new Set<string>();
+
+    // Iterate through each item in the dataSource array
+    this.dataSource.forEach(item => {
+      // Get the value from the object in the array and add it to the set
+      const value = Object.values(item)[0];
+      dataSourceValues.add(value);
+    });
+
+    // Iterate through the keys in the configParams object
+    for (const key in this.configParams) {
+      if (!dataSourceValues.has(key)) {
+        // If the key doesn't exist in the dataSource array, remove it from configParams
+        delete this.configParams[key];
+      }
+    }
+  }
 
   checkAllRowsValidated(): boolean {
     // All rows are validated if there are no errors
@@ -101,6 +128,10 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.initializing = true;
+    this.CsvImporter = this.qerService.getCsvImporter();
+    this.functionObjectsCount = this.qerService.getfunctionObjectsCount();
+    console.log(this.CsvImporter)
+    console.log(this.functionObjectsCount)
     setTimeout(() => {
       this.csvDataSource.paginator = this.paginator;
       this.validating = true;
@@ -478,6 +509,35 @@ private validateRow(endpoint: string, rowToValidate: any): MethodDescriptor<Vali
     credentials: 'include',
     observe: 'response',
     responseType: 'json'
+  };
+}
+
+private countObjectsWithFunctionKey(data: any[]): number {
+  if (!data) {
+    return 0; // Return 0 if data is undefined or null
+  }
+  return data.filter(item => item.hasOwnProperty("Function") || item.hasOwnProperty("function")).length;
+}
+
+
+public async getAERoleforCsvImporter(): Promise<void> {
+  const CsvImporter = await this.config.apiClient.processRequest<string[]>(this.getWhoForCSV());
+  console.log(CsvImporter);
+  this.dataSource = CsvImporter;
+ }
+
+ private getWhoForCSV(): MethodDescriptor<void> {
+  const parameters = [];
+  return {
+    path: `/portal/BulkActionsFunctionsForUser`,
+    parameters,
+    method: 'GET',
+    headers: {
+      'imx-timezone': TimeZoneInfo.get(),
+    },
+    credentials: 'include',
+    observe: 'response',
+    responseType: 'json',
   };
 }
 

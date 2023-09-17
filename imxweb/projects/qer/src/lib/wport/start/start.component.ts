@@ -66,6 +66,7 @@ export class StartComponent implements OnInit {
     private qerService: QerService
   ) {
     this.qerService.setCsvImporter(this.CsvImporter);
+    this.qerService.setfunctionObjectsCount(this.functionObjectsCount);
   }
 
   public async ngOnInit(): Promise<void> {

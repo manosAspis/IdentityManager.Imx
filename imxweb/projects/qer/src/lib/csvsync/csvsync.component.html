@@ -1,5 +1,5 @@
 <div class="overlay" *ngIf="loading"></div>
-<div *ngIf="CsvImporter">
+<div *ngIf="functionObjectsCount > 0">
   <h1 class="mat-headline">Bulk Actions</h1>
   <eui-alert *ngIf="!fileLoaded" class="imx-helper-alert" type="info" condensed="true" [colored]="true" [dismissable]="true">
     <span>Drag & drop or upload a CSV file.</span>

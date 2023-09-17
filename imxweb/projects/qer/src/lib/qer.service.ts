@@ -42,7 +42,8 @@ import { ObjectSheetService } from './object-sheet/object-sheet.service';
 })
 export class QerService {
 
-  private CsvImporter: boolean;
+  private CsvImporter: string[] = [];
+  private functionObjectsCount: number;
 
   constructor(
     private authService: TwoFactorAuthenticationService,
@@ -52,7 +53,7 @@ export class QerService {
     private readonly menuService: MenuService
   ) { }
 
-  setCsvImporter(value: boolean) {
+  setCsvImporter(value: []) {
     this.CsvImporter = value;
   }
 
@@ -60,16 +61,12 @@ export class QerService {
     return this.CsvImporter;
   }
 
-  CCC_Tables(): string[] {
-    return ['Identities', 'Business Roles'];
+  setfunctionObjectsCount(value: number) {
+    this.functionObjectsCount = value;
   }
 
-  CCC_BR_Columns(): string[] {
-    return ['Business Role Name', 'City', 'Description'];
-  }
-
-  CCC_ID_Columns(): string[] {
-    return ['First Name', 'Last Name'];
+  getfunctionObjectsCount() {
+    return this.functionObjectsCount;
   }
 
   public init(): void {
