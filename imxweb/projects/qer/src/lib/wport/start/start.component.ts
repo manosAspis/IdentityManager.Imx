@@ -50,7 +50,9 @@ export class StartComponent implements OnInit {
   public systemInfo: SystemInfo;
   public viewReady: boolean;
   public userUid: string;
-  CsvImporter: boolean;
+  dataSource: string[] = [];
+  CsvImporter: any;
+  functionObjectsCount: number = 0;
 
   constructor(
     public readonly router: Router,
@@ -77,13 +79,15 @@ export class StartComponent implements OnInit {
       this.userUid = (await this.sessionService.getSessionState()).UserUid;
       this.viewReady = true;
       this.authentication.update();
-      this.getAERoleforCsvImporter().then(result => {
-        this.CsvImporter = result;
-        this.qerService.setCsvImporter(this.CsvImporter);
-      });
+
+      await this.getAERoleforCsvImporter(); // Wait for data to be fetched
+
+      this.functionObjectsCount = this.countObjectsWithFunctionKey(this.dataSource);
+      console.log("Number of objects with 'Function' property:", this.functionObjectsCount);
     } finally {
       setTimeout(() => this.busyService.hide(overlayRef));
     }
+    console.log(this.dataSource);
   }
 
   public ShowPasswordTile(): boolean {
@@ -177,16 +181,24 @@ export class StartComponent implements OnInit {
     this.router.navigate(['/csvsync-component']);
   }
 
-  public async getAERoleforCsvImporter(): Promise<boolean> {
-    const CsvImporter = await this.config.apiClient.processRequest(this.getWhoForCSV());
+  private countObjectsWithFunctionKey(data: any[]): number {
+    if (!data) {
+      return 0; // Return 0 if data is undefined or null
+    }
+    return data.filter(item => item.hasOwnProperty("Function") || item.hasOwnProperty("function")).length;
+  }
+
+
+  public async getAERoleforCsvImporter(): Promise<void> {
+    const CsvImporter = await this.config.apiClient.processRequest<string[]>(this.getWhoForCSV());
     console.log(CsvImporter);
-    return CsvImporter;
+    this.dataSource = CsvImporter;
    }
 
-   private getWhoForCSV(): MethodDescriptor<boolean> {
+   private getWhoForCSV(): MethodDescriptor<void> {
     const parameters = [];
     return {
-      path: `/portal/forcsv`,
+      path: `/portal/BulkActionsFunctionsForUser`,
       parameters,
       method: 'GET',
       headers: {
