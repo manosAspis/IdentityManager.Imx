@@ -426,6 +426,27 @@ private getMapping(endpoint: string): MethodDescriptor<object> {
   };
 }
 
+public async notes(endpoint: string): Promise<object> {
+  const notes = await this.config.apiClient.processRequest(this.notebook(endpoint));
+  console.log(notes);
+  return notes;
+ }
+
+private notebook(endpoint: string): MethodDescriptor<object> {
+  const parameters = [];
+  return {
+    path: `/portal/bulkactions/${endpoint}/notebook`,
+    parameters,
+    method: 'GET',
+    headers: {
+      'imx-timezone': TimeZoneInfo.get(),
+    },
+    credentials: 'include',
+    observe: 'response',
+    responseType: 'json',
+  };
+}
+
 
 public async onValidateClicked(endpoint: string): Promise<void> {
   this.shouldValidate = true;
