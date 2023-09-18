@@ -447,6 +447,33 @@ private notebook(endpoint: string): MethodDescriptor<object> {
   };
 }
 
+private async validateNoDuplicates(columnMapping: any): Promise<void> {
+  const columnToUniqueValues: { [key: string]: string[] } = {};
+
+  for (const [rowIndex, csvRow] of this.csvDataSource.data.entries()) {
+    Object.keys(columnMapping).forEach(colIndex => {
+      const columnName = columnMapping[colIndex];
+      const columnValue = csvRow[colIndex].trim();
+
+      if (!(columnName in columnToUniqueValues)) {
+        columnToUniqueValues[columnName] = [];
+      }
+
+      if (columnToUniqueValues[columnName].includes(columnValue)) {
+        this.validationResults.push({
+          rowIndex,
+          colIndex: Number(colIndex),
+          message: `Duplicate entry found in ${columnName} column: ${columnValue}`,
+        });
+        this.allvalidated = false;
+        this.numberOfErrors++;
+      } else {
+        columnToUniqueValues[columnName].push(columnValue);
+      }
+    });
+  }
+}
+
 
 public async onValidateClicked(endpoint: string): Promise<void> {
   this.shouldValidate = true;
@@ -467,6 +494,8 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
   this.allvalidated = true;
   this.validating = true;
   this.numberOfErrors = 0; // Reset the error count before new validation
+
+  await this.validateNoDuplicates(columnMapping);
 
   for (const [rowIndex, csvRow] of this.csvDataSource.data.entries()) { // Validate all rows
     const rowToValidate: any = {};
