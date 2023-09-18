@@ -435,7 +435,7 @@ public async notes(endpoint: string): Promise<object> {
 private notebook(endpoint: string): MethodDescriptor<object> {
   const parameters = [];
   return {
-    path: `/portal/bulkactions/${endpoint}/notebook`,
+    path: `/portal/bulkactions/${endpoint}/noduplicates`,
     parameters,
     method: 'GET',
     headers: {
@@ -463,7 +463,7 @@ private async validateNoDuplicates(columnMapping: any): Promise<void> {
         this.validationResults.push({
           rowIndex,
           colIndex: Number(colIndex),
-          message: `Duplicate entry found in ${columnName} column: ${columnValue}`,
+          message: `CSV already contains an entry ${columnValue}`,
         });
         this.allvalidated = false;
         this.numberOfErrors++;
@@ -495,7 +495,8 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
   this.validating = true;
   this.numberOfErrors = 0; // Reset the error count before new validation
 
-  await this.validateNoDuplicates(columnMapping);
+  const NoDuplicates = await this.notes(endpoint);
+  await this.validateNoDuplicates(NoDuplicates);
 
   for (const [rowIndex, csvRow] of this.csvDataSource.data.entries()) { // Validate all rows
     const rowToValidate: any = {};
