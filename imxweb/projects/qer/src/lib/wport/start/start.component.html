@@ -141,7 +141,7 @@
     [subtitle]="'#LDS#Make bulk actions to the database.' | translate"
     [image]="'database'"
     [identifier]="'import-a-csv-file'"
-    *ngIf="functionObjectsCount > 0"
+    *ngIf="functionObjectsCount > 0 && BulkActionsCofigParamCount > 0"
   >
     <ng-template #ActionTemplate>
       <button mat-button color="primary" (click)="GoToCSVsync()">

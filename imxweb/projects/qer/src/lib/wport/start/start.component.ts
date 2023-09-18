@@ -53,6 +53,7 @@ export class StartComponent implements OnInit {
   dataSource: string[] = [];
   CsvImporter: any;
   functionObjectsCount: number = 0;
+  public BulkActionsCofigParamCount: number;
 
   constructor(
     public readonly router: Router,
@@ -80,7 +81,7 @@ export class StartComponent implements OnInit {
       this.userUid = (await this.sessionService.getSessionState()).UserUid;
       this.viewReady = true;
       this.authentication.update();
-
+      this.BulkActionsCofigParamCount = await this.countPropertiesInConfigurationParameters();
       await this.getAERoleforCsvImporter(); // Wait for data to be fetched
 
       this.functionObjectsCount = this.countObjectsWithFunctionKey(this.dataSource);
@@ -182,12 +183,24 @@ export class StartComponent implements OnInit {
     this.router.navigate(['/csvsync-component']);
   }
 
-  private countObjectsWithFunctionKey(data: any[]): number {
-    if (!data) {
-      return 0; // Return 0 if data is undefined or null
+  private countObjectsWithFunctionKey(data: any): number {
+    if (!data || (Array.isArray(data) && data.length === 0)) {
+      return 0; // Return 0 if data is undefined, null, or an empty array
     }
-    return data.filter(item => item.hasOwnProperty("Function") || item.hasOwnProperty("function")).length;
+
+    if (Array.isArray(data)) {
+      // If data is an array, count objects with "Function" or "function" keys
+      return data.reduce((count, item) => {
+        return count + (item.hasOwnProperty("Function") || item.hasOwnProperty("function") ? 1 : 0);
+      }, 0);
+    } else if (typeof data === 'object') {
+      // If data is an object, check if it has "Function" or "function" keys
+      return (data.hasOwnProperty("Function") || data.hasOwnProperty("function")) ? 1 : 0;
+    }
+
+    return 0; // Return 0 for other data types
   }
+
 
 
   public async getAERoleforCsvImporter(): Promise<void> {
@@ -200,6 +213,33 @@ export class StartComponent implements OnInit {
     const parameters = [];
     return {
       path: `/portal/BulkActionsFunctionsForUser`,
+      parameters,
+      method: 'GET',
+      headers: {
+        'imx-timezone': TimeZoneInfo.get(),
+      },
+      credentials: 'include',
+      observe: 'response',
+      responseType: 'json',
+    };
+  }
+
+  public async ConfigurationParameters(): Promise<object> {
+    const ConfigurationParameters = await this.config.apiClient.processRequest(this.getConfigCsv());
+    console.log(ConfigurationParameters);
+    return ConfigurationParameters;
+   }
+
+   public async countPropertiesInConfigurationParameters(): Promise<number> {
+    const configurationParameters = await this.ConfigurationParameters();
+    return Object.keys(configurationParameters).length;
+  }
+
+
+   private getConfigCsv(): MethodDescriptor<object> {
+    const parameters = [];
+    return {
+      path: `/portal/ConfigCsv`,
       parameters,
       method: 'GET',
       headers: {

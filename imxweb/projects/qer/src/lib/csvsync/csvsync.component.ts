@@ -44,6 +44,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   dataSource: string[] = [];
   CsvImporter: any;
   functionObjectsCount: number = 0;
+  public BulkActionsCofigParamCount: number;
 
   constructor(
     private menuService: MenuService,
@@ -72,6 +73,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     await this.getAERoleforCsvImporter(); // Wait for data to be fetched
     await this.filterConfigParams();
     console.log(this.configParams);
+    this.BulkActionsCofigParamCount = await this.countPropertiesInConfigurationParameters();
     this.functionObjectsCount = this.countObjectsWithFunctionKey(this.dataSource);
     console.log("Number of objects with 'Function' property:", this.functionObjectsCount);
 
@@ -372,6 +374,10 @@ private PostObject(endpoint: string, inputParameterName: any): MethodDescriptor<
   };
 }
 
+public async countPropertiesInConfigurationParameters(): Promise<number> {
+  const configurationParameters = await this.ConfigurationParameters();
+  return Object.keys(configurationParameters).length;
+}
 
 public async ConfigurationParameters(): Promise<object> {
   const ConfigurationParameters = await this.config.apiClient.processRequest(this.getConfigCsv());
@@ -563,12 +569,24 @@ private validateRow(endpoint: string, rowToValidate: any): MethodDescriptor<Vali
   };
 }
 
-private countObjectsWithFunctionKey(data: any[]): number {
-  if (!data) {
-    return 0; // Return 0 if data is undefined or null
+private countObjectsWithFunctionKey(data: any): number {
+  if (!data || (Array.isArray(data) && data.length === 0)) {
+    return 0; // Return 0 if data is undefined, null, or an empty array
   }
-  return data.filter(item => item.hasOwnProperty("Function") || item.hasOwnProperty("function")).length;
+
+  if (Array.isArray(data)) {
+    // If data is an array, count objects with "Function" or "function" keys
+    return data.reduce((count, item) => {
+      return count + (item.hasOwnProperty("Function") || item.hasOwnProperty("function") ? 1 : 0);
+    }, 0);
+  } else if (typeof data === 'object') {
+    // If data is an object, check if it has "Function" or "function" keys
+    return (data.hasOwnProperty("Function") || data.hasOwnProperty("function")) ? 1 : 0;
+  }
+
+  return 0; // Return 0 for other data types
 }
+
 
 
 public async getAERoleforCsvImporter(): Promise<void> {
