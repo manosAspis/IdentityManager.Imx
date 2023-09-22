@@ -15,12 +15,12 @@ const ReleasesData: ReleaseInterface[] = [
 
 
 @Component({
-  selector: 'ccc-newsletter',
-  templateUrl: './newsletter.component.html',
-  styleUrls: ['./newsletter.component.scss']
+  selector: 'ccc-changelog',
+  templateUrl: './changelog.component.html',
+  styleUrls: ['./changelog.component.scss']
 })
 
-export class NewsletterComponent {
+export class ChangelogComponent {
   
   _ReleasesData = ReleasesData;
 
