@@ -25,17 +25,15 @@ const ReleasesData: ReleaseInterface[] = [
   styleUrls: ['./popup-support-window.component.scss'],
 })
 
-
-
 export class PopupSupportWindowComponent implements OnInit {
   _ReleasesData = ReleasesData;
   filtersLoaded: Promise<boolean>;
+
   constructor(
     private dialogRef: MatDialogRef<PopupSupportWindowComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private readonly config: AppConfigService,
-    private readonly authentication: AuthenticationService
-    
+    private readonly authentication: AuthenticationService   
   ) { }
 
   ngOnInit(): void {
