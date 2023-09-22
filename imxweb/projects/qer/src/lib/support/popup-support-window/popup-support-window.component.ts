@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import { Inject } from '@angular/core';
+
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 import { AppConfigService, AuthenticationService } from 'qbm';
 
@@ -9,7 +10,6 @@ import { AppConfigService, AuthenticationService } from 'qbm';
   templateUrl: './popup-support-window.component.html',
   styleUrls: ['./popup-support-window.component.scss']
 })
-
 
 export class PopupSupportWindowComponent implements OnInit {
   constructor(
@@ -49,4 +49,5 @@ export class PopupSupportWindowComponent implements OnInit {
       responseType: 'json',
     };
   }
+
 }
