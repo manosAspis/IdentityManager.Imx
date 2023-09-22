@@ -4,23 +4,43 @@ import { Inject } from '@angular/core';
 
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 import { AppConfigService, AuthenticationService } from 'qbm';
+import { SupportModule } from '../support.module';
+import { CommonModule } from "@angular/common";
+
+export interface ReleaseInterface {
+  title: string;
+  url: string;
+  release_name: string;
+  date: string;
+}
+
+const ReleasesData: ReleaseInterface[] = [
+  {title: '', url: '', release_name: '', date: ''},
+];
+
 
 @Component({
   selector: 'ccc-popup-support-window',
   templateUrl: './popup-support-window.component.html',
-  styleUrls: ['./popup-support-window.component.scss']
+  styleUrls: ['./popup-support-window.component.scss'],
 })
 
+
+
 export class PopupSupportWindowComponent implements OnInit {
+  _ReleasesData = ReleasesData;
+  filtersLoaded: Promise<boolean>;
   constructor(
     private dialogRef: MatDialogRef<PopupSupportWindowComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private readonly config: AppConfigService,
     private readonly authentication: AuthenticationService
+    
   ) { }
 
   ngOnInit(): void {
-    this.getCustom();
+    this.authentication.update();
+    this.getNewsAPI();
   }
   
 
@@ -29,13 +49,15 @@ export class PopupSupportWindowComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  public async getCustom(): Promise<String> {
-    const data = await this.config.apiClient.processRequest(this.getFeatureConfigDescriptor());
-    alert(data);
+  public async getNewsAPI(): Promise<ReleaseInterface> {
+    const data: any = await this.config.apiClient.processRequest(this.getNews());
+    this._ReleasesData = data;
+    this.filtersLoaded = Promise.resolve(true);
+    
     return data;
    }
 
-  private getFeatureConfigDescriptor(): MethodDescriptor<String> {
+  private getNews(): MethodDescriptor<ReleaseInterface> {
     const parameters = [];
     return {
       path: `/portal/GetNews`,
