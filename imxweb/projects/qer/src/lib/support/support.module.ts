@@ -4,6 +4,7 @@ import { CoeContactComponent } from './coe-contact/coe-contact.component';
 import { InstructionsComponent } from './instructions/instructions.component';
 import { ChangelogComponent } from './changelog/changelog.component';
 import { PopupSupportWindowComponent } from './popup-support-window/popup-support-window.component';
+import { MatTableModule } from '@angular/material/table';
 
 
 @NgModule({
@@ -14,13 +15,15 @@ import { PopupSupportWindowComponent } from './popup-support-window/popup-suppor
     PopupSupportWindowComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    MatTableModule
   ],
   exports: [
     CoeContactComponent,
     InstructionsComponent,
     ChangelogComponent,
-    PopupSupportWindowComponent
+    PopupSupportWindowComponent,
+    MatTableModule
   ]
 })
 export class SupportModule { }
