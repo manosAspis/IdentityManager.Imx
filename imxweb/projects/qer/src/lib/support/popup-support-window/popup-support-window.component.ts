@@ -4,19 +4,6 @@ import { Inject } from '@angular/core';
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 import { AppConfigService, AuthenticationService } from 'qbm';
 
-export interface PeriodicElement {
-  contactInfo: string;
-  headCoe: string;
-  serviceNow: string;
-  confluence: string;
-}
-
-let ELEMENT_DATA: PeriodicElement[] = [
-  {headCoe: '', contactInfo: '', serviceNow: '', confluence: ''},
-  
-];
-
-
 @Component({
   selector: 'ccc-popup-support-window',
   templateUrl: './popup-support-window.component.html',
@@ -24,9 +11,7 @@ let ELEMENT_DATA: PeriodicElement[] = [
 })
 
 
-
 export class PopupSupportWindowComponent implements OnInit {
-  dataSource = ELEMENT_DATA;
   constructor(
     private dialogRef: MatDialogRef<PopupSupportWindowComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -35,7 +20,6 @@ export class PopupSupportWindowComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    //alert(this.getFeatureConfigDescriptor);
     this.getCustom();
   }
   
@@ -47,8 +31,6 @@ export class PopupSupportWindowComponent implements OnInit {
 
   public async getCustom(): Promise<String> {
     const data = await this.config.apiClient.processRequest(this.getFeatureConfigDescriptor());
-    //ELEMENT_DATA = [data];
-    //this.dataSource = ELEMENT_DATA;
     alert(data);
     return data;
    }
