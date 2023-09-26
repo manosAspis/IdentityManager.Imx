@@ -41,6 +41,10 @@ import { ObjectSheetService } from './object-sheet/object-sheet.service';
   providedIn: 'root'
 })
 export class QerService {
+
+  private CsvImporter: string[] = [];
+  private functionObjectsCount: number;
+
   constructor(
     private authService: TwoFactorAuthenticationService,
     private extService: ExtService,
@@ -48,6 +52,22 @@ export class QerService {
     private readonly validationDetailService: ShoppingCartValidationDetailService,
     private readonly menuService: MenuService
   ) { }
+
+  setCsvImporter(value: []) {
+    this.CsvImporter = value;
+  }
+
+  getCsvImporter() {
+    return this.CsvImporter;
+  }
+
+  setfunctionObjectsCount(value: number) {
+    this.functionObjectsCount = value;
+  }
+
+  getfunctionObjectsCount() {
+    return this.functionObjectsCount;
+  }
 
   public init(): void {
 
@@ -69,7 +89,12 @@ export class QerService {
     //     if (!preProps.includes('ITSHOP')) {
     //       return null;
     //     }
+    this.menuService.addMenuFactories(
 
+      (preProps: string[], __: string[]) => {
+        if (!preProps.includes('ITSHOP')) {
+           return null;
+         }
     //     return {
     //       id: 'ROOT_RelatedApplications',
     //       title: '#LDS#Related applications',
@@ -79,5 +104,25 @@ export class QerService {
     //     };
     //   }
     // );
+        return {
+          id: 'ROOT_BULK',
+          title: '#LDS#Bulk imports',
+          sorting: '100',
+      // TODO (TFS number 805756): get from API; has a tree structure
+          items:[
+           {
+            id: 'BUSINESS_ROLES_IMPORT',
+            route: 'csvsync-component',
+            title: '#LDS#Business Roles'
+           },
+           {
+            id: 'IDENTITIES_IMPORT',
+            route: 'csvsync-component',
+            title: '#LDS#Identities'
+           },
+        ],
+        };
+      }
+    );
   }
 }

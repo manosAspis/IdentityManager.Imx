@@ -61,6 +61,10 @@ import { TilesModule } from './tiles/tiles.module';
 import { UserModule } from './user/user.module';
 import { ShoppingCartValidationDetailModule } from './shopping-cart-validation-detail/shopping-cart-validation-detail.module';
 import { RoleMembershipsModule } from './role-management/role-memberships/role-memberships.module';
+import { CsvsyncComponent } from './csvsync/csvsync.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
 
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
@@ -79,6 +83,12 @@ const routes: Routes = [
     canActivate: [RouteGuardService],
     resolve: [RouteGuardService],
   },
+  {
+    path: 'csvsync-component',
+    component: CsvsyncComponent,
+    canActivate: [RouteGuardService],
+    resolve: [RouteGuardService],
+  },
 ];
 
 // @dynamic
@@ -86,8 +96,12 @@ const routes: Routes = [
   declarations: [
     StartComponent,
     BusinessOwnerChartSummaryComponent,
+    CsvsyncComponent,
   ],
   imports: [
+    MatTableModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
     CommonModule,
     RouterModule.forChild(routes),
     QbmModule,
