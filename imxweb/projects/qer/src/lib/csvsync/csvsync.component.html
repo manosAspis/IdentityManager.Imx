@@ -106,7 +106,7 @@
         mat-raised-button
         [disabled]="!allRowsValidated || validating || initializing || !fileLoaded"
         color="primary"
-        (click)="importToDatabase(selectedOptionKey)"
+        (click)="openConfirmationDialog()"
       >
         Import to database
     </button>

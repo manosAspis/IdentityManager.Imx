@@ -65,6 +65,8 @@ import { CsvsyncComponent } from './csvsync/csvsync.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
+import { ConfirmDialogComponent } from './csvsync/confirm-dialog/confirm-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
@@ -97,8 +99,10 @@ const routes: Routes = [
     StartComponent,
     BusinessOwnerChartSummaryComponent,
     CsvsyncComponent,
+    ConfirmDialogComponent,
   ],
   imports: [
+    MatDialogModule,
     MatTableModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,

@@ -6,6 +6,9 @@ import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 import { AppConfigService, AuthenticationService, MenuService  } from 'qbm';
 import { BehaviorSubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+
 
 export interface PeriodicElement {}
 export interface ValidationElement{
@@ -20,6 +23,7 @@ export interface ValidationElement{
   styleUrls: ['./csvsync.component.scss']
 })
 export class CsvsyncComponent implements OnInit, AfterViewInit {
+  totalRows: number;
   allRowsValidated: boolean = false;
   validationResults$ = new BehaviorSubject<ValidationElement[]>([]);
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -47,6 +51,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   public BulkActionsCofigParamCount: number;
 
   constructor(
+    private dialog: MatDialog,
     private menuService: MenuService,
     private readonly config: AppConfigService,
     private readonly authentication: AuthenticationService,
@@ -255,6 +260,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
         }
         this.csvDataSource.data = this.csvData;
         this.fileLoaded = true;
+        this.totalRows = lines.length - 1;
     };
     this.searchControl.enable();
     reader.readAsText(file);
@@ -514,9 +520,6 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
     try {
       let validationResponse: any = await this.config.apiClient.processRequest(this.validateRow(endpoint, rowToValidate));
 
-      // Additional logic if needed (e.g. check for duplicates)
-      // ...
-
       console.log(validationResponse);
 
       Object.keys(columnMapping).forEach(colIndex => {
@@ -609,6 +612,29 @@ public async getAERoleforCsvImporter(): Promise<void> {
     responseType: 'json',
   };
 }
+
+openConfirmationDialog(): void {
+  const selectedOptionValue = this.getObjectValues(this.configParams).find(
+    (value) => this.getReversedKey(value) === this.selectedOptionKey
+  );
+
+  const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    width: '400px',
+    data: {
+      selectedOptionKey: this.selectedOptionKey,
+      selectedOptionValue: selectedOptionValue,
+      totalRows: this.totalRows
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      // User confirmed, perform the import action here
+      this.importToDatabase(result.selectedOptionKey);
+    }
+  });
+}
+
 
 }
 
