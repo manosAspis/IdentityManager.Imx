@@ -23,7 +23,7 @@ export interface ValidationElement{
   styleUrls: ['./csvsync.component.scss']
 })
 export class CsvsyncComponent implements OnInit, AfterViewInit {
-  totalRows: number;
+  totalRows: number = 0;
   allRowsValidated: boolean = false;
   validationResults$ = new BehaviorSubject<ValidationElement[]>([]);
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -43,12 +43,16 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   numberOfErrors: number;
   searchControl = new FormControl({value: '', disabled: true});
   loading = false;
+  showProgressBar = false;
+  processedRows = 0;
   configParams: { [key: string]: string } = {};
   selectedOptionKey: string;
   dataSource: string[] = [];
   CsvImporter: any;
   functionObjectsCount: number = 0;
   public BulkActionsCofigParamCount: number;
+  progress: number = 0;
+  estimatedRemainingTime: string;
 
   constructor(
     private dialog: MatDialog,
@@ -90,6 +94,9 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   }
 
   ngOnDestroy() {
+    this.progress = 0;
+    this.totalRows = 0;
+    this.processedRows = 0;
     this.selectedOptionKey = null;
     this.allRowsValidated = false;
     this.validationResults$.next([]);
@@ -106,6 +113,32 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.initializing = false;
     this.shouldValidate = false;
     this.numberOfErrors = 0;
+  }
+
+  replaceCsv() {
+    this.progress = 0;
+    this.totalRows = 0;
+    this.processedRows = 0;
+    this.fileLoaded = false;
+    this.allvalidated = false;
+    this.csvData = [];
+    this.headers = [];
+    this.csvDataSource.data = [];
+    this.validationResponses = [];
+    this.validationResults = [];
+    this.validationResults$.next([]);
+    this.validating = true;
+    this.numberOfErrors = 0;
+    this.visibleRows = [];
+    this.shouldValidate = false;
+    this.searchControl.disable();
+  }
+
+  public formatTime(seconds: number): string {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   }
 
   filterConfigParams() {
@@ -162,7 +195,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
       this.initializing = false;
     }, 100); // Adjust the delay as needed, typically a small value like 100ms should be sufficient
   }
-
 
   applyFilter() {
     const filterValue = this.searchControl.value;
@@ -266,26 +298,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     reader.readAsText(file);
     this.allvalidated = false;
   }
-
-replaceCsv() {
-  this.loading = true;
-  this.fileLoaded = false;
-  this.allvalidated = false;
-  this.csvData = [];
-  this.headers = [];
-  this.csvDataSource.data = [];
-  this.validationResponses = [];
-  this.validationResults = [];
-  this.validationResults$.next([]);
-  this.validating = true;
-  this.numberOfErrors = 0;
-  this.visibleRows = [];
-  this.shouldValidate = false;
-  this.searchControl.disable();
-  setTimeout(() => {
-    this.loading = false;
-  });
-}
 
 getValidationResult(rowIndex: number, colIndex: number): string | undefined {
   // Get the row index in the filtered data
@@ -510,13 +522,16 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
   const NoDuplicates = await this.notes(endpoint);
   await this.validateNoDuplicates(NoDuplicates);
 
+  let totalTimeTaken = 0; // Total time taken for processing rows
+  let estimatedRemainingSecs = 0;
+
   for (const [rowIndex, csvRow] of this.csvDataSource.data.entries()) { // Validate all rows
     const rowToValidate: any = {};
     Object.keys(columnMapping).forEach(colIndex => {
       const columnName = columnMapping[colIndex];
       rowToValidate[columnName] = csvRow[colIndex].trim(); // Trim the values here
     });
-
+    const startTime = performance.now();
     try {
       let validationResponse: any = await this.config.apiClient.processRequest(this.validateRow(endpoint, rowToValidate));
 
@@ -535,6 +550,21 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
       console.error(`Error validating row ${rowIndex}: ${error}`);
       this.allvalidated = false;
       this.validationResults$.next(this.validationResults);
+    } finally {
+
+
+      const endTime = performance.now();
+      const timeTaken = endTime - startTime;
+      totalTimeTaken += timeTaken;
+
+      // Calculate the average time taken per row
+      const averageTimePerRow = totalTimeTaken / (this.processedRows + 1);
+
+      estimatedRemainingSecs = (averageTimePerRow * (this.totalRows - this.processedRows - 1)) / 1000; // Convert to seconds
+      // Calculate the progress and update the progress bar
+      this.progress = (this.processedRows / this.totalRows) * 100;
+      this.estimatedRemainingTime = this.formatTime(estimatedRemainingSecs);
+      this.processedRows++;
     }
   }
 
@@ -543,6 +573,9 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
   this.cdr.detectChanges();
   setTimeout(() => {
     this.loading = false;
+    this.progress = 0;
+    this.processedRows = 0;
+    this.estimatedRemainingTime = null;
   });
 }
 

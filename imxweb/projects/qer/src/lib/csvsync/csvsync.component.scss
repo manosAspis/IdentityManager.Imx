@@ -120,7 +120,7 @@ td.mat-cell {
   background-color: #ffe5e5 /* light red */
 }
 
-.spinner-container {
+.loading-container {
   background-color: rgba(0, 0, 0, 0.3); /* Dark background for the whole page */
   position: fixed;
   top: 0;
@@ -133,14 +133,29 @@ td.mat-cell {
   align-items: center;
 }
 
-.spinner-wrapper {
+.loading-wrapper {
   background-color: white;
   border-radius: 5px;
-  width: 150px;
-  height: 150px;
+  width: 600px;
+  height: 300px;
   display: flex;
+  flex-direction: column; /* Change to column layout */
   justify-content: center;
   align-items: center;
+}
+
+
+.mat-progress-bar {
+  height: 20;
+  max-width: 500px;
+  margin-top: 10px;
+}
+
+.mat-spinner {
+  margin-top: auto;
+  margin-bottom: 10px;
+  width: 40px;
+  height: 40px;
 }
 
 .flex-container {

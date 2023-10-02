@@ -88,7 +88,7 @@
   <div class="button-bar">
     <button
         mat-raised-button
-        [disabled]="!fileLoaded"
+        [disabled]="!fileLoaded || loading"
         color="accent"
         (click)="replaceCsv()"
       >
@@ -96,7 +96,7 @@
     </button>
     <button
         mat-raised-button
-        [disabled]="!fileLoaded || selectedOptionKey === null"
+        [disabled]="!fileLoaded || selectedOptionKey === null || loading"
         color="warn"
         (click)="onValidateClicked(selectedOptionKey)"
       >
@@ -104,18 +104,24 @@
     </button>
     <button
         mat-raised-button
-        [disabled]="!allRowsValidated || validating || initializing || !fileLoaded"
+        [disabled]="!allRowsValidated || validating || initializing || !fileLoaded || loading"
         color="primary"
         (click)="openConfirmationDialog()"
       >
         Import to database
     </button>
   </div>
-  <div *ngIf="loading" class="spinner-container">
-    <div class="spinner-wrapper">
-      <mat-spinner mode="indeterminate"></mat-spinner>
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-wrapper">
+      <h1>Validation procedure is loading.</h1>
+      <p>Estimated remaining time: {{ estimatedRemainingTime }}</p>
+      <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
     </div>
   </div>
+
+
+
+
 
 </div>
 
