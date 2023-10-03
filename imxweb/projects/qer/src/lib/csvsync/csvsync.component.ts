@@ -23,6 +23,7 @@ export interface ValidationElement{
   styleUrls: ['./csvsync.component.scss']
 })
 export class CsvsyncComponent implements OnInit, AfterViewInit {
+
   totalRows: number = 0;
   allRowsValidated: boolean = false;
   validationResults$ = new BehaviorSubject<ValidationElement[]>([]);
@@ -117,6 +118,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.numberOfErrors = 0;
   }
 
+
   replaceCsv() {
     this.progress = 0;
     this.totalRows = 0;
@@ -142,6 +144,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     const remainingSeconds = Math.floor(seconds % 60);
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   }
+
 
   filterConfigParams() {
     // Create a set to store the values from the dataSource array
@@ -320,6 +323,7 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
 
     this.visibleRows = this.csvDataSource.data.slice(startIndex, endIndex);
     this.cdr.detectChanges();
+
   }
 
   public async importToDatabase(endpoint: string): Promise<PeriodicElement[]> {
@@ -349,6 +353,7 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     }
 
     for (const inputParameter of inputParameters) {
+
       const startTime = performance.now();
       console.log(inputParameter);
       try {
@@ -371,16 +376,19 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
         this.progress = (this.processedRows / this.totalRows) * 100;
         this.estimatedRemainingTime = this.formatTime(estimatedRemainingSecs);
         this.processedRows++;
+
       }
     }
 
     this.allRowsValidated = false;
 
     setTimeout(() => {
+
       this.loadingImport = false;
       this.progress = 0;
       this.processedRows = 0;
       this.estimatedRemainingTime = null;
+
     });
 
     return results;
@@ -521,10 +529,12 @@ public async onValidateClicked(endpoint: string): Promise<void> {
 }
 
 public async validate(endpoint: string, columnMapping: any): Promise<void> {
+
   this.loadingValidation = true;
   if(this.initializing || !this.shouldValidate) {
     setTimeout(() => {
       this.loadingValidation = false;
+
     });
     return;
   }
@@ -536,6 +546,7 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
   const NoDuplicates = await this.notes(endpoint);
   await this.validateNoDuplicates(NoDuplicates);
 
+
   let totalTimeTaken = 0; // Total time taken for processing rows
   let estimatedRemainingSecs = 0;
 
@@ -545,9 +556,11 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
       const columnName = columnMapping[colIndex];
       rowToValidate[columnName] = csvRow[colIndex].trim(); // Trim the values here
     });
+
     const startTime = performance.now();
     try {
       let validationResponse: any = await this.config.apiClient.processRequest(this.validateRow(endpoint, rowToValidate));
+
 
       console.log(validationResponse);
 
@@ -579,6 +592,7 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
       this.progress = (this.processedRows / this.totalRows) * 100;
       this.estimatedRemainingTime = this.formatTime(estimatedRemainingSecs);
       this.processedRows++;
+
     }
   }
 
@@ -619,6 +633,7 @@ private validateRow(endpoint: string, rowToValidate: any): MethodDescriptor<Vali
   };
 }
 
+
 public async start(endpoint: string, startobject: any): Promise<object> {
   const val = await this.config.apiClient.processRequest(this.startmethod(endpoint, startobject));
   console.log(val);
@@ -644,6 +659,7 @@ private startmethod(endpoint: string, startobject: any): MethodDescriptor<Valida
     responseType: 'json'
   };
 }
+
 
 private countObjectsWithFunctionKey(data: any): number {
   if (!data || (Array.isArray(data) && data.length === 0)) {
@@ -686,6 +702,7 @@ public async getAERoleforCsvImporter(): Promise<void> {
   };
 }
 
+
 openConfirmationDialog(): void {
   const selectedOptionValue = this.getObjectValues(this.configParams).find(
     (value) => this.getReversedKey(value) === this.selectedOptionKey
@@ -707,7 +724,6 @@ openConfirmationDialog(): void {
     }
   });
 }
-
 
 }
 
