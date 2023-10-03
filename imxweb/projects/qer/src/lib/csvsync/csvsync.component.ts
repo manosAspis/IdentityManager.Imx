@@ -42,7 +42,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   shouldValidate: boolean = false;
   numberOfErrors: number;
   searchControl = new FormControl({value: '', disabled: true});
-  loading = false;
+  loadingValidation = false;
+  loadingImport = false;
   showProgressBar = false;
   processedRows = 0;
   configParams: { [key: string]: string } = {};
@@ -75,7 +76,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
 
     this.selectedOptionKey = null;
     this.numberOfErrors = 0;
-    this.loading = false;
+    this.loadingValidation = false;
+    this.loadingImport = false;
     this.validating = true;
     this.allvalidated = false;
     await this.ConfigurationParameters();
@@ -168,10 +170,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.initializing = true;
-    this.CsvImporter = this.qerService.getCsvImporter();
-    this.functionObjectsCount = this.qerService.getfunctionObjectsCount();
-    console.log(this.CsvImporter)
-    console.log(this.functionObjectsCount)
     setTimeout(() => {
       this.csvDataSource.paginator = this.paginator;
       this.validating = true;
@@ -313,7 +311,6 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
   }
 
   public pageChanged(event: PageEvent): void {
-    this.loading = true;
     const startIndex = event.pageIndex * event.pageSize;
     let endIndex = startIndex + event.pageSize;
 
@@ -323,13 +320,10 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
 
     this.visibleRows = this.csvDataSource.data.slice(startIndex, endIndex);
     this.cdr.detectChanges();
-    setTimeout(() => {
-      this.loading = false;
-    });
   }
 
   public async importToDatabase(endpoint: string): Promise<PeriodicElement[]> {
-    this.loading = true;
+    this.loadingImport = true;
     const inputParameters: any[] = [];
     const csvData = this.csvDataSource.data;
     const results: PeriodicElement[] = [];
@@ -337,7 +331,8 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
 
     // Get the mapping object from the mapping function
     const mappingObject = await this.mapping(endpoint);
-
+    let totalTimeTaken = 0; // Total time taken for processing rows
+    let estimatedRemainingSecs = 0;
     for (const csvRow of csvData) {
       const inputParameterName: any = {};
 
@@ -354,19 +349,38 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     }
 
     for (const inputParameter of inputParameters) {
+      const startTime = performance.now();
       console.log(inputParameter);
       try {
         const data = await this.config.apiClient.processRequest(this.PostObject(endpoint, inputParameter));
         results.push(data);
       } catch (error) {
         console.error(`Error submitting CSV data: ${error}`);
+      } finally {
+
+
+        const endTime = performance.now();
+        const timeTaken = endTime - startTime;
+        totalTimeTaken += timeTaken;
+
+        // Calculate the average time taken per row
+        const averageTimePerRow = totalTimeTaken / (this.processedRows + 1);
+
+        estimatedRemainingSecs = (averageTimePerRow * (this.totalRows - this.processedRows - 1)) / 1000; // Convert to seconds
+        // Calculate the progress and update the progress bar
+        this.progress = (this.processedRows / this.totalRows) * 100;
+        this.estimatedRemainingTime = this.formatTime(estimatedRemainingSecs);
+        this.processedRows++;
       }
     }
 
     this.allRowsValidated = false;
 
     setTimeout(() => {
-      this.loading = false;
+      this.loadingImport = false;
+      this.progress = 0;
+      this.processedRows = 0;
+      this.estimatedRemainingTime = null;
     });
 
     return results;
@@ -507,10 +521,10 @@ public async onValidateClicked(endpoint: string): Promise<void> {
 }
 
 public async validate(endpoint: string, columnMapping: any): Promise<void> {
-  this.loading = true;
+  this.loadingValidation = true;
   if(this.initializing || !this.shouldValidate) {
     setTimeout(() => {
-      this.loading = false;
+      this.loadingValidation = false;
     });
     return;
   }
@@ -572,7 +586,7 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
   console.log(this.allvalidated);
   this.cdr.detectChanges();
   setTimeout(() => {
-    this.loading = false;
+    this.loadingValidation = false;
     this.progress = 0;
     this.processedRows = 0;
     this.estimatedRemainingTime = null;
@@ -592,6 +606,32 @@ private validateRow(endpoint: string, rowToValidate: any): MethodDescriptor<Vali
       {
         name: 'rowToValidate',
         value: rowToValidate,
+        in: 'body'
+      },
+    ],
+    method: 'POST',
+    headers: {
+      'imx-timezone': TimeZoneInfo.get(),
+    },
+    credentials: 'include',
+    observe: 'response',
+    responseType: 'json'
+  };
+}
+
+public async start(endpoint: string, startobject: any): Promise<object> {
+  const val = await this.config.apiClient.processRequest(this.startmethod(endpoint, startobject));
+  console.log(val);
+  return val;
+ }
+
+private startmethod(endpoint: string, startobject: any): MethodDescriptor<ValidationElement> {
+  return {
+    path: `/portal/bulkactions/${endpoint}/start`,
+    parameters: [
+      {
+        name: 'startobject',
+        value: startobject,
         in: 'body'
       },
     ],

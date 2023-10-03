@@ -51,7 +51,6 @@ export class StartComponent implements OnInit {
   public viewReady: boolean;
   public userUid: string;
   dataSource: string[] = [];
-  CsvImporter: any;
   functionObjectsCount: number = 0;
   public BulkActionsCofigParamCount: number;
 
@@ -65,10 +64,7 @@ export class StartComponent implements OnInit {
     private readonly config: AppConfigService,
     private readonly authentication: AuthenticationService,
     private qerService: QerService
-  ) {
-    this.qerService.setCsvImporter(this.CsvImporter);
-    this.qerService.setfunctionObjectsCount(this.functionObjectsCount);
-  }
+  ) {}
 
   public async ngOnInit(): Promise<void> {
     let overlayRef: OverlayRef;

@@ -64,8 +64,6 @@ export class MenuComponent {
 
   public async ngOnInit(): Promise<void> {
     this.authentication.update();
-    this.CsvImporter = await this.getAERoleforCsvImporter();
-    console.log(this.CsvImporter);
   }
 
   public isActive(item: MenuItem): boolean {
@@ -117,26 +115,5 @@ export class MenuComponent {
       this.router.navigate(item.navigationCommands.commands);
       this.logger.trace(this, item.navigationCommands);
     }
-  }
-
-  public async getAERoleforCsvImporter(): Promise<boolean> {
-    const CsvImporter = await this.config.apiClient.processRequest(this.getWhoForCSV());
-    console.log(CsvImporter);
-    return CsvImporter;
-   }
-
-   private getWhoForCSV(): MethodDescriptor<boolean> {
-    const parameters = [];
-    return {
-      path: `/portal/forcsv`,
-      parameters,
-      method: 'GET',
-      headers: {
-        'imx-timezone': TimeZoneInfo.get(),
-      },
-      credentials: 'include',
-      observe: 'response',
-      responseType: 'json',
-    };
   }
 }
