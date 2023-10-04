@@ -41,10 +41,6 @@ import { ObjectSheetService } from './object-sheet/object-sheet.service';
   providedIn: 'root'
 })
 export class QerService {
-
-  private CsvImporter: string[] = [];
-  private functionObjectsCount: number;
-
   constructor(
     private authService: TwoFactorAuthenticationService,
     private extService: ExtService,
@@ -52,22 +48,6 @@ export class QerService {
     private readonly validationDetailService: ShoppingCartValidationDetailService,
     private readonly menuService: MenuService
   ) { }
-
-  setCsvImporter(value: []) {
-    this.CsvImporter = value;
-  }
-
-  getCsvImporter() {
-    return this.CsvImporter;
-  }
-
-  setfunctionObjectsCount(value: number) {
-    this.functionObjectsCount = value;
-  }
-
-  getfunctionObjectsCount() {
-    return this.functionObjectsCount;
-  }
 
   public init(): void {
 

@@ -1,4 +1,6 @@
-<div class="overlay" *ngIf="loading"></div>
+
+<div class="overlay" *ngIf="loadingValidation || loadingImport"></div>
+
 <div *ngIf="functionObjectsCount > 0 && BulkActionsCofigParamCount > 0">
   <h1 class="mat-headline">Bulk Actions</h1>
   <eui-alert *ngIf="!fileLoaded" class="imx-helper-alert" type="info" condensed="true" [colored]="true" [dismissable]="true">
@@ -36,18 +38,10 @@
     </mat-select>
   </mat-form-field>
 
-
-
-
-
 </div>
 </div>
-
-
-
   <div class="file-input-wrapper">
-  <input style="display: none;" id="csv-file" type="file" (change)="onFileChange($event)" accept=".csv" />
-
+    <input style="display: none;" id="csv-file" type="file" (change)="onFileChange($event)" accept=".csv" />
 
   </div>
   <div *ngIf="!fileLoaded" class="preview-window" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)">
@@ -58,9 +52,6 @@
     </div>
   </div>
   <div *ngIf="fileLoaded" class="scrollable-table">
-
-
-
 
     <table mat-table [dataSource]="csvDataSource">
 
@@ -81,14 +72,15 @@
         <tr mat-row *matRowDef="let row; columns: headers; let rowIndex = index" [class.error-row]="isRowError(rowIndex)">
         </tr>
 
-
       </table>
     </div>
     <mat-paginator #paginator [pageSizeOptions]="[20, 50, 100, 200]" showFirstLastButtons (page)="pageChanged($event)"></mat-paginator>
   <div class="button-bar">
     <button
         mat-raised-button
-        [disabled]="!fileLoaded"
+
+        [disabled]="!fileLoaded || loading"
+
         color="accent"
         (click)="replaceCsv()"
       >
@@ -96,7 +88,9 @@
     </button>
     <button
         mat-raised-button
-        [disabled]="!fileLoaded || selectedOptionKey === null"
+
+        [disabled]="!fileLoaded || selectedOptionKey === null || loading"
+
         color="warn"
         (click)="onValidateClicked(selectedOptionKey)"
       >
@@ -104,16 +98,23 @@
     </button>
     <button
         mat-raised-button
-        [disabled]="!allRowsValidated || validating || initializing || !fileLoaded"
+
+        [disabled]="!allRowsValidated || validating || initializing || !fileLoaded || loading"
         color="primary"
-        (click)="importToDatabase(selectedOptionKey)"
+        (click)="openConfirmationDialog()"
+
       >
         Import to database
     </button>
   </div>
-  <div *ngIf="loading" class="spinner-container">
-    <div class="spinner-wrapper">
-      <mat-spinner mode="indeterminate"></mat-spinner>
+
+  <div *ngIf="loadingValidation || loadingImport" class="loading-container">
+    <div class="loading-wrapper">
+      <h1 *ngIf="loadingValidation">Validation procedure is loading.</h1>
+      <h1 *ngIf="loadingImport">Import procedure is loading.</h1>
+      <h2 class="WarningForBrowser">Do not close the browser.</h2>
+      <p>Estimated remaining time: {{ estimatedRemainingTime }}</p>
+      <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
     </div>
   </div>
 

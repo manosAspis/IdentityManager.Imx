@@ -64,8 +64,7 @@ export class MenuComponent {
 
   public async ngOnInit(): Promise<void> {
     this.authentication.update();
-    this.CsvImporter = await this.getAERoleforCsvImporter();
-    console.log(this.CsvImporter);
+
   }
 
   public isActive(item: MenuItem): boolean {
