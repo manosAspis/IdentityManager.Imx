@@ -31,6 +31,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   csvDataSource: MatTableDataSource<any> = new MatTableDataSource();
   csvData: any[] = [];
   fileLoaded: boolean = false;
+  dialogHide: boolean = false;
   headers: string[] = [];
   validationResponses: any[] = [];
   validationResults: ValidationElement[] = [];
@@ -118,6 +119,9 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.numberOfErrors = 0;
   }
 
+  dialogClose() {
+    this.dialogHide = true;
+  }
 
   replaceCsv() {
     this.progress = 0;
@@ -194,7 +198,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
         console.warn('Paginator is not available');
       }
       this.initializing = false;
-    }, 100); // Adjust the delay as needed, typically a small value like 100ms should be sufficient
+    }, 500); // Adjust the delay as needed, typically a small value like 500ms should be sufficient
   }
 
   applyFilter() {
@@ -526,6 +530,7 @@ public async onValidateClicked(endpoint: string): Promise<void> {
   const mapping = await this.mapping(endpoint); // Fetch the mapping from API
   await this.validate(endpoint, mapping);
   this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
+  this.dialogHide = false;
 }
 
 public async validate(endpoint: string, columnMapping: any): Promise<void> {

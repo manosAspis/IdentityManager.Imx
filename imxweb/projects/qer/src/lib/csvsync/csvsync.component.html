@@ -11,13 +11,13 @@
     <span>Validate your CSV data.</span>
   </eui-alert>
 
-  <eui-alert *ngIf="fileLoaded && allRowsValidated && !validating && !initializing && numberOfErrors === 0" class="imx-helper-alert" type="success" condensed="true" [colored]="true" [dismissable]="true">
+  <!--<eui-alert *ngIf="fileLoaded && allRowsValidated && !validating && !initializing && numberOfErrors === 0" class="imx-helper-alert" type="success" condensed="true" [colored]="true" [dismissable]="true">
     <span>You can submit your CSV to the database.</span>
   </eui-alert>
 
   <eui-alert *ngIf="numberOfErrors > 0" class="imx-helper-alert" type="error" condensed="true" [colored]="true" [dismissable]="true">
     <span>There are errors in your CSV data at: {{ getErrorRowsAndHeaders() }}. Please select another CSV file.</span>
-  </eui-alert>
+  </eui-alert>-->
 
   <div class="flex-container">
   <div>
@@ -79,7 +79,7 @@
     <button
         mat-raised-button
 
-        [disabled]="!fileLoaded || loading"
+        [disabled]="!fileLoaded || loadingValidation || loadingImport"
 
         color="accent"
         (click)="replaceCsv()"
@@ -89,7 +89,7 @@
     <button
         mat-raised-button
 
-        [disabled]="!fileLoaded || selectedOptionKey === null || loading"
+        [disabled]="!fileLoaded || selectedOptionKey === null || loadingValidation || loadingImport"
 
         color="warn"
         (click)="onValidateClicked(selectedOptionKey)"
@@ -99,7 +99,7 @@
     <button
         mat-raised-button
 
-        [disabled]="!allRowsValidated || validating || initializing || !fileLoaded || loading"
+        [disabled]="!allRowsValidated || validating || initializing || !fileLoaded || loadingValidation || loadingImport"
         color="primary"
         (click)="openConfirmationDialog()"
 
@@ -117,6 +117,26 @@
       <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
     </div>
   </div>
+
+  <div *ngIf="!dialogHide && fileLoaded && allRowsValidated && !validating && !initializing && numberOfErrors === 0" class="loading-container success">
+    <div class="loading-wrapper">
+      <h1>Successfull Validation!</h1>
+      <p>You can procceed with the data import</p>
+      <button type="button" class="close" (click)="dialogClose()">Ok</button>
+    </div>
+  </div>
+
+  <div *ngIf="!dialogHide && !validating && numberOfErrors > 0" class="loading-container error">
+    <div class="loading-wrapper">
+      <h1>Error</h1>
+      <div class="dialog-body">
+        <p>{{ getErrorRowsAndHeaders() }}<p>
+      </div>
+      
+      <button type="button" class="close" (click)="dialogClose()">Close</button>
+    </div>
+  </div>
+
 
 </div>
 
