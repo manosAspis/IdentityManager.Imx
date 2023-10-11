@@ -11,11 +11,19 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 
 
 export interface PeriodicElement {}
+
 export interface ValidationElement{
   rowIndex: number;
   colIndex: number;
   message: string;
 }
+export interface PreValidationElement{
+  message: string;
+  permission: boolean;
+}
+
+
+
 
 @Component({
   selector: 'imx-csvsync',
@@ -24,6 +32,8 @@ export interface ValidationElement{
 })
 export class CsvsyncComponent implements OnInit, AfterViewInit {
 
+  startValidateObj: any;
+  preValidateMsg: object = {message:'', permission: false};
   totalRows: number = 0;
   allRowsValidated: boolean = false;
   validationResults$ = new BehaviorSubject<ValidationElement[]>([]);
@@ -31,7 +41,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   csvDataSource: MatTableDataSource<any> = new MatTableDataSource();
   csvData: any[] = [];
   fileLoaded: boolean = false;
-  dialogHide: boolean = false;
+  dialogHide: boolean = true;
   headers: string[] = [];
   validationResponses: any[] = [];
   validationResults: ValidationElement[] = [];
@@ -527,10 +537,11 @@ private async validateNoDuplicates(columnMapping: any): Promise<void> {
 
 public async onValidateClicked(endpoint: string): Promise<void> {
   this.shouldValidate = true;
-  const mapping = await this.mapping(endpoint); // Fetch the mapping from API
-  await this.validate(endpoint, mapping);
-  this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
-  this.dialogHide = false;
+  this.startValidateObj = this.startValidate(endpoint, {totalRows: this.totalRows});
+  
+   
+  //this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
+  
 }
 
 public async validate(endpoint: string, columnMapping: any): Promise<void> {
@@ -639,15 +650,18 @@ private validateRow(endpoint: string, rowToValidate: any): MethodDescriptor<Vali
 }
 
 
-public async start(endpoint: string, startobject: any): Promise<object> {
-  const val = await this.config.apiClient.processRequest(this.startmethod(endpoint, startobject));
-  console.log(val);
-  return val;
+public async startValidate(endpoint: string, startobject: any): Promise<object> {
+  const msg = await this.config.apiClient.processRequest(this.startValidateMethod(endpoint, startobject));
+  this.preValidateMsg = msg;
+  console.log(msg);
+  console.log(msg.permission);
+  this.dialogHide = false;
+  return msg;
  }
 
-private startmethod(endpoint: string, startobject: any): MethodDescriptor<ValidationElement> {
+private startValidateMethod(endpoint: string, startobject: any): MethodDescriptor<PreValidationElement> {
   return {
-    path: `/portal/bulkactions/${endpoint}/start`,
+    path: `/portal/bulkactions/${endpoint}/startvalidate`,
     parameters: [
       {
         name: 'startobject',
