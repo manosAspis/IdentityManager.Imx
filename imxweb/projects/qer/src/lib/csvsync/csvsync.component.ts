@@ -52,6 +52,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   validating: boolean;
   initializing: boolean = false;
   shouldValidate: boolean = false;
+  preValidateDialog: boolean = false;
+  validateDialog: boolean = false;
   numberOfErrors: number;
   searchControl = new FormControl({value: '', disabled: true});
   loadingValidation = false;
@@ -535,13 +537,19 @@ private async validateNoDuplicates(columnMapping: any): Promise<void> {
 }
 
 
-public async onValidateClicked(endpoint: string): Promise<void> {
+public async onValidate(endpoint: string): Promise<void> {
   this.shouldValidate = true;
-  this.startValidateObj = this.startValidate(endpoint, {totalRows: this.totalRows});
-  
-   
-  //this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
-  
+  this.preValidateDialog = true;
+  this.startValidateObj = this.getStartValidateData(endpoint, {totalRows: this.totalRows});
+}
+
+public async beginValidation(endpoint: string): Promise<void> {
+  this.preValidateDialog = false;
+  this.shouldValidate = true;
+  const mapping = await this.mapping(endpoint); // Fetch the mapping from API
+  await this.validate(endpoint, mapping);
+  this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
+  this.validateDialog = true;
 }
 
 public async validate(endpoint: string, columnMapping: any): Promise<void> {
@@ -650,11 +658,15 @@ private validateRow(endpoint: string, rowToValidate: any): MethodDescriptor<Vali
 }
 
 
-public async startValidate(endpoint: string, startobject: any): Promise<object> {
+public async getStartValidateData(endpoint: string, startobject: any): Promise<object> {
   const msg = await this.config.apiClient.processRequest(this.startValidateMethod(endpoint, startobject));
   this.preValidateMsg = msg;
   console.log(msg);
   console.log(msg.permission);
+
+  if (msg.permission === true) {
+    this.beginValidation(endpoint);
+  }
   this.dialogHide = false;
   return msg;
  }
