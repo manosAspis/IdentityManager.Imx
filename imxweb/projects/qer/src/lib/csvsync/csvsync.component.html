@@ -8,7 +8,7 @@
   </eui-alert>
 
   <eui-alert *ngIf="fileLoaded && numberOfErrors === 0 && (!allRowsValidated || validating || initializing) && numberOfErrors === 0" class="imx-helper-alert" type="warning" condensed="true" [colored]="true" [dismissable]="true">
-    <span>Validate your CSV data.</span>
+    <span>Select a function and Validate your CSV data.</span>
   </eui-alert>
 
   <!--<eui-alert *ngIf="fileLoaded && allRowsValidated && !validating && !initializing && numberOfErrors === 0" class="imx-helper-alert" type="success" condensed="true" [colored]="true" [dismissable]="true">
@@ -69,7 +69,7 @@
 
         <!-- Header and Rows -->
         <tr mat-header-row *matHeaderRowDef="headers"></tr>
-        <tr mat-row *matRowDef="let row; columns: headers; let rowIndex = index" [class.error-row]="isRowError(rowIndex)">
+        <tr mat-row *matRowDef="let row; columns: headers; let rowIndex = index" [class.not-show]="numberOfErrors > 0 && !isRowError(rowIndex)" [class.error-row]="isRowError(rowIndex)">
         </tr>
 
       </table>
@@ -77,38 +77,32 @@
     <mat-paginator #paginator [pageSizeOptions]="[20, 50, 100, 200]" showFirstLastButtons (page)="pageChanged($event)"></mat-paginator>
   <div class="button-bar">
     <button
-        mat-raised-button
-
-        [disabled]="!fileLoaded || loadingValidation || loadingImport"
-
-        color="accent"
-        (click)="replaceCsv()"
-      >
-        Remove CSV
+      mat-raised-button
+      [disabled]="!fileLoaded || loadingValidation || loadingImport"
+      color="warn"
+      (click)="replaceCsv()"
+    >
+      Remove CSV
     </button>
     <button
-        mat-raised-button
-
-        [disabled]="!fileLoaded || selectedOptionKey === null || loadingValidation || loadingImport"
-
-        color="warn"
-        (click)="onValidateClicked(selectedOptionKey)"
-      >
-        Validate
+      mat-raised-button
+      [disabled]="!fileLoaded || selectedOptionKey === null || loadingValidation || loadingImport"
+      color="accent"
+      (click)="onValidate(selectedOptionKey)"
+    >
+      Validate
     </button>
     <button
-        mat-raised-button
-
-        [disabled]="!allRowsValidated || validating || initializing || !fileLoaded || loadingValidation || loadingImport"
-        color="primary"
-        (click)="openConfirmationDialog()"
-
-      >
-        Import to database
+      mat-raised-button
+      [disabled]="!allRowsValidated || validating || initializing || !fileLoaded || loadingValidation || loadingImport"
+      color="primary"
+      (click)="openConfirmationDialog()"
+    >
+      Import to database
     </button>
   </div>
 
-  <div *ngIf="loadingValidation || loadingImport" class="loading-container">
+  <!--<div *ngIf="loadingValidation || loadingImport" class="loading-container">
     <div class="loading-wrapper">
       <h1 *ngIf="loadingValidation">Validation procedure is loading.</h1>
       <h1 *ngIf="loadingImport">Import procedure is loading.</h1>
@@ -124,9 +118,61 @@
       <p>You can procceed with the data import</p>
       <button type="button" class="close" (click)="dialogClose()">Ok</button>
     </div>
+  </div>-->
+
+  <div *ngIf="!dialogHide" class="loading-container">
+
+    <!--<div *ngIf="preValidateDialog" class="loading-wrapper">
+      <h1 [ngClass]="preValidateMsg.permission ? 'permitted' : 'not-permitted'">{{preValidateMsg.message}}</h1>
+      <button type="button" class="close" (click)="dialogClose()">Cancel</button>
+      <button [disabled]="!preValidateMsg.permission" type="button" class="close" (click)="beginValidation(selectedOptionKey)">Ok</button>
+    </div>-->
+
+    <div *ngIf="preValidateMsg.permission">
+      <div *ngIf="loadingValidation || loadingImport || validateDialog" class="loading-wrapper">
+        <div *ngIf="loadingValidation">
+          <h2>Validating...</h2>
+          <p class="warning">Please do not close the browser</p>
+        </div>
+          
+        <div class="success" *ngIf="fileLoaded && allRowsValidated && !validating && !initializing && numberOfErrors === 0">
+          <h1>Successfull Validation!</h1>
+          <p>You can procceed with the data import</p>
+        </div>
+
+        <div class="errors" *ngIf="!validating && !initializing && numberOfErrors > 0">
+          <h1>Validation Error!</h1>
+          <p>You have <span>{{numberOfErrors}}</span> errors in the Csv</p>
+        </div>
+            
+        <p *ngIf="validating">Estimated remaining time: {{ estimatedRemainingTime }}</p>
+        <mat-progress-bar mode="determinate" [value]="validating ? progress : '100' "></mat-progress-bar>
+        <p>{{preValidateMsg.message}}</p>
+
+        <div class=button-wrapper>
+          <div *ngIf="numberOfErrors === 0">
+            <button [disabled]="!validating" type="button" class="close" (click)="dialogClose()">Cancel</button>
+            <button [disabled]="validating" type="button" class="close" (click)="dialogClose()">Ok</button>
+          </div>
+          <button *ngIf="numberOfErrors > 0" type="button" class="close" (click)="dialogClose()">Cancel</button>
+        </div>   
+      </div>
+    </div>
+
+    <div *ngIf="!preValidateMsg.permission">
+      <div class="loading-wrapper">
+        <h1 class="warning">Action not allowed</h1>
+        <p>{{preValidateMsg.message}}<p>
+
+        <div class="button-wrapper">
+          <button type="button" class="close" (click)="dialogClose()">Cancel</button>
+          <button disabled type="button" class="close" (click)="dialogClose()">Ok</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div *ngIf="!dialogHide && !validating && numberOfErrors > 0" class="loading-container error">
+  <!--<div *ngIf="!dialogHide && !validating && numberOfErrors > 0" class="loading-container error">
     <div class="loading-wrapper">
       <h1>Error</h1>
       <div class="dialog-body">
@@ -135,7 +181,7 @@
       
       <button type="button" class="close" (click)="dialogClose()">Close</button>
     </div>
-  </div>
+  </div>-->
 
 
 </div>

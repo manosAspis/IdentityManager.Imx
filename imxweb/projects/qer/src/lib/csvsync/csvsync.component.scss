@@ -12,12 +12,27 @@ h1.mat-headline {
   margin-bottom: 15px;
 }
 
+.mat-raised-button.mat-primary {
+  background-color: green;
+}
+.mat-raised-button.mat-primary.mat-button-disabled,
+.mat-raised-button.mat-button-disabled.mat-button-disabled {
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
 th.mat-header-cell {
   min-width: 100px;
   position: sticky;
   top: 0;
   background-color: $white;
   z-index: 1;
+}
+
+.not-show {
+  display: none;
+}
+.error-row {
+  display: table-row;
 }
 
 td.mat-cell {
@@ -139,56 +154,90 @@ td.mat-cell {
   align-items: center;
 
   .loading-wrapper {
+    float: left;
+    position: relative;
     background-color: white;
     border-radius: 5px;
-    min-width: 600px;
+    padding: 50px;
+    width: 650px;
     max-width: 960px;
-    min-height: 300px;
+    height: 300px;
     max-height: 500px;
-    display: flex;
+    //display: flex;
     flex-direction: column; /* Change to column layout */
     justify-content: center;
     align-items: center;
+    text-align: center;
     
+    p {
+      font-size: 18px;
+      &.warning {font-weight: 600;}
+    }
     h1 {
-      font-weight: 300;
+      font-weight: 400;
       margin-top: 15px;
     }
-
-    button {
-      margin: 15px 0;
-      padding: 5px 20px;
-      background: white;
-      border: 1px solid;
-      border-radius: 5px;
-      font-weight: 300;
-      &:hover {
-        cursor: pointer;
+    h2 {font-weight: 400;}
+    .success {
+      text-align: center;
+      h1 {
+        color: green;
+        font-weight: 400;
       }
+    }
+
+    .errors,
+    .warning {
+      color: red;
+      
+      h1 {font-weight: 400;}
+      p {
+        margin-top: 10px;
+        span {
+          font-weight: 600;
+          font-size: 20px;
+        }
+      }
+    }
+
+    .button-wrapper {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+
+      button {
+        margin: 30px 0 0 10px;
+        padding: 5px 20px;
+        background: white;
+        border: 1px solid;
+        border-radius: 5px;
+        font-size: 13px;
+        font-weight: 300;
+        float: right;
+        box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
     }
 
     .dialog-body {
       overflow: auto;
       padding: 0 30px;
     }
-  }
 
-  &.error {
-    h1, .dialog-body {color: red;}
-  }
-
-  &.success {
-    .loading-wrapper {
-      min-height: auto;
-    }
-    
     h1 {
-      color: green;
-      font-weight: 400;
+      &.success {
+        font-weight: 400;
+        color: green;
+      }
+      &.error {
+        font-weight: 400;
+        color: red;
+      }
     }
-    p { font-size: 18px;}
   }
-
 }
 
 .mat-progress-bar {
