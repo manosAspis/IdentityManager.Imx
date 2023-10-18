@@ -10,6 +10,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 
+
+
 export interface PeriodicElement {}
 
 export interface ValidationElement{
@@ -28,7 +30,7 @@ export interface PreValidationElement{
 @Component({
   selector: 'imx-csvsync',
   templateUrl: './csvsync.component.html',
-  styleUrls: ['./csvsync.component.scss']
+  styleUrls: ['./csvsync.component.scss'],
 })
 export class CsvsyncComponent implements OnInit, AfterViewInit {
 
@@ -68,6 +70,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   public BulkActionsCofigParamCount: number;
   progress: number = 0;
   estimatedRemainingTime: string;
+  ShowErrors: boolean = true;
+  initialPageEvent = new PageEvent();
 
   constructor(
     private dialog: MatDialog,
@@ -195,12 +199,12 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
       this.cdr.detectChanges();
       if (this.paginator) {
         // Create a new PageEvent and manually trigger the page change event
-        const initialPageEvent = new PageEvent();
-        initialPageEvent.pageIndex = 0;
-        initialPageEvent.pageSize = this.paginator.pageSize;
-        initialPageEvent.length = this.csvDataSource.data.length;
+        
+        this.initialPageEvent.pageIndex = 0;
+        this.initialPageEvent.pageSize = this.paginator.pageSize;
+        this.initialPageEvent.length = this.csvDataSource.data.length;
 
-        this.pageChanged(initialPageEvent);
+        this.pageChanged(this.initialPageEvent);
 
         // Subscribe to future page changes
         this.paginator.page.subscribe((event) => {
@@ -210,7 +214,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
         console.warn('Paginator is not available');
       }
       this.initializing = false;
-    }, 500); // Adjust the delay as needed, typically a small value like 500ms should be sufficient
+    },800); // Adjust the delay as needed, typically a small value like 500ms should be sufficient
   }
 
   applyFilter() {
@@ -242,6 +246,9 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     return reversedObject;
   }
 
+  toggleErrors() {
+    this.ShowErrors = !this.ShowErrors;
+  }
 
   getErrorRowsAndHeaders(): string {
     const errorInfos = this.validationResults.map(result => {
@@ -594,6 +601,7 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
           this.validationResults.push({ rowIndex, colIndex: Number(colIndex), message: validationResponse[columnName] });
           this.allvalidated = false;
           this.numberOfErrors++;
+          this.initialPageEvent.length = this.numberOfErrors
         }
       });
 
@@ -607,6 +615,7 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
       const endTime = performance.now();
       const timeTaken = endTime - startTime;
       totalTimeTaken += timeTaken;
+    
 
       // Calculate the average time taken per row
       const averageTimePerRow = totalTimeTaken / (this.processedRows + 1);
@@ -622,6 +631,7 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
 
   this.validating = false;
   console.log(this.allvalidated);
+  this.csvDataSource.paginator._changePageSize(this.numberOfErrors);
   this.cdr.detectChanges();
   setTimeout(() => {
     this.loadingValidation = false;

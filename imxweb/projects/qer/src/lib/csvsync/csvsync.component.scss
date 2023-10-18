@@ -20,6 +20,12 @@ h1.mat-headline {
   background-color: rgba(0, 0, 0, 0.12);
 }
 
+.mat-raised-button.toggle-errors{
+  background-color: grey;
+  color: white;
+  margin-bottom: 10px;
+}
+
 th.mat-header-cell {
   min-width: 100px;
   position: sticky;
@@ -172,6 +178,16 @@ td.mat-cell {
     p {
       font-size: 18px;
       &.warning {font-weight: 600;}
+      &.validation-details {
+        margin-bottom: 0;
+        font-size: 14px;
+        text-align: left;
+
+        span {
+          float: right;
+          margin-right: 50px;
+        }
+      }
     }
     h1 {
       font-weight: 400;
@@ -243,7 +259,7 @@ td.mat-cell {
 .mat-progress-bar {
   height: 20;
   max-width: 500px;
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .mat-spinner {
