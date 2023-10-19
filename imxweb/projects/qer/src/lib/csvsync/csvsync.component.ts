@@ -44,6 +44,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   csvData: any[] = [];
   fileLoaded: boolean = false;
   dialogHide: boolean = true;
+  hardError: string = '';
   headers: string[] = [];
   validationResponses: any[] = [];
   validationResults: ValidationElement[] = [];
@@ -553,13 +554,12 @@ public async onValidate(endpoint: string): Promise<void> {
 public async beginValidation(endpoint: string): Promise<void> {
   this.preValidateDialog = false;
   this.shouldValidate = true;
-  const mapping = await this.mapping(endpoint); // Fetch the mapping from API
-  await this.validate(endpoint, mapping);
+  await this.validate(endpoint);
   this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
   this.validateDialog = true;
 }
 
-public async validate(endpoint: string, columnMapping: any): Promise<void> {
+public async validate(endpoint: string): Promise<void> {
 
   this.loadingValidation = true;
   if(this.initializing || !this.shouldValidate) {
@@ -573,6 +573,7 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
   this.allvalidated = true;
   this.validating = true;
   this.numberOfErrors = 0; // Reset the error count before new validation
+  this.hardError = ''; //Clear the hardError message
 
   const NoDuplicates = await this.notes(endpoint);
   await this.validateNoDuplicates(NoDuplicates);
@@ -581,41 +582,62 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
   let totalTimeTaken = 0; // Total time taken for processing rows
   let estimatedRemainingSecs = 0;
 
-  for (const [rowIndex, csvRow] of this.csvDataSource.data.entries()) { // Validate all rows
-    const rowToValidate: any = {};
-    Object.keys(columnMapping).forEach(colIndex => {
-      const columnName = columnMapping[colIndex];
-      rowToValidate[columnName] = csvRow[colIndex].trim(); // Trim the values here
-    });
+  for (const [rowIndex, csvRow] of this.csvData.entries()) { // Validate all rows
+
+    const sanitizedHeaders: string[] = [];
+    const rowToValidate: any = {
+      HeaderNames: sanitizedHeaders
+    };
+
+    // Skip the "Index" column and start from 1
+    for (let colIndex = 1; colIndex < csvRow.length; colIndex++) {
+      const header = this.headers[colIndex]; // Use the header name as the key
+      const sanitizedHeader = header.replace(/\s/g, '_'); // Replace spaces with underscores in the header
+      sanitizedHeaders.push(sanitizedHeader);
+      rowToValidate[sanitizedHeader] = csvRow[colIndex];
+    }
 
     const startTime = performance.now();
     try {
+      console.log(rowToValidate);
       let validationResponse: any = await this.config.apiClient.processRequest(this.validateRow(endpoint, rowToValidate));
-
 
       console.log(validationResponse);
 
-      Object.keys(columnMapping).forEach(colIndex => {
-        const columnName = columnMapping[colIndex];
-        if (validationResponse[columnName] && validationResponse[columnName] !== "ok") {
-          this.validationResults.push({ rowIndex, colIndex: Number(colIndex), message: validationResponse[columnName] });
+      if (validationResponse.error) {
+        console.log(`Validation error found: ${validationResponse.error}`);
+        this.hardError = validationResponse.error;
+        this.validating = false;
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.allRowsValidated = false;
+          this.loadingValidation = false;
+          this.progress = 0;
+          this.processedRows = 0;
+          this.estimatedRemainingTime = null;
+        });
+        return; // Exit the function when an error is found
+      }
+
+      // Iterate over the headers and validate responses
+      for (let colIndex = 1; colIndex < this.headers.length; colIndex++) {
+        const header = this.headers[colIndex];
+        const sanitizedHeader = header.replace(/\s/g, '_'); // Replace spaces with underscores in the header
+        if (validationResponse[sanitizedHeader] && validationResponse[sanitizedHeader] !== "ok") {
+          this.validationResults.push({ rowIndex, colIndex, message: validationResponse[sanitizedHeader] });
           this.allvalidated = false;
           this.numberOfErrors++;
-          this.initialPageEvent.length = this.numberOfErrors
         }
-      });
+      }
 
     } catch (error) {
       console.error(`Error validating row ${rowIndex}: ${error}`);
       this.allvalidated = false;
       this.validationResults$.next(this.validationResults);
     } finally {
-
-
       const endTime = performance.now();
       const timeTaken = endTime - startTime;
       totalTimeTaken += timeTaken;
-    
 
       // Calculate the average time taken per row
       const averageTimePerRow = totalTimeTaken / (this.processedRows + 1);
@@ -625,7 +647,6 @@ public async validate(endpoint: string, columnMapping: any): Promise<void> {
       this.progress = (this.processedRows / this.totalRows) * 100;
       this.estimatedRemainingTime = this.formatTime(estimatedRemainingSecs);
       this.processedRows++;
-
     }
   }
 

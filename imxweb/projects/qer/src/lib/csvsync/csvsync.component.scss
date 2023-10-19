@@ -20,10 +20,12 @@ h1.mat-headline {
   background-color: rgba(0, 0, 0, 0.12);
 }
 
-.mat-raised-button.toggle-errors{
-  background-color: grey;
-  color: white;
-  margin-bottom: 10px;
+mat-slide-toggle{
+  position: absolute;
+  top: 5px;
+  left: 0;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 th.mat-header-cell {
@@ -91,6 +93,7 @@ td.mat-cell {
   justify-content: flex-end;
   border-top: $black-c 1px solid;
   flex-wrap: wrap;
+  position: relative;
 
   > * {
     margin-left: 10px;
