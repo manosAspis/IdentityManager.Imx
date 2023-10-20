@@ -72,6 +72,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   progress: number = 0;
   estimatedRemainingTime: string;
   ShowErrors: boolean = true;
+  cancelValidate: boolean = false; // Canceles the validate() function
+  cancelCheck: boolean = false; // Checks if the validation process has been canceled.
   initialPageEvent = new PageEvent();
 
   constructor(
@@ -137,7 +139,14 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   }
 
   dialogClose() {
-    this.dialogHide = true;
+    if (this.validating){
+      this.cancelValidate = true;
+      this.cancelCheck = true;
+      this.dialogHide = true;
+    }else{
+      this.cancelCheck = false;
+      this.dialogHide = true;
+    }
   }
 
   replaceCsv() {
@@ -584,6 +593,10 @@ public async validate(endpoint: string): Promise<void> {
 
   for (const [rowIndex, csvRow] of this.csvData.entries()) { // Validate all rows
 
+    if (this.cancelValidate) {  
+      break;
+    }
+
     const sanitizedHeaders: string[] = [];
     const rowToValidate: any = {
       HeaderNames: sanitizedHeaders
@@ -649,10 +662,10 @@ public async validate(endpoint: string): Promise<void> {
       this.processedRows++;
     }
   }
-
+  this.cancelValidate = false; 
   this.validating = false;
   console.log(this.allvalidated);
-  this.csvDataSource.paginator._changePageSize(this.numberOfErrors);
+  this.csvDataSource.paginator._changePageSize(this.totalRows);
   this.cdr.detectChanges();
   setTimeout(() => {
     this.loadingValidation = false;

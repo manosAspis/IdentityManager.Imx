@@ -11,42 +11,32 @@
     <span>Select a function and Validate your CSV data.</span>
   </eui-alert>
 
-  <!--<eui-alert *ngIf="fileLoaded && allRowsValidated && !validating && !initializing && numberOfErrors === 0" class="imx-helper-alert" type="success" condensed="true" [colored]="true" [dismissable]="true">
-    <span>You can submit your CSV to the database.</span>
-  </eui-alert>
-
-  <eui-alert *ngIf="numberOfErrors > 0" class="imx-helper-alert" type="error" condensed="true" [colored]="true" [dismissable]="true">
-    <span>There are errors in your CSV data at: {{ getErrorRowsAndHeaders() }}. Please select another CSV file.</span>
-  </eui-alert>-->
-
   <div class="flex-container">
-  <div>
-    <mat-form-field appearance="outline" class="search-width">
-        <mat-label>Search</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput (keyup)="applyFilter()" [formControl]="searchControl">
-        <button mat-icon-button matSuffix *ngIf="searchControl.value" (click)="searchControl.setValue('')">
-            <mat-icon>close</mat-icon>
-        </button>
-    </mat-form-field>
+    <div>
+      <mat-form-field appearance="outline" class="search-width">
+          <mat-label>Search</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput (keyup)="applyFilter()" [formControl]="searchControl">
+          <button mat-icon-button matSuffix *ngIf="searchControl.value" (click)="searchControl.setValue('')">
+              <mat-icon>close</mat-icon>
+          </button>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field appearance="outline" class="search-width">
+        <mat-label>Select a Function</mat-label>
+        <mat-select [(ngModel)]="selectedOptionKey">
+          <mat-option *ngFor="let value of getObjectValues(configParams)" [value]="getReversedKey(value)">{{ value }}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-  
-    
-</div>
-<div>
-  <mat-form-field appearance="outline" class="search-width">
-    <mat-label>Select a Function</mat-label>
-    <mat-select [(ngModel)]="selectedOptionKey">
-      <mat-option *ngFor="let value of getObjectValues(configParams)" [value]="getReversedKey(value)">{{ value }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+    </div>
+  </div>
 
-</div>
-</div>
   <div class="file-input-wrapper">
     <input style="display: none;" id="csv-file" type="file" (change)="onFileChange($event)" accept=".csv" />
-
   </div>
+
   <div *ngIf="!fileLoaded" class="preview-window" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)">
     <div for="file" class="no-results" (click)="triggerFileUpload()">
       <eui-icon [icon]="noDataIcon"></eui-icon>
@@ -54,8 +44,8 @@
         <p>or click to browse.</p>
     </div>
   </div>
-  <div *ngIf="fileLoaded" class="scrollable-table">
 
+  <div *ngIf="fileLoaded" class="scrollable-table">
     <table mat-table [dataSource]="csvDataSource">
 
         <!-- Table Columns -->
@@ -68,23 +58,22 @@
             </span>
           </td>
         </ng-container>
-
-
         <!-- Header and Rows -->
         <tr mat-header-row *matHeaderRowDef="headers"></tr>
-        <tr mat-row *matRowDef="let row; columns: headers; let rowIndex = index" [class.not-show]="numberOfErrors > 0 && !isRowError(rowIndex) && ShowErrors" [class.error-row]="isRowError(rowIndex)">
+        <tr mat-row *matRowDef="let row; columns: headers; let rowIndex = index" [class.not-show]="numberOfErrors > 0 && !isRowError(rowIndex) && ShowErrors && !cancelCheck" [class.error-row]="isRowError(rowIndex)">
         </tr>
 
-      </table>
-    </div>
-    <mat-paginator #paginator [pageSizeOptions]="[20, 100, 200]" showFirstLastButtons (page)="pageChanged($event)"></mat-paginator>
+    </table>
+  </div>
+  <mat-paginator #paginator [pageSizeOptions]="[20, 100, 200]" showFirstLastButtons (page)="pageChanged($event)"></mat-paginator>
+  
   <div class="button-bar">
 
     <mat-slide-toggle
       class="toggle-errors"
       [color]="ShowErrors ? 'warn' : 'warn'"
       [checked]="ShowErrors"
-      [disabled]="validating || initializing || !fileLoaded || loadingValidation || numberOfErrors === 0"
+      [disabled]="validating || initializing || !fileLoaded || loadingValidation || numberOfErrors === 0 || cancelCheck"
       (change)="toggleErrors()">
       Show Errors
     </mat-slide-toggle>
@@ -107,7 +96,7 @@
     </button>
     <button
       mat-raised-button
-      [disabled]="!allRowsValidated || validating || initializing || !fileLoaded || loadingValidation || loadingImport"
+      [disabled]="!allRowsValidated || validating || initializing || !fileLoaded || loadingValidation || loadingImport || cancelCheck"
       color="primary"
       (click)="openConfirmationDialog()"
     >
@@ -164,7 +153,7 @@
       </div>
     </div>
   </div>
-  
+
 </div>
 
 
