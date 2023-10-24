@@ -365,28 +365,27 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     const csvData = this.csvDataSource.data;
     const results: PeriodicElement[] = [];
     this.validating = true;
-
-    // Get the mapping object from the mapping function
-    const mappingObject = await this.mapping(endpoint);
+    
     let totalTimeTaken = 0; // Total time taken for processing rows
     let estimatedRemainingSecs = 0;
+
+    // Create an array of sanitized headers
+    const sanitizedHeaders = this.headers.map(header => header.replace(/\s/g, '_'));
+
     for (const csvRow of csvData) {
       const inputParameterName: any = {};
-
-      for (const csvColumn in mappingObject) {
-        const dbColumn = mappingObject[csvColumn];
-        const cleanCellValue = typeof csvRow[csvColumn] === 'string'
-          ? csvRow[csvColumn].replace(/[\r\n]+/g, '').trim()
-          : csvRow[csvColumn];
-
-        inputParameterName[dbColumn] = cleanCellValue;
-      }
+      // Iterate over the sanitized headers to set the keys in the inputParameter object
+      sanitizedHeaders.forEach((sanitizedHeader, index) => {
+        const cleanCellValue =
+          typeof csvRow[index] === 'string'
+            ? csvRow[index].replace(/[\r\n]+/g, '').trim()
+            : csvRow[index];
+            inputParameterName[sanitizedHeader] = cleanCellValue;
+      });
 
       inputParameters.push(inputParameterName);
     }
-
     for (const inputParameter of inputParameters) {
-
       const startTime = performance.now();
       console.log(inputParameter);
       try {
@@ -395,37 +394,13 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
       } catch (error) {
         console.error(`Error submitting CSV data: ${error}`);
       } finally {
-
-
-        const endTime = performance.now();
+      const endTime = performance.now();
         const timeTaken = endTime - startTime;
         totalTimeTaken += timeTaken;
-
-        // Calculate the average time taken per row
-        const averageTimePerRow = totalTimeTaken / (this.processedRows + 1);
-
-        estimatedRemainingSecs = (averageTimePerRow * (this.totalRows - this.processedRows - 1)) / 1000; // Convert to seconds
-        // Calculate the progress and update the progress bar
-        this.progress = (this.processedRows / this.totalRows) * 100;
-        this.estimatedRemainingTime = this.formatTime(estimatedRemainingSecs);
-        this.processedRows++;
-
-      }
+         return results;
     }
-
-    this.allRowsValidated = false;
-
-    setTimeout(() => {
-
-      this.loadingImport = false;
-      this.progress = 0;
-      this.processedRows = 0;
-      this.estimatedRemainingTime = null;
-
-    });
-
-    return results;
   }
+}
 
 private PostObject(endpoint: string, inputParameterName: any): MethodDescriptor<PeriodicElement> {
   return {
