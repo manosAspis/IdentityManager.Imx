@@ -98,7 +98,7 @@
       mat-raised-button
       [disabled]="!allRowsValidated || validating || initializing || !fileLoaded || loadingValidation || loadingImport || cancelCheck"
       color="primary"
-      (click)="openConfirmationDialog()"
+      (click)="onImport(getImportData())"
     >
       Import to database
     </button>

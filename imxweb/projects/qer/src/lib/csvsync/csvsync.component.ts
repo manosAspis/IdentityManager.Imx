@@ -8,6 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { QerApiService } from '../qer-api-client.service';
 
 
 
@@ -82,7 +83,9 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     private readonly config: AppConfigService,
     private readonly authentication: AuthenticationService,
     private qerService: QerService,
-    private cdr: ChangeDetectorRef) {
+    private cdr: ChangeDetectorRef,
+    private apiService: QerApiService)
+     {
       this.ConfigurationParameters().then((configParams) => {
         if (configParams) {
           this.configParams = this.convertObjectValuesToStrings(configParams);
@@ -535,6 +538,21 @@ public async onValidate(endpoint: string): Promise<void> {
   this.startValidateObj = this.getStartValidateData(endpoint, {totalRows: this.totalRows});
 }
 
+getImportData(): any[] {
+  const csvData: any[] = this.csvDataSource.data.map((row) => {
+    return this.headers.map((header) => row[header]);
+  });
+
+  return csvData;
+}
+
+public async onImport(endpoint: string): Promise<void> {
+ 
+}
+
+
+
+
 public async beginValidation(endpoint: string): Promise<void> {
   this.preValidateDialog = false;
   this.shouldValidate = true;
@@ -697,6 +715,26 @@ private startValidateMethod(endpoint: string, startobject: any): MethodDescripto
       {
         name: 'startobject',
         value: startobject,
+        in: 'body'
+      },
+    ],
+    method: 'POST',
+    headers: {
+      'imx-timezone': TimeZoneInfo.get(),
+    },
+    credentials: 'include',
+    observe: 'response',
+    responseType: 'json'
+  };
+}
+
+private startImportMethod(endpoint: string, startimportobject: any): MethodDescriptor<PreValidationElement> {
+  return {
+    path: `/portal/bulkactions/${endpoint}/startimport`,
+    parameters: [
+      {
+        name: 'startimportobject',
+        value: startimportobject,
         in: 'body'
       },
     ],
