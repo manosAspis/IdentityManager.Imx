@@ -19,7 +19,7 @@ export interface ValidationElement{
   colIndex: number;
   message: string;
 }
-export interface PreValidationElement{
+export interface PreActionElement{
   message: string;
   permission: boolean;
 }
@@ -34,8 +34,10 @@ export interface PreValidationElement{
 })
 export class CsvsyncComponent implements OnInit, AfterViewInit {
 
-  startValidateObj: any;
-  preValidateMsg: object = {message:'', permission: false};
+  startValidateObj: object;
+  startImportObj: object;
+  endImportObj: object;
+  preActionMsg: object = {message:'', permission: false};
   totalRows: number = 0;
   allRowsValidated: boolean = false;
   validationResults$ = new BehaviorSubject<ValidationElement[]>([]);
@@ -562,12 +564,26 @@ public async onValidate(endpoint: string): Promise<void> {
   this.startValidateObj = this.getStartValidateData(endpoint, {totalRows: this.totalRows});
 }
 
+public async onSubmit(endpoint: string): Promise<void> {
+  this.shouldValidate = true;
+  this.preValidateDialog = true;
+  this.startImportObj = this.getStartImportData(endpoint, {totalRows: this.totalRows});
+}
+
 public async beginValidation(endpoint: string): Promise<void> {
   this.preValidateDialog = false;
   this.shouldValidate = true;
   await this.validate(endpoint);
   this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
   this.validateDialog = true;
+}
+
+public async beginImport(endpoint: string): Promise<void> {
+  //this.preValidateDialog = false;
+  //this.shouldValidate = true;
+  await this.importToDatabase(endpoint);
+  this.validateDialog = true;
+  this.endImportObj = this.getEndImportData(endpoint, {totalRows: this.totalRows});
 }
 
 public async validate(endpoint: string): Promise<void> {
@@ -706,7 +722,7 @@ private validateRow(endpoint: string, rowToValidate: any): MethodDescriptor<Vali
 
 public async getStartValidateData(endpoint: string, startobject: any): Promise<object> {
   const msg = await this.config.apiClient.processRequest(this.startValidateMethod(endpoint, startobject));
-  this.preValidateMsg = msg;
+  this.preActionMsg = msg;
   console.log(msg);
   console.log(msg.permission);
 
@@ -715,9 +731,29 @@ public async getStartValidateData(endpoint: string, startobject: any): Promise<o
   }
   this.dialogHide = false;
   return msg;
- }
+}
 
-private startValidateMethod(endpoint: string, startobject: any): MethodDescriptor<PreValidationElement> {
+public async getStartImportData(endpoint: string, startobject: any): Promise<object> {
+  const msg = await this.config.apiClient.processRequest(this.startImportMethod(endpoint, startobject));
+  this.preActionMsg = msg;
+  if (msg.permission === true) {
+    this.beginImport(endpoint);
+  }
+  this.dialogHide = false;
+  return msg;
+}
+
+public async getEndImportData(endpoint: string, startobject: any): Promise<object> {
+  const msg = await this.config.apiClient.processRequest(this.endImportMethod(endpoint, startobject));
+  this.preActionMsg = msg;
+  console.log(msg.message)
+  this.dialogHide = false;
+  return msg;
+}
+
+
+
+private startValidateMethod(endpoint: string, startobject: any): MethodDescriptor<PreActionElement> {
   return {
     path: `/portal/bulkactions/${endpoint}/startvalidate`,
     parameters: [
@@ -736,6 +772,47 @@ private startValidateMethod(endpoint: string, startobject: any): MethodDescripto
     responseType: 'json'
   };
 }
+
+private startImportMethod(endpoint: string, startobject: any): MethodDescriptor<PreActionElement> {
+  return {
+    path: `/portal/bulkactions/${endpoint}/startimport`,
+    parameters: [
+      {
+        name: 'startobject',
+        value: startobject,
+        in: 'body'
+      },
+    ],
+    method: 'POST',
+    headers: {
+      'imx-timezone': TimeZoneInfo.get(),
+    },
+    credentials: 'include',
+    observe: 'response',
+    responseType: 'json'
+  };
+}
+
+private endImportMethod(endpoint: string, startobject: any): MethodDescriptor<PreActionElement> {
+  return {
+    path: `/portal/bulkactions/${endpoint}/endimport`,
+    parameters: [
+      {
+        name: 'startobject',
+        value: startobject,
+        in: 'body'
+      },
+    ],
+    method: 'POST',
+    headers: {
+      'imx-timezone': TimeZoneInfo.get(),
+    },
+    credentials: 'include',
+    observe: 'response',
+    responseType: 'json'
+  };
+}
+
 
 
 private countObjectsWithFunctionKey(data: any): number {

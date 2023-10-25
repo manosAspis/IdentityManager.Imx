@@ -98,7 +98,7 @@
       mat-raised-button
       [disabled]="!allRowsValidated || validating || initializing || !fileLoaded || loadingValidation || loadingImport || cancelCheck"
       color="primary"
-      (click)="openConfirmationDialog()"
+      (click)="onSubmit(selectedOptionKey)"
     >
       Import to database
     </button>
@@ -106,7 +106,7 @@
 
   <div *ngIf="!dialogHide" class="loading-container">
 
-    <div *ngIf="preValidateMsg.permission">
+    <div *ngIf="preActionMsg.permission">
       <div *ngIf="loadingValidation || loadingImport || validateDialog" class="loading-wrapper">
         <div *ngIf="loadingValidation">
           <h2>Validating...</h2>
@@ -129,7 +129,7 @@
           <span *ngIf="!validating">{{totalRows}} of {{totalRows}}</span>
         </p>
         <mat-progress-bar mode="determinate" [value]="validating ? progress : '100' "></mat-progress-bar>
-        <p class="validation-details">{{preValidateMsg.message}}</p>
+        <p class="validation-details">{{preActionMsg.message}}</p>
 
         <div class=button-wrapper>
           <div *ngIf="numberOfErrors === 0 && !hardError.length">
@@ -141,10 +141,10 @@
       </div>
     </div>
 
-    <div *ngIf="!preValidateMsg.permission">
+    <div *ngIf="!preActionMsg.permission">
       <div class="loading-wrapper">
         <h1 class="warning">Action not allowed</h1>
-        <p>{{preValidateMsg.message}}<p>
+        <p>{{preActionMsg.message}}<p>
 
         <div class="button-wrapper">
           <button type="button" class="close" (click)="dialogClose()">Cancel</button>
