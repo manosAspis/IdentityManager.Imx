@@ -47,12 +47,14 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   preValidateMsg: object = {message:'', permission: false};
   totalRows: number = 0;
   allRowsValidated: boolean = false;
+  allRowsImported: boolean = false;
   validationResults$ = new BehaviorSubject<ValidationElement[]>([]);
   @ViewChild(MatPaginator) paginator: MatPaginator;
   csvDataSource: MatTableDataSource<any> = new MatTableDataSource();
   csvData: any[] = [];
   fileLoaded: boolean = false;
   dialogHide: boolean = true;
+  importdialogHide: boolean = true;
   hardError: string = '';
   headers: string[] = [];
   validationResponses: any[] = [];
@@ -62,10 +64,12 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   public noDataIcon = 'table';
   public visibleRows: any[] = [];
   validating: boolean;
+  importing: boolean;
   initializing: boolean = false;
   shouldValidate: boolean = false;
   preValidateDialog: boolean = false;
   validateDialog: boolean = false;
+  importDialog: boolean = false;
   numberOfErrors: number;
   searchControl = new FormControl({value: '', disabled: true});
   loadingValidation = false;
@@ -112,6 +116,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.loadingValidation = false;
     this.loadingImport = false;
     this.validating = true;
+    this.importing = true;
     this.processing = true;
     this.allvalidated = false;
     await this.ConfigurationParameters();
@@ -146,6 +151,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.allvalidated = false;
     this.visibleRows = [];
     this.validating = false;
+    this.importing = false;
     this.initializing = false;
     this.shouldValidate = false;
     this.numberOfErrors = 0;
@@ -156,11 +162,15 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
       this.cancelValidate = true;
       this.cancelCheck = true;
       this.dialogHide = true;
+      this.importdialogHide = true;
     }else{
       this.cancelCheck = false;
       this.dialogHide = true;
+      this.importdialogHide = true;
     }
   }
+
+
 
   replaceCsv() {
     this.progress = 0;
@@ -175,6 +185,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.validationResults = [];
     this.validationResults$.next([]);
     this.validating = true;
+    this.importing = true;
     this.numberOfErrors = 0;
     this.visibleRows = [];
     this.shouldValidate = false;
@@ -214,11 +225,17 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     return this.numberOfErrors === 0;
   }
 
+  checkAllRowsImported(): boolean {
+    // All rows are validated if there are no errors
+    return this.numberOfErrors === 0;
+  }
+
   ngAfterViewInit() {
     this.initializing = true;
     setTimeout(() => {
       this.csvDataSource.paginator = this.paginator;
       this.validating = true;
+      this.importing = true;
       this.cdr.detectChanges();
       if (this.paginator) {
         // Create a new PageEvent and manually trigger the page change event
@@ -519,6 +536,8 @@ public async onImport(endpoint: string): Promise<void>{
 
 public async beginImport(endpoint: string): Promise<void>{
   await this.importToDatabase(endpoint);
+  this.allRowsImported = this.checkAllRowsImported(); // Call the new method after import
+  this.importDialog = true;
 }
 
 public async importToDatabase(endpoint: string): Promise<PeriodicElement[]> {
@@ -527,6 +546,7 @@ public async importToDatabase(endpoint: string): Promise<PeriodicElement[]> {
   const csvData = this.csvDataSource.data;
   const results: PeriodicElement[] = [];
   this.processing = true;
+  this.importing = true;
 
   let totalTimeTaken = 0; // Total time taken for processing rows
   let estimatedRemainingSecs = 0;
@@ -585,7 +605,7 @@ public async importToDatabase(endpoint: string): Promise<PeriodicElement[]> {
     this.estimatedRemainingTime = null;
 
   });
-
+  this.allRowsImported = true;
   return results;
 }
 
@@ -774,11 +794,8 @@ public async getStartImportData(endpoint: string, startobject: any): Promise<obj
   this.preImportMsg = importmsg;
  if (importmsg.permission === true) {
     this.beginImport(endpoint);
-    this.dialogHide = true;
   }
-  else{
-    this.dialogHide = false;
-  } 
+  this.importdialogHide = false;
   return importmsg;
  }
 
