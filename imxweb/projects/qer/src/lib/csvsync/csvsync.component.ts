@@ -89,6 +89,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   cancelCheck: boolean = false; // Checks if the validation process has been canceled.
   initialPageEvent = new PageEvent();
   processing: boolean = false;
+  styleElement: HTMLStyleElement;
+  colors : Array<string> = ["#6a6a6a", "#B7B7B7"];
 
   constructor(
     private dialog: MatDialog,
@@ -132,6 +134,9 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
 
     console.log(this.allvalidated)
     console.log(this.validating)
+
+    this.styleElement = document.createElement('style');
+    this.changeColors();
   }
 
   ngOnDestroy() {
@@ -883,6 +888,26 @@ openConfirmationDialog(): void {
     }
   });
 }
+
+changeColors() {
+  const head = document.getElementsByTagName('head')[0];
+  const css = `
+  .progress-style .mat-progress-bar-fill::after {
+    background-color: ${this.colors[0]} !important;
+  }
+
+  .progress-style .mat-progress-bar-buffer {
+    background-color: ${this.colors[1]} !important; 
+  }
+  
+  `;
+  this.styleElement.innerHTML = '';
+  this.styleElement.type = 'text/css';
+  this.styleElement.appendChild(document.createTextNode(css));
+  head.appendChild(this.styleElement);
+
+}
+
 
 }
 

@@ -128,7 +128,7 @@
           <span *ngIf="validating">{{processedRows}} of {{totalRows}}</span>
           <span *ngIf="!validating">{{totalRows}} of {{totalRows}}</span>
         </p>
-        <mat-progress-bar mode="determinate" [value]="validating ? progress : '100' "></mat-progress-bar>
+        <mat-progress-bar class="progress-style" mode="determinate" [value]="validating ? progress : '100' "></mat-progress-bar>
         <p class="validation-details">{{preValidateMsg.message}}</p>
 
         <div class=button-wrapper>
@@ -177,8 +177,9 @@
         <button [disabled]="importing" type="button" class="close" (click)="dialogClose()">Cancel</button>
         <button [disabled]="!importing" type="button" class="close" (click)="dialogClose()">Ok</button>
       </div>
-  </div>
+    </div>
 
+  </div>
 </div>
   
 
