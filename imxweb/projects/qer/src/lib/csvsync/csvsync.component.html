@@ -8,6 +8,7 @@
   </eui-alert>
 
   <eui-alert *ngIf="fileLoaded && numberOfErrors === 0 && (!allRowsValidated || processing || initializing) && numberOfErrors === 0" class="imx-helper-alert" type="warning" condensed="true" [colored]="true" [dismissable]="true">
+
     <span>Select a function and Validate your CSV data.</span>
   </eui-alert>
 
@@ -73,7 +74,9 @@
       class="toggle-errors"
       [color]="ShowErrors ? 'warn' : 'warn'"
       [checked]="ShowErrors"
+
       [disabled]="processing || initializing || !fileLoaded || loadingValidation || numberOfErrors === 0 || cancelCheck"
+
       (change)="toggleErrors()">
       Show Errors
     </mat-slide-toggle>
@@ -83,6 +86,7 @@
       [disabled]="!fileLoaded || loadingValidation || loadingImport"
       color="warn"
       (click)="removeCsv()"
+
     >
       Remove CSV
     </button>
@@ -96,9 +100,11 @@
     </button>
     <button
       mat-raised-button
+
       [disabled]="!allRowsValidated || processing || initializing || !fileLoaded || loadingValidation || loadingImport || cancelCheck"
       color="primary"
       (click)="onSubmit(selectedOptionKey)"
+
     >
       Import to database
     </button>
@@ -154,6 +160,7 @@
 
         <div mat-dialog-actions class="button-wrapper">
           <button type="button" mat-button color="warn" (click)="dialogClose()">Cancel</button>
+
         </div>
       </div>
     </div>
