@@ -8,31 +8,22 @@ import { BehaviorSubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
-import { QerApiService } from '../qer-api-client.service';
 
-
-
-
-export interface PeriodicElement {}
+export interface PeriodicElement {
+  permission: boolean;
+  message: string;
+}
 
 export interface ValidationElement{
   rowIndex: number;
   colIndex: number;
   message: string;
 }
-export interface PreValidationElement{
+
+export interface PreActionElement{
   message: string;
   permission: boolean;
 }
-
-interface PermissionResponse {
-  permission: boolean;
-  message?: string;
-}
-
-
-
-
 
 @Component({
   selector: 'imx-csvsync',
@@ -40,36 +31,33 @@ interface PermissionResponse {
   styleUrls: ['./csvsync.component.scss'],
 })
 export class CsvsyncComponent implements OnInit, AfterViewInit {
-
-  startValidateObj: any;
-  startImportObj: any;
-  preImportMsg: object = {message:'', permission: false};
-  preValidateMsg: object = {message:'', permission: false};
+  startValidateObj: object;
+  startImportObj: object;
+  endImportObj: object;
+  preActionMsg: object = {message:'', permission: false};
   totalRows: number = 0;
+  importErrorMsg: string = '';
   allRowsValidated: boolean = false;
-  allRowsImported: boolean = false;
   validationResults$ = new BehaviorSubject<ValidationElement[]>([]);
   @ViewChild(MatPaginator) paginator: MatPaginator;
   csvDataSource: MatTableDataSource<any> = new MatTableDataSource();
   csvData: any[] = [];
   fileLoaded: boolean = false;
   dialogHide: boolean = true;
-  importdialogHide: boolean = true;
   hardError: string = '';
   headers: string[] = [];
   validationResponses: any[] = [];
   validationResults: ValidationElement[] = [];
   allvalidated: boolean = false;
+  allImported: boolean = false;
   public noDataText = '#LDS#No data';
   public noDataIcon = 'table';
   public visibleRows: any[] = [];
-  validating: boolean;
-  importing: boolean;
+  processing: boolean;
   initializing: boolean = false;
   shouldValidate: boolean = false;
   preValidateDialog: boolean = false;
   validateDialog: boolean = false;
-  importDialog: boolean = false;
   numberOfErrors: number;
   searchControl = new FormControl({value: '', disabled: true});
   loadingValidation = false;
@@ -84,13 +72,11 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   public BulkActionsCofigParamCount: number;
   progress: number = 0;
   estimatedRemainingTime: string;
+  importError: boolean = false;
   ShowErrors: boolean = true;
-  cancelValidate: boolean = false; // Canceles the validate() function
+  cancelAction: boolean = false; // Canceles the validate() function
   cancelCheck: boolean = false; // Checks if the validation process has been canceled.
   initialPageEvent = new PageEvent();
-  processing: boolean = false;
-  styleElement: HTMLStyleElement;
-  colors : Array<string> = ["#6a6a6a", "#B7B7B7"];
 
   constructor(
     private dialog: MatDialog,
@@ -98,9 +84,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     private readonly config: AppConfigService,
     private readonly authentication: AuthenticationService,
     private qerService: QerService,
-    private cdr: ChangeDetectorRef,
-    private apiService: QerApiService)
-     {
+    private cdr: ChangeDetectorRef) {
       this.ConfigurationParameters().then((configParams) => {
         if (configParams) {
           this.configParams = this.convertObjectValuesToStrings(configParams);
@@ -108,17 +92,13 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
           console.error('ConfigurationParameters() returned an undefined or null object.');
         }
       });
-
     }
 
   public async ngOnInit(): Promise<void>  {
-
     this.selectedOptionKey = null;
     this.numberOfErrors = 0;
     this.loadingValidation = false;
     this.loadingImport = false;
-    this.validating = true;
-    this.importing = true;
     this.processing = true;
     this.allvalidated = false;
     await this.ConfigurationParameters();
@@ -128,15 +108,10 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.BulkActionsCofigParamCount = await this.countPropertiesInConfigurationParameters();
     this.functionObjectsCount = this.countObjectsWithFunctionKey(this.dataSource);
     console.log("Number of objects with 'Function' property:", this.functionObjectsCount);
-
     this.authentication.update();
     this.cdr.detectChanges();
-
     console.log(this.allvalidated)
-    console.log(this.validating)
-
-    this.styleElement = document.createElement('style');
-    this.changeColors();
+    console.log(this.processing)
   }
 
   ngOnDestroy() {
@@ -145,6 +120,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.processedRows = 0;
     this.selectedOptionKey = null;
     this.allRowsValidated = false;
+    this.allImported = false;
     this.validationResults$.next([]);
     this.csvDataSource = new MatTableDataSource();
     this.csvData = [];
@@ -155,42 +131,45 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.CsvImporter = [];
     this.allvalidated = false;
     this.visibleRows = [];
-    this.validating = false;
-    this.importing = false;
+    this.processing = false;
     this.initializing = false;
     this.shouldValidate = false;
     this.numberOfErrors = 0;
   }
 
   dialogClose() {
-    if (this.validating){
-      this.cancelValidate = true;
+    if (this.processing){
+      this.cancelAction = true;
       this.cancelCheck = true;
-      this.dialogHide = true;
-      this.importdialogHide = true;
     }else{
       this.cancelCheck = false;
-      this.dialogHide = true;
-      this.importdialogHide = true;
     }
+    this.importError = false;
+    this.importErrorMsg = '';
+    this.hardError = '';
+    this.dialogHide = true;
   }
 
-
-
-  replaceCsv() {
+  removeCsv() {
+    this.cancelAction = false;
+    this.cancelCheck = false;
     this.progress = 0;
+    this.importError = false;
+    this.hardError = '';
+    this.importErrorMsg = '';
     this.totalRows = 0;
     this.processedRows = 0;
     this.fileLoaded = false;
     this.allvalidated = false;
+    this.allImported = false;
+    this.allRowsValidated = false;
+    this.processing = false;
     this.csvData = [];
     this.headers = [];
     this.csvDataSource.data = [];
     this.validationResponses = [];
     this.validationResults = [];
     this.validationResults$.next([]);
-    this.validating = true;
-    this.importing = true;
     this.numberOfErrors = 0;
     this.visibleRows = [];
     this.shouldValidate = false;
@@ -230,17 +209,12 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     return this.numberOfErrors === 0;
   }
 
-  checkAllRowsImported(): boolean {
-    // All rows are validated if there are no errors
-    return this.numberOfErrors === 0;
-  }
-
   ngAfterViewInit() {
     this.initializing = true;
+
+    this.processing = true;
     setTimeout(() => {
       this.csvDataSource.paginator = this.paginator;
-      this.validating = true;
-      this.importing = true;
       this.cdr.detectChanges();
       if (this.paginator) {
         // Create a new PageEvent and manually trigger the page change event
@@ -394,6 +368,78 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
 
   }
 
+  public async importToDatabase(endpoint: string): Promise<PeriodicElement[]> {
+    this.loadingImport = true;
+    const inputParameters: any[] = [];
+    const csvData = this.csvDataSource.data;
+    const results: PeriodicElement[] = [];
+    this.processing = true;
+
+    let totalTimeTaken = 0; // Total time taken for processing rows
+    let estimatedRemainingSecs = 0;
+
+    // Create an array of sanitized headers
+    const sanitizedHeaders = this.headers.map(header => header.replace(/\s/g, '_'));
+
+    for (const csvRow of csvData) {
+      const inputParameterName: any = {};
+      // Iterate over the sanitized headers to set the keys in the inputParameter object
+      sanitizedHeaders.forEach((sanitizedHeader, index) => {
+        const cleanCellValue =
+          typeof csvRow[index] === 'string'
+            ? csvRow[index].replace(/[\r\n]+/g, '').trim()
+            : csvRow[index];
+        inputParameterName[sanitizedHeader] = cleanCellValue;
+      });
+      inputParameters.push(inputParameterName);
+    }
+
+    for (const inputParameter of inputParameters) {
+      const startTime = performance.now();
+      console.log(inputParameter);
+      try {
+        const data = await this.config.apiClient.processRequest(this.PostObject(endpoint, inputParameter));
+        console.log('>>>>>>>>>>>>>>>>>>>'+ data.permission)
+        if (this.cancelAction) {  
+          break;
+        }
+        if (!data.permission) {
+          this.importError = true;
+          this.importErrorMsg = data.message;
+          break;
+        }
+        results.push(data);
+      } catch (error) {
+        console.error(`Error submitting CSV data: ${error}`);
+      } finally {
+        const endTime = performance.now();
+        const timeTaken = endTime - startTime;
+        totalTimeTaken += timeTaken;
+
+        // Calculate the average time taken per row
+        const averageTimePerRow = totalTimeTaken / (this.processedRows + 1);
+
+        estimatedRemainingSecs = (averageTimePerRow * (this.totalRows - this.processedRows - 1)) / 1000; // Convert to seconds
+        // Calculate the progress and update the progress bar
+        this.progress = (this.processedRows / this.totalRows) * 100;
+        this.estimatedRemainingTime = this.formatTime(estimatedRemainingSecs);
+        this.processedRows++;
+      }
+    }
+
+    this.allRowsValidated = false;
+    this.allImported = true;
+    this.processing = false;
+    setTimeout(() => {
+
+      this.loadingImport = false;
+      this.progress = 0;
+      this.processedRows = 0;
+      this.estimatedRemainingTime = null;
+    });
+    return results;
+  }
+
 private PostObject(endpoint: string, inputParameterName: any): MethodDescriptor<PeriodicElement> {
   return {
     path: `/portal/bulkactions/${endpoint}/import`,
@@ -522,100 +568,17 @@ private async validateNoDuplicates(columnMapping: any): Promise<void> {
 
 
 public async onValidate(endpoint: string): Promise<void> {
+  this.allRowsValidated = false;
   this.shouldValidate = true;
   this.preValidateDialog = true;
   this.startValidateObj = this.getStartValidateData(endpoint, {totalRows: this.totalRows});
 }
 
-getImportData(): any[] {
-  const csvData: any[] = this.csvDataSource.data.map((row) => {
-    return this.headers.map((header) => row[header]);
-  });
-
-  return csvData;
-}
-
-public async onImport(endpoint: string): Promise<void>{
+public async onSubmit(endpoint: string): Promise<void> {
+  this.shouldValidate = true;
+  this.preValidateDialog = true;
   this.startImportObj = this.getStartImportData(endpoint, {totalRows: this.totalRows});
 }
-
-public async beginImport(endpoint: string): Promise<void>{
-  await this.importToDatabase(endpoint);
-  this.allRowsImported = this.checkAllRowsImported(); // Call the new method after import
-  this.importDialog = true;
-}
-
-public async importToDatabase(endpoint: string): Promise<PeriodicElement[]> {
-  this.loadingImport = true;
-  const inputParameters: any[] = [];
-  const csvData = this.csvDataSource.data;
-  const results: PeriodicElement[] = [];
-  this.processing = true;
-  this.importing = true;
-
-  let totalTimeTaken = 0; // Total time taken for processing rows
-  let estimatedRemainingSecs = 0;
-
-  // Create an array of sanitized headers
-  const sanitizedHeaders = this.headers.map(header => header.replace(/\s/g, '_'));
-
-  for (const csvRow of csvData) {
-    const inputParameterName: any = {};
-
-    // Iterate over the sanitized headers to set the keys in the inputParameter object
-    sanitizedHeaders.forEach((sanitizedHeader, index) => {
-      const cleanCellValue =
-        typeof csvRow[index] === 'string'
-          ? csvRow[index].replace(/[\r\n]+/g, '').trim()
-          : csvRow[index];
-      inputParameterName[sanitizedHeader] = cleanCellValue;
-    });
-
-    inputParameters.push(inputParameterName);
-  }
-  for (const inputParameter of inputParameters) {
-
-    const startTime = performance.now();
-    console.log(inputParameter);
-    try {
-      const data = await this.config.apiClient.processRequest(this.PostObject(endpoint, inputParameter));
-      results.push(data);
-    } catch (error) {
-      console.error(`Error submitting CSV data: ${error}`);
-    } finally {
-
-
-      const endTime = performance.now();
-      const timeTaken = endTime - startTime;
-      totalTimeTaken += timeTaken;
-
-      // Calculate the average time taken per row
-      const averageTimePerRow = totalTimeTaken / (this.processedRows + 1);
-
-      estimatedRemainingSecs = (averageTimePerRow * (this.totalRows - this.processedRows - 1)) / 1000; // Convert to seconds
-      // Calculate the progress and update the progress bar
-      this.progress = (this.processedRows / this.totalRows) * 100;
-      this.estimatedRemainingTime = this.formatTime(estimatedRemainingSecs);
-      this.processedRows++;
-      
-    }
-  }
-
-  this.allRowsValidated = false;
-  setTimeout(() => {
-
-    this.loadingImport = false;
-    this.progress = 0;
-    this.processedRows = 0;
-    this.estimatedRemainingTime = null;
-
-  });
-  this.allRowsImported = true;
-  return results;
-}
-
-
-
 
 public async beginValidation(endpoint: string): Promise<void> {
   this.preValidateDialog = false;
@@ -625,35 +588,39 @@ public async beginValidation(endpoint: string): Promise<void> {
   this.validateDialog = true;
 }
 
-public async validate(endpoint: string): Promise<void> {
+public async beginImport(endpoint: string): Promise<void> {
+  //this.preValidateDialog = false;
+  this.shouldValidate = true;
+  await this.importToDatabase(endpoint);
+  this.endImportObj = this.getEndImportData(endpoint, {totalRows: this.totalRows});
 
+}
+
+public async validate(endpoint: string): Promise<void> {
+  this.processing = true;
+  this.allImported = false;
   this.loadingValidation = true;
   if(this.initializing || !this.shouldValidate) {
     setTimeout(() => {
       this.loadingValidation = false;
-
     });
     return;
   }
   this.validationResults = []; // Clear the previous validation results
   this.allvalidated = true;
-  this.validating = true;
   this.numberOfErrors = 0; // Reset the error count before new validation
   this.hardError = ''; //Clear the hardError message
-
-  const NoDuplicates = await this.notes(endpoint);
-  await this.validateNoDuplicates(NoDuplicates);
-
+  //const NoDuplicates = await this.notes(endpoint);
+  //await this.validateNoDuplicates(NoDuplicates);
 
   let totalTimeTaken = 0; // Total time taken for processing rows
   let estimatedRemainingSecs = 0;
 
   for (const [rowIndex, csvRow] of this.csvData.entries()) { // Validate all rows
+    if (this.cancelAction) {  
 
-    if (this.cancelValidate) {  
       break;
     }
-
     const sanitizedHeaders: string[] = [];
     const rowToValidate: any = {
       HeaderNames: sanitizedHeaders
@@ -677,7 +644,7 @@ public async validate(endpoint: string): Promise<void> {
       if (validationResponse.error) {
         console.log(`Validation error found: ${validationResponse.error}`);
         this.hardError = validationResponse.error;
-        this.validating = false;
+        this.processing = false;
         this.cdr.detectChanges();
         setTimeout(() => {
           this.allRowsValidated = false;
@@ -719,8 +686,8 @@ public async validate(endpoint: string): Promise<void> {
       this.processedRows++;
     }
   }
-  this.cancelValidate = false; 
-  this.validating = false;
+  this.cancelAction = false; 
+  this.processing = false;
   console.log(this.allvalidated);
   this.csvDataSource.paginator._changePageSize(this.totalRows);
   this.cdr.detectChanges();
@@ -758,23 +725,39 @@ private validateRow(endpoint: string, rowToValidate: any): MethodDescriptor<Vali
   };
 }
 
-
 public async getStartValidateData(endpoint: string, startobject: any): Promise<object> {
   const msg = await this.config.apiClient.processRequest(this.startValidateMethod(endpoint, startobject));
-  this.preValidateMsg = msg;
+  this.preActionMsg = msg;
   console.log(msg);
   console.log(msg.permission);
-
   if (msg.permission === true) {
     this.beginValidation(endpoint);
   }
   this.dialogHide = false;
   return msg;
- }
+}
 
+public async getStartImportData(endpoint: string, startobject: any): Promise<object> {
+  const msg = await this.config.apiClient.processRequest(this.startImportMethod(endpoint, startobject));
+  this.preActionMsg = msg;
+  if (msg.permission === true) {
+    this.beginImport(endpoint);
+  }
+  this.dialogHide = false;
+  return msg;
+}
 
+public async getEndImportData(endpoint: string, startobject: any): Promise<object> {
+  const msg = await this.config.apiClient.processRequest(this.endImportMethod(endpoint, startobject));
+  this.preActionMsg = msg;
+  console.log(msg.message)
+  if (!this.cancelCheck) {
+    this.dialogHide = false;
+  }
+  return msg;
+}
 
-private startValidateMethod(endpoint: string, startobject: any): MethodDescriptor<PreValidationElement> {
+private startValidateMethod(endpoint: string, startobject: any): MethodDescriptor<PreActionElement> {
   return {
     path: `/portal/bulkactions/${endpoint}/startvalidate`,
     parameters: [
@@ -794,17 +777,7 @@ private startValidateMethod(endpoint: string, startobject: any): MethodDescripto
   };
 }
 
-public async getStartImportData(endpoint: string, startobject: any): Promise<object> {
-  const importmsg = await this.config.apiClient.processRequest(this.startImportMethod(endpoint, startobject));
-  this.preImportMsg = importmsg;
- if (importmsg.permission === true) {
-    this.beginImport(endpoint);
-  }
-  this.importdialogHide = false;
-  return importmsg;
- }
-
-private startImportMethod(endpoint: string, startobject: any): MethodDescriptor<PreValidationElement> {
+private startImportMethod(endpoint: string, startobject: any): MethodDescriptor<PreActionElement> {
   return {
     path: `/portal/bulkactions/${endpoint}/startimport`,
     parameters: [
@@ -824,12 +797,30 @@ private startImportMethod(endpoint: string, startobject: any): MethodDescriptor<
   };
 }
 
+private endImportMethod(endpoint: string, startobject: any): MethodDescriptor<PreActionElement> {
+  return {
+    path: `/portal/bulkactions/${endpoint}/endimport`,
+    parameters: [
+      {
+        name: 'startobject',
+        value: startobject,
+        in: 'body'
+      },
+    ],
+    method: 'POST',
+    headers: {
+      'imx-timezone': TimeZoneInfo.get(),
+    },
+    credentials: 'include',
+    observe: 'response',
+    responseType: 'json'
+  };
+}
 
 private countObjectsWithFunctionKey(data: any): number {
   if (!data || (Array.isArray(data) && data.length === 0)) {
     return 0; // Return 0 if data is undefined, null, or an empty array
   }
-
   if (Array.isArray(data)) {
     // If data is an array, count objects with "Function" or "function" keys
     return data.reduce((count, item) => {
@@ -839,11 +830,8 @@ private countObjectsWithFunctionKey(data: any): number {
     // If data is an object, check if it has "Function" or "function" keys
     return (data.hasOwnProperty("Function") || data.hasOwnProperty("function")) ? 1 : 0;
   }
-
   return 0; // Return 0 for other data types
 }
-
-
 
 public async getAERoleforCsvImporter(): Promise<void> {
   const CsvImporter = await this.config.apiClient.processRequest<string[]>(this.getWhoForCSV());
@@ -865,7 +853,6 @@ public async getAERoleforCsvImporter(): Promise<void> {
     responseType: 'json',
   };
 }
-
 
 openConfirmationDialog(): void {
   const selectedOptionValue = this.getObjectValues(this.configParams).find(
@@ -889,25 +876,4 @@ openConfirmationDialog(): void {
   });
 }
 
-changeColors() {
-  const head = document.getElementsByTagName('head')[0];
-  const css = `
-  .progress-style .mat-progress-bar-fill::after {
-    background-color: ${this.colors[0]} !important;
-  }
-
-  .progress-style .mat-progress-bar-buffer {
-    background-color: ${this.colors[1]} !important; 
-  }
-  
-  `;
-  this.styleElement.innerHTML = '';
-  this.styleElement.type = 'text/css';
-  this.styleElement.appendChild(document.createTextNode(css));
-  head.appendChild(this.styleElement);
-
 }
-
-
-}
-

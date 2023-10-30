@@ -1,0 +1,19 @@
+.loading-wrapper {
+  background-color: white;
+  border-radius: 5px;
+  min-width: 300px;
+  max-width: 560px;
+  min-height: 100px;
+  max-height: 150px;
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
+  align-items: center;
+  
+  h1 {
+    font-weight: 300;
+    margin-top: 15px;
+  }
+}
+
+

@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef  } from '@angular/material/dialog';
 
-
 @Component({
   selector: 'imx-confirm-dialog',
   templateUrl: './confirm-dialog.component.html',
@@ -21,5 +20,4 @@ export class ConfirmDialogComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
 }
