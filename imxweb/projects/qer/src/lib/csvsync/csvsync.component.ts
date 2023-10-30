@@ -8,6 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { Papa } from 'ngx-papaparse';
 
 export interface PeriodicElement {
   permission: boolean;
@@ -84,7 +85,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     private readonly config: AppConfigService,
     private readonly authentication: AuthenticationService,
     private qerService: QerService,
-    private cdr: ChangeDetectorRef) {
+    private cdr: ChangeDetectorRef,
+    private papa: Papa) {
       this.ConfigurationParameters().then((configParams) => {
         if (configParams) {
           this.configParams = this.convertObjectValuesToStrings(configParams);
@@ -325,22 +327,33 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
 
   private processFile(file: File) {
     const reader = new FileReader();
-    reader.onload = async () => {
-        const data = reader.result as string;
-        const lines = data.split('\n').filter(line => line.trim().length > 0);  // Filter out empty lines
-        this.headers = ['Index', ...lines[0].split(',').map(header => header ? header.trim() : '')];
-        for (let i = 1; i < lines.length; i++) {
-            const row = [i, ...lines[i].split(',').map(cell => cell ? cell.trim() : '')];
-            this.csvData.push(row);
-        }
-        this.csvDataSource.data = this.csvData;
-        this.fileLoaded = true;
-        this.totalRows = lines.length - 1;
+  
+    reader.onload = (event) => {
+      const data = event.target.result as string;
+  
+      this.papa.parse(data, {
+        delimiter: ',', 
+        header: true, 
+        skipEmptyLines: true, 
+        encoding: 'UTF-8', 
+        complete: (result) => {
+          // 'result.data' contains the parsed CSV data
+          if (result.data.length > 0) {
+            this.headers = ['Index', ...Object.keys(result.data[0])];
+            this.csvData = result.data.map((row, index) => [index + 1, ...Object.values(row)]);
+            this.csvDataSource.data = this.csvData;
+            this.fileLoaded = true;
+            this.totalRows = result.data.length;
+          }
+        },
+      });
     };
+  
     this.searchControl.enable();
     reader.readAsText(file);
     this.allvalidated = false;
   }
+  
 
 getValidationResult(rowIndex: number, colIndex: number): string | undefined {
   // Get the row index in the filtered data
