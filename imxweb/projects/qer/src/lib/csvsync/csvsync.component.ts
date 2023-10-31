@@ -79,6 +79,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   cancelCheck: boolean = false; // Checks if the validation process has been canceled.
   initialPageEvent = new PageEvent();
 
+
   constructor(
     private dialog: MatDialog,
     private menuService: MenuService,
@@ -330,9 +331,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   
     reader.onload = (event) => {
       const data = event.target.result as string;
-  
+
       this.papa.parse(data, {
-        delimiter: ',', 
         header: true, 
         skipEmptyLines: true, 
         encoding: 'UTF-8', 
