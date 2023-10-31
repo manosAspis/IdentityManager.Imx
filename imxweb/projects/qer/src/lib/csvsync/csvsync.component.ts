@@ -162,10 +162,10 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     if (this.processing){
       this.cancelAction = true;
       this.cancelCheck = true;
-      
+
     }else{
       this.cancelCheck = false;
-      
+
     }
     this.importError = false;
     this.importErrorMsg = '';
@@ -243,12 +243,12 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.processing = true;
     setTimeout(() => {
       this.csvDataSource.paginator = this.paginator;
-      
+
 
       this.cdr.detectChanges();
       if (this.paginator) {
         // Create a new PageEvent and manually trigger the page change event
-        
+
         this.initialPageEvent.pageIndex = 0;
         this.initialPageEvent.pageSize = this.paginator.pageSize;
         this.initialPageEvent.length = this.csvDataSource.data.length;
@@ -409,23 +409,25 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     let totalTimeTaken = 0; // Total time taken for processing rows
     let estimatedRemainingSecs = 0;
 
-    // Create an array of sanitized headers
-    const sanitizedHeaders = this.headers.map(header => header.replace(/\s/g, '_'));
 
     for (const csvRow of csvData) {
-      const inputParameterName: any = {};
+      const inputParameter: any = {
+        columns: [],
+      };
 
-      // Iterate over the sanitized headers to set the keys in the inputParameter object
-      sanitizedHeaders.forEach((sanitizedHeader, index) => {
+      this.headers.forEach((header, index) => {
         const cleanCellValue =
           typeof csvRow[index] === 'string'
             ? csvRow[index].replace(/[\r\n]+/g, '').trim()
             : csvRow[index];
-        inputParameterName[sanitizedHeader] = cleanCellValue;
+        inputParameter.columns.push({
+          column: header,
+          value: cleanCellValue,
+        });
       });
 
 
-      inputParameters.push(inputParameterName);
+      inputParameters.push(inputParameter);
     }
 
     for (const inputParameter of inputParameters) {
@@ -437,7 +439,7 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
 
         console.log('>>>>>>>>>>>>>>>>>>>'+ data.permission)
 
-        if (this.cancelAction) {  
+        if (this.cancelAction) {
           break;
         }
         if (!data.permission) {
@@ -451,7 +453,7 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
         console.error(`Error submitting CSV data: ${error}`);
       } finally {
 
-        
+
 
         const endTime = performance.now();
         const timeTaken = endTime - startTime;
@@ -659,14 +661,9 @@ public async validate(endpoint: string): Promise<void> {
   }
   this.validationResults = []; // Clear the previous validation results
   this.allvalidated = true;
-  
+
   this.numberOfErrors = 0; // Reset the error count before new validation
-  this.hardError = ''; //Clear the hardError message
-
-  //const NoDuplicates = await this.notes(endpoint);
-  //await this.validateNoDuplicates(NoDuplicates);
-
-
+  this.hardError = '';
 
   let totalTimeTaken = 0; // Total time taken for processing rows
   let estimatedRemainingSecs = 0;
@@ -674,63 +671,63 @@ public async validate(endpoint: string): Promise<void> {
   for (const [rowIndex, csvRow] of this.csvData.entries()) { // Validate all rows
 
 
-    if (this.cancelAction) {  
+    if (this.cancelAction) {
       break;
     }
 
-    const sanitizedHeaders: string[] = [];
+    const validationHeaders: string[] = [];
     const rowToValidate: any = {
-      HeaderNames: sanitizedHeaders
+      headerNames: validationHeaders,
+      index: (rowIndex + 1).toString(), // Adjust the index to be 1-based
+      columns: []
     };
 
     // Skip the "Index" column and start from 1
     for (let colIndex = 1; colIndex < csvRow.length; colIndex++) {
-      const header = this.headers[colIndex]; // Use the header name as the key
-      const sanitizedHeader = header.replace(/\s/g, '_'); // Replace spaces with underscores in the header
-      sanitizedHeaders.push(sanitizedHeader);
-      rowToValidate[sanitizedHeader] = csvRow[colIndex];
+      const header = this.headers[colIndex];
+      validationHeaders.push(header);
+
+      // Add each column object to the "columns" array
+      rowToValidate.columns.push({
+        column: header,
+        value: csvRow[colIndex]
+      });
     }
 
     const startTime = performance.now();
     try {
       console.log(rowToValidate);
+      // Process the API response
       let validationResponse: any = await this.config.apiClient.processRequest(this.validateRow(endpoint, rowToValidate));
-
       console.log(validationResponse);
+      for (const responseItem of validationResponse) {
+        const column = responseItem.column;
+        const value = responseItem.value;
 
-      if (validationResponse.error) {
-        console.log(`Validation error found: ${validationResponse.error}`);
-        this.hardError = validationResponse.error;
-
-        this.processing = false;
-
-        this.cdr.detectChanges();
-        setTimeout(() => {
-          this.allRowsValidated = false;
-          this.loadingValidation = false;
-          this.progress = 0;
-          this.processedRows = 0;
-          this.estimatedRemainingTime = null;
-        });
-        return; // Exit the function when an error is found
-      }
-
-      // Iterate over the headers and validate responses
-      for (let colIndex = 1; colIndex < this.headers.length; colIndex++) {
-        const header = this.headers[colIndex];
-        const sanitizedHeader = header.replace(/\s/g, '_'); // Replace spaces with underscores in the header
-        if (validationResponse[sanitizedHeader] && validationResponse[sanitizedHeader] !== "ok") {
-          this.validationResults.push({ rowIndex, colIndex, message: validationResponse[sanitizedHeader] });
-          this.allvalidated = false;
-          this.numberOfErrors++;
+        if (column === "HardError") {
+          // Handle hard errors
+          this.hardError = value;
+          // You can add additional logic here if needed
+        } else {
+          // Handle validation results
+          // Iterate over the headers and validate responses
+          for (let colIndex = 1; colIndex < this.headers.length; colIndex++) {
+            const header = this.headers[colIndex];
+            if (column === header && value !== "ok") {
+              this.validationResults.push({ rowIndex, colIndex, message: value });
+              this.allvalidated = false;
+              this.numberOfErrors++;
+            }
+          }
         }
       }
-
+      console.log(validationResponse);
     } catch (error) {
-      console.error(`Error validating row ${rowIndex}: ${error}`);
+      console.error(`Error handling the API response: ${error}`);
       this.allvalidated = false;
       this.validationResults$.next(this.validationResults);
-    } finally {
+    }
+     finally {
       const endTime = performance.now();
       const timeTaken = endTime - startTime;
       totalTimeTaken += timeTaken;
@@ -746,7 +743,7 @@ public async validate(endpoint: string): Promise<void> {
     }
   }
 
-  this.cancelAction = false; 
+  this.cancelAction = false;
   this.processing = false;
 
   console.log(this.allvalidated);
@@ -799,7 +796,7 @@ public async getStartValidateData(endpoint: string, startobject: any): Promise<o
     this.beginValidation(endpoint);
   }
   this.dialogHide = false;
-  return msg;<<<<<<< bulk_actions_v1.2
+  return msg;
 }
 
 public async getStartImportData(endpoint: string, startobject: any): Promise<object> {
@@ -820,7 +817,7 @@ public async getEndImportData(endpoint: string, startobject: any): Promise<objec
   if (!this.cancelCheck) {
     this.dialogHide = false;
   }
-  
+
   return msg;
 }
 

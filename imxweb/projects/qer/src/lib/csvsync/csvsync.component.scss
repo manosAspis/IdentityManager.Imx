@@ -182,14 +182,14 @@ td.mat-cell {
     padding: 50px;
     width: 650px;
     max-width: 960px;
-    height: 300px;
+    height: auto;
     max-height: 500px;
     //display: flex;
     flex-direction: column; /* Change to column layout */
     justify-content: center;
     align-items: center;
     text-align: center;
-    
+
     p {
       font-size: 18px;
       &.warning {font-weight: 600;}
@@ -223,7 +223,7 @@ td.mat-cell {
     .errors,
     .warning {
       color: red;
-      
+
       h1 {font-weight: 400;}
       p {
 
