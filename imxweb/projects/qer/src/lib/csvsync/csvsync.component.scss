@@ -8,6 +8,18 @@
   height: 100%;
 }
 
+::ng-deep .mat-progress-bar-fill::after {
+  background-color: slategrey;
+}
+
+::ng-deep .mat-progress-bar-buffer {
+  background: lightgrey;
+}
+
+::ng-deep .mat-progress-bar {
+  border-radius: 2px;
+}
+
 h1.mat-headline {
   margin-bottom: 15px;
 }
@@ -203,6 +215,9 @@ td.mat-cell {
         color: green;
         font-weight: 400;
       }
+
+      p {margin-top: 10px;}
+
     }
 
     .errors,
@@ -211,7 +226,10 @@ td.mat-cell {
       
       h1 {font-weight: 400;}
       p {
-        margin-top: 10px;
+
+        margin-top: 5px;
+        &.warning {margin-top: 5px;}
+
         span {
           font-weight: 600;
           font-size: 20px;
@@ -225,18 +243,19 @@ td.mat-cell {
       right: 20px;
 
       button {
-        margin: 30px 0 0 10px;
-        padding: 5px 20px;
-        background: white;
-        border: 1px solid;
-        border-radius: 5px;
-        font-size: 13px;
-        font-weight: 300;
+       // margin: 30px 0 0 10px;
+        //padding: 5px 20px;
+       // background: white;
+       // border: 1px solid;
+       // border-radius: 5px;
+       // font-size: 13px;
+       // font-weight: 300;
         float: right;
-        box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-        &:hover {
-          cursor: pointer;
-        }
+       // box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+       // &:hover {
+         // cursor: pointer;
+       // }
+
       }
 
     }
