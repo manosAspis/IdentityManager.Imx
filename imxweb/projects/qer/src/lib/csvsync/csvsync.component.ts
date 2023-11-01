@@ -9,6 +9,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { Papa } from 'ngx-papaparse';
+import { CsvsyncService } from './csvsync.service';
 
 export interface PeriodicElement {
   permission: boolean;
@@ -21,10 +22,7 @@ export interface ValidationElement{
   message: string;
 }
 
-export interface PreActionElement{
-  message: string;
-  permission: boolean;
-}
+
 
 @Component({
   selector: 'imx-csvsync',
@@ -87,7 +85,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     private readonly authentication: AuthenticationService,
     private qerService: QerService,
     private cdr: ChangeDetectorRef,
-    private papa: Papa) {
+    private papa: Papa,
+    private csvsyncService: CsvsyncService) {
       this.ConfigurationParameters().then((configParams) => {
         if (configParams) {
           this.configParams = this.convertObjectValuesToStrings(configParams);
@@ -739,7 +738,7 @@ private validateRow(endpoint: string, rowToValidate: any): MethodDescriptor<Vali
 }
 
 public async getStartValidateData(endpoint: string, startobject: any): Promise<object> {
-  const msg = await this.config.apiClient.processRequest(this.startValidateMethod(endpoint, startobject));
+  const msg = await this.config.apiClient.processRequest(this.csvsyncService.startValidateMethod(endpoint, startobject));
   this.preActionMsg = msg;
   console.log(msg);
   console.log(msg.permission);
@@ -751,7 +750,7 @@ public async getStartValidateData(endpoint: string, startobject: any): Promise<o
 }
 
 public async getStartImportData(endpoint: string, startobject: any): Promise<object> {
-  const msg = await this.config.apiClient.processRequest(this.startImportMethod(endpoint, startobject));
+  const msg = await this.config.apiClient.processRequest(this.csvsyncService.startImportMethod(endpoint, startobject));
   this.preActionMsg = msg;
   if (msg.permission === true) {
     this.beginImport(endpoint);
@@ -761,7 +760,7 @@ public async getStartImportData(endpoint: string, startobject: any): Promise<obj
 }
 
 public async getEndImportData(endpoint: string, startobject: any): Promise<object> {
-  const msg = await this.config.apiClient.processRequest(this.endImportMethod(endpoint, startobject));
+  const msg = await this.config.apiClient.processRequest(this.csvsyncService.endImportMethod(endpoint, startobject));
   this.preActionMsg = msg;
   console.log(msg.message)
   if (!this.cancelCheck) {
@@ -770,65 +769,9 @@ public async getEndImportData(endpoint: string, startobject: any): Promise<objec
   return msg;
 }
 
-private startValidateMethod(endpoint: string, startobject: any): MethodDescriptor<PreActionElement> {
-  return {
-    path: `/portal/bulkactions/${endpoint}/startvalidate`,
-    parameters: [
-      {
-        name: 'startobject',
-        value: startobject,
-        in: 'body'
-      },
-    ],
-    method: 'POST',
-    headers: {
-      'imx-timezone': TimeZoneInfo.get(),
-    },
-    credentials: 'include',
-    observe: 'response',
-    responseType: 'json'
-  };
-}
 
-private startImportMethod(endpoint: string, startobject: any): MethodDescriptor<PreActionElement> {
-  return {
-    path: `/portal/bulkactions/${endpoint}/startimport`,
-    parameters: [
-      {
-        name: 'startobject',
-        value: startobject,
-        in: 'body'
-      },
-    ],
-    method: 'POST',
-    headers: {
-      'imx-timezone': TimeZoneInfo.get(),
-    },
-    credentials: 'include',
-    observe: 'response',
-    responseType: 'json'
-  };
-}
 
-private endImportMethod(endpoint: string, startobject: any): MethodDescriptor<PreActionElement> {
-  return {
-    path: `/portal/bulkactions/${endpoint}/endimport`,
-    parameters: [
-      {
-        name: 'startobject',
-        value: startobject,
-        in: 'body'
-      },
-    ],
-    method: 'POST',
-    headers: {
-      'imx-timezone': TimeZoneInfo.get(),
-    },
-    credentials: 'include',
-    observe: 'response',
-    responseType: 'json'
-  };
-}
+
 
 private countObjectsWithFunctionKey(data: any): number {
   if (!data || (Array.isArray(data) && data.length === 0)) {
