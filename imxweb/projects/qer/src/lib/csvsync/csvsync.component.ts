@@ -686,6 +686,11 @@ public async validate(endpoint: string): Promise<void> {
       this.progress = (this.processedRows / this.totalRows) * 100;
       this.estimatedRemainingTime = this.formatTime(estimatedRemainingSecs);
       this.processedRows++;
+          // Here, you can update the estimatedRemainingTime and processedRows in CsvsyncService
+    this.csvsyncService.setEstimatedRemainingTime(this.estimatedRemainingTime);
+    this.csvsyncService.setProcessedRows(this.processedRows);
+    this.csvsyncService.settotalRows(this.totalRows);
+    this.csvsyncService.setprogress(this.progress);
     }
   }
   this.cancelAction = false; 
@@ -751,13 +756,24 @@ public async getStartValidateData(endpoint: string, startobject: any): Promise<o
     estimatedRemainingTime: this.estimatedRemainingTime,
     processedRows: this.processedRows,
     totalRows: this.totalRows,
-    
+    progress: this.progress
   };
 
   const dialogRef = this.dialog.open(ConfirmDialogComponent, {
     data: dialogData,
     width: '650px',
+    height: '300px',
   });
+
+  // Subscribe to dialog close event and handle any changes if needed
+  dialogRef.afterClosed().subscribe((result: any) => {
+    if (result === true) {
+      // Handle dialog confirmation logic if needed
+    } else {
+      // Handle dialog cancel or other logic
+    }
+  });
+
   return msg;
 }
 

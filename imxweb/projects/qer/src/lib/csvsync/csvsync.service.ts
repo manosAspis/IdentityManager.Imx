@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { BehaviorSubject } from 'rxjs';
 
 export interface PreActionElement{
   message: string;
@@ -12,9 +13,35 @@ export interface PreActionElement{
   providedIn: 'root'
 })
 export class CsvsyncService {
+  private estimatedRemainingTimeSource = new BehaviorSubject<string>('');
+  private processedRowsSource = new BehaviorSubject<number>(0);
+  private totalRowsSource = new BehaviorSubject<number>(0);
+  private progressSource = new BehaviorSubject<number>(0);
+
+  estimatedRemainingTime$ = this.estimatedRemainingTimeSource.asObservable();
+  processedRows$ = this.processedRowsSource.asObservable();
+  totalRows$ = this.totalRowsSource.asObservable();
+  progress$ = this.progressSource.asObservable();
+  
 
   constructor(public dialog: MatDialog) { }
-  
+
+  setEstimatedRemainingTime(estimatedRemainingTime: string) {
+    this.estimatedRemainingTimeSource.next(estimatedRemainingTime);
+  }
+
+  setProcessedRows(processedRows: number) {
+    this.processedRowsSource.next(processedRows);
+  }
+
+  settotalRows(totalRows: number) {
+    this.totalRowsSource.next(totalRows);
+  }
+
+  setprogress(progress: number) {
+    this.progressSource.next(progress);
+  }
+
 
   public startValidateMethod(endpoint: string, startobject: any): MethodDescriptor<PreActionElement> {
     return {

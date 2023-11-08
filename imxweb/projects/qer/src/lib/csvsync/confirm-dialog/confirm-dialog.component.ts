@@ -1,5 +1,7 @@
 import { Component, Inject, OnInit, Input } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef  } from '@angular/material/dialog';
+import { CsvsyncService } from '../csvsync.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'imx-confirm-dialog',
@@ -7,34 +9,64 @@ import { MAT_DIALOG_DATA, MatDialogRef  } from '@angular/material/dialog';
   styleUrls: ['./confirm-dialog.component.scss']
 })
 export class ConfirmDialogComponent implements OnInit {
+  estimatedRemainingTime: string;
+  processedRows = 0;
+  totalRows: number = 0;
+  progress: number = 0;
+
+
+  private estimatedRemainingTimeSubscription: Subscription;
+  private processedRowsSubscription: Subscription;
+  private totalRowsSubscription: Subscription;
+  private progressSubscription: Subscription;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {console.log('Received data in the dialog component:', this.data);}
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    public csvsyncService: CsvsyncService,
+    public dialogRef: MatDialogRef<ConfirmDialogComponent>,
+  ) {console.log('Received data in the dialog component:', this.data);
+  }
+
+
 
   dialogClose(): void {
-    // Here, you can handle any necessary logic when the user closes the dialog.
-    // For example, you can set properties, call functions, or perform other actions.
-  
+
     if (this.data.processing) {
-      // If processing is in progress, handle cancellation or other actions.
       this.data.cancelAction = true;
       this.data.cancelCheck = true;
     } else {
       this.data.cancelCheck = false;
     }
   
-    // Reset or update other properties as needed
     this.data.importError = false;
     this.data.importErrorMsg = '';
     this.data.hardError = '';
   
-    // Close the dialog with a result (true or false)
-    this.data.close(true); // You can pass any value you need here
+    this.dialogRef.close(true);
+
+    this.estimatedRemainingTimeSubscription.unsubscribe();
+    this.processedRowsSubscription.unsubscribe();
+    this.totalRowsSubscription.unsubscribe();
+    this.progressSubscription.unsubscribe();
   }
 
   ngOnInit(): void {
-    console.log("Test", this.data.preActionMsg);
+    // Subscribe to estimatedRemainingTime$ and processedRows$
+    this.estimatedRemainingTimeSubscription = this.csvsyncService.estimatedRemainingTime$.subscribe((value) => {
+      this.estimatedRemainingTime = value;
+    });
+
+    this.processedRowsSubscription = this.csvsyncService.processedRows$.subscribe((value) => {
+      this.processedRows = value;
+    });
+
+    this.totalRowsSubscription = this.csvsyncService.totalRows$.subscribe((value) => {
+      this.totalRows = value;
+    });
+
+    this.progressSubscription = this.csvsyncService.progress$.subscribe((value) => {
+      this.progress = value;
+    });
   }
 
 }
