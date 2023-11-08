@@ -6,7 +6,7 @@ import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 import { AppConfigService, AuthenticationService, MenuService  } from 'qbm';
 import { BehaviorSubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { Papa } from 'ngx-papaparse';
 import { CsvsyncService } from './csvsync.service';
@@ -86,7 +86,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     private qerService: QerService,
     private cdr: ChangeDetectorRef,
     private papa: Papa,
-    private csvsyncService: CsvsyncService) {
+    private csvsyncService: CsvsyncService,
+    private dialogRef: MatDialogRef<ConfirmDialogComponent>) {
       this.ConfigurationParameters().then((configParams) => {
         if (configParams) {
           this.configParams = this.convertObjectValuesToStrings(configParams);
@@ -139,18 +140,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.numberOfErrors = 0;
   }
 
-  dialogClose() {
-    if (this.processing){
-      this.cancelAction = true;
-      this.cancelCheck = true;
-    }else{
-      this.cancelCheck = false;
-    }
-    this.importError = false;
-    this.importErrorMsg = '';
-    this.hardError = '';
-    this.dialogHide = true;
-  }
 
   removeCsv() {
     this.cancelAction = false;
@@ -590,6 +579,7 @@ public async onSubmit(endpoint: string): Promise<void> {
   this.shouldValidate = true;
   this.preValidateDialog = true;
   this.startImportObj = this.getStartImportData(endpoint, {totalRows: this.totalRows});
+
 }
 
 public async beginValidation(endpoint: string): Promise<void> {
@@ -598,7 +588,7 @@ public async beginValidation(endpoint: string): Promise<void> {
   await this.validate(endpoint);
   this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
   this.validateDialog = true;
-}
+} 
 
 public async beginImport(endpoint: string): Promise<void> {
   //this.preValidateDialog = false;
@@ -709,7 +699,7 @@ public async validate(endpoint: string): Promise<void> {
     this.processedRows = 0;
     this.estimatedRemainingTime = null;
   });
-}
+} 
 
 public async val(endpoint: string, rowToValidate: any): Promise<object> {
   const val = await this.config.apiClient.processRequest(this.validateRow(endpoint, rowToValidate));
@@ -745,7 +735,29 @@ public async getStartValidateData(endpoint: string, startobject: any): Promise<o
   if (msg.permission === true) {
     this.beginValidation(endpoint);
   }
-  this.dialogHide = false;
+  const dialogData = {
+    preActionMsg: this.preActionMsg,
+    numberOfErrors: this.numberOfErrors,
+    loadingValidation: this.loadingValidation,
+    loadingImport: this.loadingImport,
+    validateDialog: this.validateDialog,
+    fileLoaded: this.fileLoaded,
+    allRowsValidated: this.allRowsValidated,
+    processing: this.processing,
+    initializing: this.initializing,
+    hardError: this.hardError,
+    allImported: this.allImported,
+    importError: this.importError,
+    estimatedRemainingTime: this.estimatedRemainingTime,
+    processedRows: this.processedRows,
+    totalRows: this.totalRows,
+    
+  };
+
+  const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    data: dialogData,
+    width: '650px',
+  });
   return msg;
 }
 
@@ -809,7 +821,7 @@ public async getAERoleforCsvImporter(): Promise<void> {
     responseType: 'json',
   };
 }
-
+/*
 openConfirmationDialog(): void {
   const selectedOptionValue = this.getObjectValues(this.configParams).find(
     (value) => this.getReversedKey(value) === this.selectedOptionKey
@@ -831,5 +843,5 @@ openConfirmationDialog(): void {
     }
   });
 }
-
+*/
 }

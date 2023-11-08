@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 export interface PreActionElement{
   message: string;
@@ -11,7 +13,7 @@ export interface PreActionElement{
 })
 export class CsvsyncService {
 
-  constructor() { }
+  constructor(public dialog: MatDialog) { }
   
 
   public startValidateMethod(endpoint: string, startobject: any): MethodDescriptor<PreActionElement> {
@@ -73,4 +75,5 @@ export class CsvsyncService {
       responseType: 'json'
     };
   }
+
 }
