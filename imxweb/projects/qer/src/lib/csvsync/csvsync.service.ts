@@ -17,11 +17,13 @@ export class CsvsyncService {
   private processedRowsSource = new BehaviorSubject<number>(0);
   private totalRowsSource = new BehaviorSubject<number>(0);
   private progressSource = new BehaviorSubject<number>(0);
+  private numberOfErrorsSource = new BehaviorSubject<number>(0);
 
   estimatedRemainingTime$ = this.estimatedRemainingTimeSource.asObservable();
   processedRows$ = this.processedRowsSource.asObservable();
   totalRows$ = this.totalRowsSource.asObservable();
   progress$ = this.progressSource.asObservable();
+  numberOfErrors$ = this.numberOfErrorsSource.asObservable();
   
 
   constructor(public dialog: MatDialog) { }
@@ -40,6 +42,10 @@ export class CsvsyncService {
 
   setprogress(progress: number) {
     this.progressSource.next(progress);
+  }
+
+  setnumberOfErrors(numberOfErrors: number) {
+    this.numberOfErrorsSource.next(numberOfErrors);
   }
 
 

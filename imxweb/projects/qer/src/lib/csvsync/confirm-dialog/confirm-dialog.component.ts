@@ -13,12 +13,14 @@ export class ConfirmDialogComponent implements OnInit {
   processedRows = 0;
   totalRows: number = 0;
   progress: number = 0;
+  numberOfErrors: number;
 
 
   private estimatedRemainingTimeSubscription: Subscription;
   private processedRowsSubscription: Subscription;
   private totalRowsSubscription: Subscription;
   private progressSubscription: Subscription;
+  private numberOfErrorsSubscription: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -48,6 +50,7 @@ export class ConfirmDialogComponent implements OnInit {
     this.processedRowsSubscription.unsubscribe();
     this.totalRowsSubscription.unsubscribe();
     this.progressSubscription.unsubscribe();
+    this.numberOfErrorsSubscription.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -67,6 +70,11 @@ export class ConfirmDialogComponent implements OnInit {
     this.progressSubscription = this.csvsyncService.progress$.subscribe((value) => {
       this.progress = value;
     });
+
+    this.numberOfErrorsSubscription = this.csvsyncService.numberOfErrors$.subscribe((value) => {
+      this.numberOfErrors = value;
+    });
+
   }
 
 }
