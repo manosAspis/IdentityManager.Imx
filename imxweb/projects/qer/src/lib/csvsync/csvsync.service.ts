@@ -9,6 +9,12 @@ export interface PreActionElement{
   permission: boolean;
 }
 
+export interface ValidationElement{
+  rowIndex: number;
+  colIndex: number;
+  message: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -18,13 +24,23 @@ export class CsvsyncService {
   private totalRowsSource = new BehaviorSubject<number>(0);
   private progressSource = new BehaviorSubject<number>(0);
   private numberOfErrorsSource = new BehaviorSubject<number>(0);
+  private hardErrorSource = new BehaviorSubject<string>('');
+  private fileLoadedSource = new BehaviorSubject<boolean>(false);
+  private allRowsValidatedSource = new BehaviorSubject<boolean>(false);
+  private processingSource = new BehaviorSubject<boolean>(false);
+  private initializingSource = new BehaviorSubject<boolean>(false);
 
   estimatedRemainingTime$ = this.estimatedRemainingTimeSource.asObservable();
   processedRows$ = this.processedRowsSource.asObservable();
   totalRows$ = this.totalRowsSource.asObservable();
   progress$ = this.progressSource.asObservable();
   numberOfErrors$ = this.numberOfErrorsSource.asObservable();
-  
+  hardError$ = this.hardErrorSource.asObservable();
+  fileLoaded$ = this.fileLoadedSource.asObservable();
+  allRowsValidated$ = this.allRowsValidatedSource.asObservable();
+  processing$ = this.processingSource.asObservable();
+  initializing$ = this.initializingSource.asObservable();
+
 
   constructor(public dialog: MatDialog) { }
 
@@ -47,6 +63,27 @@ export class CsvsyncService {
   setnumberOfErrors(numberOfErrors: number) {
     this.numberOfErrorsSource.next(numberOfErrors);
   }
+
+  sethardError(hardError: string) {
+    this.hardErrorSource.next(hardError);
+  }
+
+  setfileLoaded(fileLoaded: boolean) {
+    this.fileLoadedSource.next(fileLoaded);
+  }
+  
+  setallRowsValidated(allRowsValidated: boolean) {
+    this.allRowsValidatedSource.next(allRowsValidated);
+  }
+
+  setprocessing(processing: boolean) {
+    this.processingSource.next(processing);
+  }
+
+  setinitializing(initializing: boolean) {
+    this.initializingSource.next(initializing);
+  }
+
 
 
   public startValidateMethod(endpoint: string, startobject: any): MethodDescriptor<PreActionElement> {

@@ -134,6 +134,7 @@ const routes: Routes = [
     DataExplorerViewModule,
   ],
   exports: [PasscodeViewerComponent, ObjectOverviewPersonComponent],
+  entryComponents: [ConfirmDialogComponent],
   providers: [
     {
       provide: APP_INITIALIZER,

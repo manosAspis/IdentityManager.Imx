@@ -115,6 +115,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.cdr.detectChanges();
     console.log(this.allvalidated)
     console.log(this.processing)
+
+    
   }
 
   ngOnDestroy() {
