@@ -115,7 +115,6 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.cdr.detectChanges();
     console.log(this.allvalidated)
     console.log(this.processing)
-
     
   }
 
@@ -575,6 +574,9 @@ public async onValidate(endpoint: string): Promise<void> {
   this.shouldValidate = true;
   this.preValidateDialog = true;
   this.startValidateObj = this.getStartValidateData(endpoint, {totalRows: this.totalRows});
+
+    // Update service data after validation
+    this.csvsyncService.setprocessing(this.processing);
 }
 
 public async onSubmit(endpoint: string): Promise<void> {

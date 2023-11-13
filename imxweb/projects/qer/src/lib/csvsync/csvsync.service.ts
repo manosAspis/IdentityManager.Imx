@@ -19,16 +19,17 @@ export interface ValidationElement{
   providedIn: 'root'
 })
 export class CsvsyncService {
-  private estimatedRemainingTimeSource = new BehaviorSubject<string>('');
-  private processedRowsSource = new BehaviorSubject<number>(0);
-  private totalRowsSource = new BehaviorSubject<number>(0);
-  private progressSource = new BehaviorSubject<number>(0);
-  private numberOfErrorsSource = new BehaviorSubject<number>(0);
-  private hardErrorSource = new BehaviorSubject<string>('');
-  private fileLoadedSource = new BehaviorSubject<boolean>(false);
-  private allRowsValidatedSource = new BehaviorSubject<boolean>(false);
-  private processingSource = new BehaviorSubject<boolean>(false);
-  private initializingSource = new BehaviorSubject<boolean>(false);
+  public estimatedRemainingTimeSource = new BehaviorSubject<string>('');
+  public processedRowsSource = new BehaviorSubject<number>(0);
+  public totalRowsSource = new BehaviorSubject<number>(0);
+  public progressSource = new BehaviorSubject<number>(0);
+  public numberOfErrorsSource = new BehaviorSubject<number>(0);
+  public hardErrorSource = new BehaviorSubject<string>('');
+  public fileLoadedSource = new BehaviorSubject<boolean>(false);
+  public allRowsValidatedSource = new BehaviorSubject<boolean>(false);
+  public processingSource = new BehaviorSubject<boolean>(false);
+  public initializingSource = new BehaviorSubject<boolean>(false);
+  public importErrorSource = new BehaviorSubject<boolean>(false);
 
   estimatedRemainingTime$ = this.estimatedRemainingTimeSource.asObservable();
   processedRows$ = this.processedRowsSource.asObservable();
@@ -40,6 +41,7 @@ export class CsvsyncService {
   allRowsValidated$ = this.allRowsValidatedSource.asObservable();
   processing$ = this.processingSource.asObservable();
   initializing$ = this.initializingSource.asObservable();
+  importError$ = this.importErrorSource.asObservable();
 
 
   constructor(public dialog: MatDialog) { }
@@ -82,6 +84,10 @@ export class CsvsyncService {
 
   setinitializing(initializing: boolean) {
     this.initializingSource.next(initializing);
+  }
+
+  setimportError(importError: boolean) {
+    this.importErrorSource.next(importError);
   }
 
 

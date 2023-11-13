@@ -27,7 +27,7 @@ export class ConfirmDialogComponent implements OnInit {
   allRowsValidated: boolean = false;
   processing: boolean;
   initializing: boolean = false;
-  validationResponse: any;
+  importError: boolean = false;
 
 
   private estimatedRemainingTimeSubscription: Subscription;
@@ -40,6 +40,7 @@ export class ConfirmDialogComponent implements OnInit {
   private allRowsValidatedSubscription: Subscription;
   private processingSubscription: Subscription;
   private initializingSubscription: Subscription;
+  private importErrorSubscription: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -79,6 +80,7 @@ export class ConfirmDialogComponent implements OnInit {
     this.allRowsValidatedSubscription.unsubscribe();
     this.processingSubscription.unsubscribe();
     this.initializingSubscription.unsubscribe();
+    this.importErrorSubscription.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -106,28 +108,28 @@ export class ConfirmDialogComponent implements OnInit {
     });
 
     this.hardErrorSubscription = this.csvsyncService.hardError$.subscribe((value) => {
-      this.cdr.detectChanges();
       this.hardError = value;
     });
 
     this.fileLoadedSubscription = this.csvsyncService.fileLoaded$.subscribe((value) => {
-      this.cdr.detectChanges();
       this.fileLoaded = value;
     });
 
     this.allRowsValidatedSubscription = this.csvsyncService.allRowsValidated$.subscribe((value) => {
-      this.cdr.detectChanges();
       this.allRowsValidated = value;
     });
 
     this.processingSubscription = this.csvsyncService.processing$.subscribe((value) => {
-      this.cdr.detectChanges();
       this.processing = value;
+      this.cdr.detectChanges();
     });
 
     this.initializingSubscription = this.csvsyncService.initializing$.subscribe((value) => {
-      this.cdr.detectChanges();
       this.initializing = value;
+    });
+
+    this.importErrorSubscription = this.csvsyncService.importError$.subscribe((value) => {
+      this.importError = value;
     });
 
 
@@ -135,6 +137,7 @@ export class ConfirmDialogComponent implements OnInit {
 
 
   }
+
 
 
 
