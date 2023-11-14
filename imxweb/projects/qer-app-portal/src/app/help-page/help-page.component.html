@@ -27,7 +27,7 @@
     <!-- Contact information Column -->
     <ng-container matColumnDef="contactInfo">
       <th mat-header-cell *matHeaderCellDef> Operational contact information </th>
-      <td mat-cell *matCellDef="let element"> {{element.contactInfo}} </td>
+      <td mat-cell *matCellDef="let element">{{contactInfo[0]}}: <a target="_blank" href="{{contactInfo[1]}}:{{contactInfo[2]}}"> link</a><br>{{contactInfo[3]}}: <a target="_blank" href="{{contactInfo[4]}}:{{contactInfo[5]}}">link</a></td>
     </ng-container>
   
     <!-- ServiceNow Column -->

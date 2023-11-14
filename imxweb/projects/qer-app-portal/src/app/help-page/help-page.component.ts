@@ -14,6 +14,8 @@ let ELEMENT_DATA: PeriodicElement[] = [
   
 ];
 
+
+
 @Component({
   selector: 'help-page',
   templateUrl: './help-page.component.html',
@@ -24,6 +26,7 @@ export class HelpPageComponent {
 
   displayedColumns: string[] = ['headCoe', 'contactInfo', 'serviceNow', 'confluence'];
   dataSource = ELEMENT_DATA;
+  contactInfo = [];
 
   constructor(
     private readonly config: AppConfigService,
@@ -41,6 +44,11 @@ export class HelpPageComponent {
   const data = await this.config.apiClient.processRequest(this.getFeatureConfigDescriptor());
   ELEMENT_DATA = [data];
   this.dataSource = ELEMENT_DATA;
+  let string = data.contactInfo;
+  let initialSplit = string.split(", ")
+  string = initialSplit.toString();
+  let finalSplit = string.split(/[:,]+/)
+  this.contactInfo = finalSplit;
   return data;
  }
 
