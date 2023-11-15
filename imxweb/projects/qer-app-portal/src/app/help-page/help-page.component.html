@@ -27,7 +27,21 @@
     <!-- Contact information Column -->
     <ng-container matColumnDef="contactInfo">
       <th mat-header-cell *matHeaderCellDef> Operational contact information </th>
-      <td mat-cell *matCellDef="let element">{{contactInfo[0]}}: <a target="_blank" href="{{contactInfo[1]}}:{{contactInfo[2]}}"> link</a><br>{{contactInfo[3]}}: <a target="_blank" href="{{contactInfo[4]}}:{{contactInfo[5]}}">link</a></td>
+      <td mat-cell *matCellDef="let element"> 
+        <div *ngIf="contactInfo.length < 3">
+
+          {{contactInfo[0]}}: <a target="_blank" href="{{contactInfo[1]}}">{{longFirstLink? (contactInfo[1] | slice:0:30)+'...':(contactInfo[1])}}</a>
+
+        </div>
+
+        <div *ngIf="contactInfo.length >= 3">
+
+          {{contactInfo[0]}}: <a target="_blank" href="{{contactInfo[1]}}">{{longFirstLink? (contactInfo[1] | slice:0:30)+'...':(contactInfo[1])}}</a><br>
+
+          {{contactInfo[2]}}: <a target="_blank" href="{{contactInfo[3]}}">{{longSecondLink? (contactInfo[3] | slice:0:30)+'...':(contactInfo[3])}}</a>
+
+        </div>
+      </td>
     </ng-container>
   
     <!-- ServiceNow Column -->

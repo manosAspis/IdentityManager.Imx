@@ -27,6 +27,9 @@ export class HelpPageComponent {
   displayedColumns: string[] = ['headCoe', 'contactInfo', 'serviceNow', 'confluence'];
   dataSource = ELEMENT_DATA;
   contactInfo = [];
+  longFirstLink:boolean = false;
+  longSecondLink:boolean = false;
+
 
   constructor(
     private readonly config: AppConfigService,
@@ -44,11 +47,20 @@ export class HelpPageComponent {
   const data = await this.config.apiClient.processRequest(this.getFeatureConfigDescriptor());
   ELEMENT_DATA = [data];
   this.dataSource = ELEMENT_DATA;
-  let string = data.contactInfo;
-  let initialSplit = string.split(", ")
-  string = initialSplit.toString();
-  let finalSplit = string.split(/[:,]+/)
-  this.contactInfo = finalSplit;
+
+  data.contactInfo.split(", ").forEach(i => {
+    i.split(": ").forEach(j => {
+      this.contactInfo.push(j)
+    })
+  })
+
+  if (this.contactInfo[1].length > 30) {
+    this.longFirstLink = true;
+  }
+  if (this.contactInfo[3].length > 30) {
+    this.longSecondLink = true;
+  }
+    
   return data;
  }
 
