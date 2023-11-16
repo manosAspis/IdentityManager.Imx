@@ -101,7 +101,9 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.selectedOptionKey = null;
     this.numberOfErrors = 0;
     this.loadingValidation = false;
+    this.csvsyncService.setloadingValidation(false);
     this.loadingImport = false;
+    this.csvsyncService.setloadingImport(false);
     this.processing = true;
     this.allvalidated = false;
     await this.ConfigurationParameters();
@@ -332,6 +334,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
             this.csvData = result.data.map((row, index) => [index + 1, ...Object.values(row)]);
             this.csvDataSource.data = this.csvData;
             this.fileLoaded = true;
+            this.csvsyncService.setfileLoaded(true);
             this.totalRows = result.data.length;
           }
         },
@@ -407,6 +410,7 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
         }
         if (!data.permission) {
           this.importError = true;
+          this.csvsyncService.setimportError(true);
           this.importErrorMsg = data.message;
           break;
         }
@@ -430,6 +434,7 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     }
 
     this.allRowsValidated = false;
+    this.csvsyncService.setallRowsValidated(false); 
     this.allImported = true;
     this.processing = false;
     setTimeout(() => {
@@ -571,12 +576,10 @@ private async validateNoDuplicates(columnMapping: any): Promise<void> {
 
 public async onValidate(endpoint: string): Promise<void> {
   this.allRowsValidated = false;
+  this.csvsyncService.setallRowsValidated(false);
   this.shouldValidate = true;
   this.preValidateDialog = true;
   this.startValidateObj = this.getStartValidateData(endpoint, {totalRows: this.totalRows});
-
-    // Update service data after validation
-    this.csvsyncService.setprocessing(this.processing);
 }
 
 public async onSubmit(endpoint: string): Promise<void> {
@@ -591,7 +594,9 @@ public async beginValidation(endpoint: string): Promise<void> {
   this.shouldValidate = true;
   await this.validate(endpoint);
   this.allRowsValidated = this.checkAllRowsValidated(); // Call the new method after validation
+  this.csvsyncService.setallRowsValidated(this.checkAllRowsValidated()); 
   this.validateDialog = true;
+  this.csvsyncService.setvalidateDialog(true);
 } 
 
 public async beginImport(endpoint: string): Promise<void> {
@@ -604,18 +609,23 @@ public async beginImport(endpoint: string): Promise<void> {
 
 public async validate(endpoint: string): Promise<void> {
   this.processing = true;
+  this.csvsyncService.setprocessing(true);
   this.allImported = false;
   this.loadingValidation = true;
+  this.csvsyncService.setloadingValidation(true);
   if(this.initializing || !this.shouldValidate) {
     setTimeout(() => {
       this.loadingValidation = false;
+      this.csvsyncService.setloadingValidation(false);
     });
     return;
   }
   this.validationResults = []; // Clear the previous validation results
   this.allvalidated = true;
   this.numberOfErrors = 0; // Reset the error count before new validation
+  this.csvsyncService.setnumberOfErrors(0);
   this.hardError = ''; //Clear the hardError message
+  this.csvsyncService.sethardError(''); 
   //const NoDuplicates = await this.notes(endpoint);
   //await this.validateNoDuplicates(NoDuplicates);
 
@@ -650,11 +660,15 @@ public async validate(endpoint: string): Promise<void> {
       if (validationResponse.error) {
         console.log(`Validation error found: ${validationResponse.error}`);
         this.hardError = validationResponse.error;
+        this.csvsyncService.sethardError(validationResponse.error); 
         this.processing = false;
+        this.csvsyncService.setprocessing(false);
         this.cdr.detectChanges();
         setTimeout(() => {
           this.allRowsValidated = false;
+          this.csvsyncService.setallRowsValidated(false); 
           this.loadingValidation = false;
+          this.csvsyncService.setloadingValidation(false);
           this.progress = 0;
           this.processedRows = 0;
           this.estimatedRemainingTime = null;
@@ -699,11 +713,13 @@ public async validate(endpoint: string): Promise<void> {
   }
   this.cancelAction = false; 
   this.processing = false;
+  this.csvsyncService.setprocessing(false);
   console.log(this.allvalidated);
   this.csvDataSource.paginator._changePageSize(this.totalRows);
   this.cdr.detectChanges();
   setTimeout(() => {
     this.loadingValidation = false;
+    this.csvsyncService.setloadingValidation(false);
     this.progress = 0;
     this.processedRows = 0;
     this.estimatedRemainingTime = null;

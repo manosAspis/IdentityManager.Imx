@@ -30,6 +30,9 @@ export class CsvsyncService {
   public processingSource = new BehaviorSubject<boolean>(false);
   public initializingSource = new BehaviorSubject<boolean>(false);
   public importErrorSource = new BehaviorSubject<boolean>(false);
+  public loadingValidationSource = new BehaviorSubject<boolean>(false);
+  public validateDialogSource = new BehaviorSubject<boolean>(false);
+  public loadingImportSource = new BehaviorSubject<boolean>(false);
 
   estimatedRemainingTime$ = this.estimatedRemainingTimeSource.asObservable();
   processedRows$ = this.processedRowsSource.asObservable();
@@ -42,6 +45,9 @@ export class CsvsyncService {
   processing$ = this.processingSource.asObservable();
   initializing$ = this.initializingSource.asObservable();
   importError$ = this.importErrorSource.asObservable();
+  loadingValidation$ = this.loadingValidationSource.asObservable();
+  validateDialog$ = this.allRowsValidatedSource.asObservable();
+  loadingImport$ = this.loadingImportSource.asObservable();
 
 
   constructor(public dialog: MatDialog) { }
@@ -90,7 +96,17 @@ export class CsvsyncService {
     this.importErrorSource.next(importError);
   }
 
+  setloadingValidation(loadingValidation: boolean) {
+    this.loadingValidationSource.next(loadingValidation);
+  }
 
+  setvalidateDialog(validateDialog: boolean) {
+    this.validateDialogSource.next(validateDialog);
+  }
+
+  setloadingImport(loadingImport: boolean) {
+    this.loadingImportSource.next(loadingImport);
+  }
 
   public startValidateMethod(endpoint: string, startobject: any): MethodDescriptor<PreActionElement> {
     return {

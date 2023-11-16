@@ -2,8 +2,8 @@
 <div class="loading-container">
   <div *ngIf="data.preActionMsg.permission">
     <div *ngIf="data.loadingValidation || data.loadingImport || data.validateDialog" class="loading-wrapper">
-      <div *ngIf="data.loadingValidation || data.loadingImport">
-        <h2 *ngIf="data.loadingValidation">Validating...</h2>
+      <div *ngIf="loadingValidation || loadingImport">
+        <h2 *ngIf="loadingValidation">Validating...</h2>
         <h2 *ngIf="data.loadingImport">Importing...</h2>
         <p class="warning">Please do not close the browser</p>
       </div>
@@ -17,11 +17,11 @@
         <p>Import procedure completed</p>
       </div>
 
-      <div class="errors" *ngIf="!data.processing && !data.initializing && data.numberOfErrors > 0 || data.hardError.length || importError ">
+      <div class="errors" *ngIf="!data.processing && !data.initializing && data.numberOfErrors > 0 || data.hardError.length || data.importError ">
         <h1>Validation Error!</h1>
-        <p *ngIf="!hardError.length && !importError">You have <span>{{numberOfErrors}}</span> errors in the Csv</p>
-        <p *ngIf="hardError.length && !importError">{{hardError}}</p>
-        <p *ngIf="!hardError.length && importError">{{importErrorMsg}}</p>
+        <p *ngIf="!data.hardError.length && !data.importError">You have <span>{{data.numberOfErrors}}</span> errors in the Csv</p>
+        <p *ngIf="data.hardError.length && !data.importError">{{data.hardError}}</p>
+        <p *ngIf="!data.hardError.length && data.importError">{{data.importErrorMsg}}</p>
       </div>
       
       <p class="validation-details">Estimated remaining time: {{ estimatedRemainingTime }} 
@@ -35,8 +35,8 @@
 
       <div mat-dialog-actions class="button-wrapper">
         <div *ngIf="data.numberOfErrors === 0 && !data.hardError.length && !data.importError">
-          <button [disabled]="!data.processing" mat-button color="warn" (click)="dialogClose()">Cancel</button>
-          <button [disabled]="data.processing" mat-button color="primary" (click)="dialogClose()">Ok</button>
+          <button [disabled]="!processing" mat-button color="warn" (click)="dialogClose()">Cancel</button>
+          <button [disabled]="processing" mat-button color="primary" (click)="dialogClose()">Ok</button>
         </div>
         <button *ngIf="data.numberOfErrors > 0 || data.hardError.length || data.importError" mat-button color="warn" (click)="dialogClose()">Cancel</button>
       </div>   

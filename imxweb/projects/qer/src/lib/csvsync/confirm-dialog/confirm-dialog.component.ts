@@ -28,6 +28,9 @@ export class ConfirmDialogComponent implements OnInit {
   processing: boolean;
   initializing: boolean = false;
   importError: boolean = false;
+  loadingValidation = false;
+  validateDialog: boolean = false;
+  loadingImport = false;
 
 
   private estimatedRemainingTimeSubscription: Subscription;
@@ -41,6 +44,9 @@ export class ConfirmDialogComponent implements OnInit {
   private processingSubscription: Subscription;
   private initializingSubscription: Subscription;
   private importErrorSubscription: Subscription;
+  private loadingValidationSubscription: Subscription;
+  private validateDialogSubscription: Subscription;
+  private loadingImportSubscription: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -81,6 +87,9 @@ export class ConfirmDialogComponent implements OnInit {
     this.processingSubscription.unsubscribe();
     this.initializingSubscription.unsubscribe();
     this.importErrorSubscription.unsubscribe();
+    this.loadingValidationSubscription.unsubscribe();
+    this.validateDialogSubscription.unsubscribe();
+    this.loadingImportSubscription.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -132,9 +141,17 @@ export class ConfirmDialogComponent implements OnInit {
       this.importError = value;
     });
 
+    this.loadingValidationSubscription = this.csvsyncService.loadingValidation$.subscribe((value) => {
+      this.loadingValidation = value;
+    });
 
+    this.validateDialogSubscription = this.csvsyncService.validateDialog$.subscribe((value) => {
+      this.validateDialog = value;
+    });
 
-
+    this.loadingImportSubscription = this.csvsyncService.loadingImport$.subscribe((value) => {
+      this.loadingImport = value;
+    });
 
   }
 
