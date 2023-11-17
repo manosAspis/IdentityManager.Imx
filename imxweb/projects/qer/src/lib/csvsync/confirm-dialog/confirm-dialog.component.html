@@ -17,11 +17,11 @@
         <p>Import procedure completed</p>
       </div>
 
-      <div class="errors" *ngIf="!data.processing && !data.initializing && data.numberOfErrors > 0 || data.hardError.length || data.importError ">
+      <div class="errors" *ngIf="!processing && !initializing && numberOfErrors > 0 || hardError.length || importError ">
         <h1>Validation Error!</h1>
-        <p *ngIf="!data.hardError.length && !data.importError">You have <span>{{data.numberOfErrors}}</span> errors in the Csv</p>
-        <p *ngIf="data.hardError.length && !data.importError">{{data.hardError}}</p>
-        <p *ngIf="!data.hardError.length && data.importError">{{data.importErrorMsg}}</p>
+        <p *ngIf="!hardError.length && !importError">You have <span>{{numberOfErrors}}</span> errors in the Csv</p>
+        <p *ngIf="hardError.length && !importError">{{hardError}}</p>
+        <p *ngIf="!hardError.length && importError">{{importErrorMsg}}</p>
       </div>
       
       <p class="validation-details">Estimated remaining time: {{ estimatedRemainingTime }} 
