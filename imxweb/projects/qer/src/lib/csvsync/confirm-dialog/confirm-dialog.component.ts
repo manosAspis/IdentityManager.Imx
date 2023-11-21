@@ -72,6 +72,9 @@ export class ConfirmDialogComponent implements OnInit {
     this.data.importErrorMsg = '';
     this.data.hardError = '';
   
+    if (this.data.processing) {
+      this.csvsyncService.setcancelAction(true);
+    }
     
 
     this.dialogRef.close();
@@ -92,7 +95,7 @@ export class ConfirmDialogComponent implements OnInit {
     this.loadingImportSubscription.unsubscribe();
   }
 
-  ngOnInit(): void {
+    ngOnInit(): void {
     // Subscribe to estimatedRemainingTime$ and processedRows$
     this.estimatedRemainingTimeSubscription = this.csvsyncService.estimatedRemainingTime$.subscribe((value) => {
       console.log('Estimated Remaining Time:', value);

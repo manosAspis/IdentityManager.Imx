@@ -10,6 +10,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { Papa } from 'ngx-papaparse';
 import { CsvsyncService } from './csvsync.service';
+import { Subscription } from 'rxjs';
 
 export interface PeriodicElement {
   permission: boolean;
@@ -77,6 +78,8 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
   cancelCheck: boolean = false; // Checks if the validation process has been canceled.
   initialPageEvent = new PageEvent();
 
+  private cancelActionSubscription: Subscription;
+
 
   constructor(
     private dialog: MatDialog,
@@ -95,6 +98,12 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
           console.error('ConfigurationParameters() returned an undefined or null object.');
         }
       });
+          // Subscribe to changes in cancelAction$
+    this.cancelActionSubscription = this.csvsyncService.cancelAction$.subscribe(
+      (cancelAction) => {
+        this.cancelAction = cancelAction;
+      }
+    );
     }
 
   public async ngOnInit(): Promise<void>  {
@@ -141,6 +150,7 @@ export class CsvsyncComponent implements OnInit, AfterViewInit {
     this.initializing = false;
     this.shouldValidate = false;
     this.numberOfErrors = 0;
+    this.cancelActionSubscription.unsubscribe();
   }
 
 
@@ -776,7 +786,8 @@ public async getStartValidateData(endpoint: string, startobject: any): Promise<o
     estimatedRemainingTime: this.estimatedRemainingTime,
     processedRows: this.processedRows,
     totalRows: this.totalRows,
-    progress: this.progress
+    progress: this.progress,
+    cancelAction: this.cancelAction
   };
 
   const dialogRef = this.dialog.open(ConfirmDialogComponent, {
