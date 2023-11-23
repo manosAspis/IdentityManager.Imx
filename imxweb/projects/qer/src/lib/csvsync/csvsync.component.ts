@@ -385,6 +385,7 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
 
   public async importToDatabase(endpoint: string): Promise<PeriodicElement[]> {
     this.loadingImport = true;
+    this.csvsyncService.setloadingImport(true);
     const inputParameters: any[] = [];
     const csvData = this.csvDataSource.data;
     const results: PeriodicElement[] = [];
@@ -423,6 +424,7 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
           this.importError = true;
           this.csvsyncService.setimportError(true);
           this.importErrorMsg = data.message;
+          this.csvsyncService.setimportErrorMsg(this.importErrorMsg);
           break;
         }
         results.push(data);
@@ -447,11 +449,13 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     this.allRowsValidated = false;
     this.csvsyncService.setallRowsValidated(false); 
     this.allImported = true;
+    this.csvsyncService.setallImported(true);
     this.processing = false;
     this.csvsyncService.setprocessing(false);
     setTimeout(() => {
 
       this.loadingImport = false;
+      this.csvsyncService.setloadingImport(false);
       this.progress = 0;
       this.processedRows = 0;
       this.estimatedRemainingTime = null;
@@ -623,6 +627,7 @@ public async validate(endpoint: string): Promise<void> {
   this.processing = true;
   this.csvsyncService.setprocessing(true);
   this.allImported = false;
+  this.csvsyncService.setallImported(false);
   this.loadingValidation = true;
   this.csvsyncService.setloadingValidation(true);
   if(this.initializing || !this.shouldValidate) {
@@ -789,7 +794,8 @@ public async getStartValidateData(endpoint: string, startobject: any): Promise<o
     processedRows: this.processedRows,
     totalRows: this.totalRows,
     progress: this.progress,
-    cancelAction: this.cancelAction
+    cancelAction: this.cancelAction,
+    importErrorMsg: this.importErrorMsg
   };
 
   const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -835,7 +841,8 @@ const dialogData = {
   processedRows: this.processedRows,
   totalRows: this.totalRows,
   progress: this.progress,
-  cancelAction: this.cancelAction
+  cancelAction: this.cancelAction,
+  importErrorMsg: this.importErrorMsg
 };
 
 const dialogRef = this.dialog.open(ConfirmDialogComponent, {

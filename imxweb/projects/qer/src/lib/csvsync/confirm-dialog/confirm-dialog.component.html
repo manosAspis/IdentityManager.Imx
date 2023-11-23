@@ -4,7 +4,7 @@
     <div *ngIf="data.loadingValidation || data.loadingImport || data.validateDialog" class="loading-wrapper">
       <div *ngIf="loadingValidation || loadingImport">
         <h2 *ngIf="loadingValidation">Validating...</h2>
-        <h2 *ngIf="data.loadingImport">Importing...</h2>
+        <h2 *ngIf="loadingImport">Importing...</h2>
         <p class="warning">Please do not close the browser</p>
       </div>
         
