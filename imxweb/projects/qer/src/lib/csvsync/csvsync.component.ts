@@ -389,6 +389,7 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     const csvData = this.csvDataSource.data;
     const results: PeriodicElement[] = [];
     this.processing = true;
+    this.csvsyncService.setprocessing(true);
 
     let totalTimeTaken = 0; // Total time taken for processing rows
     let estimatedRemainingSecs = 0;
@@ -447,6 +448,7 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
     this.csvsyncService.setallRowsValidated(false); 
     this.allImported = true;
     this.processing = false;
+    this.csvsyncService.setprocessing(false);
     setTimeout(() => {
 
       this.loadingImport = false;
@@ -815,6 +817,41 @@ public async getStartImportData(endpoint: string, startobject: any): Promise<obj
     this.beginImport(endpoint);
   }
   this.dialogHide = false;
+  
+const dialogData = {
+  preActionMsg: this.preActionMsg,
+  numberOfErrors: this.numberOfErrors,
+  loadingValidation: this.loadingValidation,
+  loadingImport: this.loadingImport,
+  validateDialog: this.validateDialog,
+  fileLoaded: this.fileLoaded,
+  allRowsValidated: this.allRowsValidated,
+  processing: this.processing,
+  initializing: this.initializing,
+  hardError: this.hardError,
+  allImported: this.allImported,
+  importError: this.importError,
+  estimatedRemainingTime: this.estimatedRemainingTime,
+  processedRows: this.processedRows,
+  totalRows: this.totalRows,
+  progress: this.progress,
+  cancelAction: this.cancelAction
+};
+
+const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+  data: dialogData,
+  width: '650px',
+  height: '300px',
+});
+
+// Subscribe to dialog close event and handle any changes if needed
+dialogRef.afterClosed().subscribe((result: any) => {
+  if (result === true) {
+    // Handle dialog confirmation logic if needed
+  } else {
+    // Handle dialog cancel or other logic
+  }
+});
   return msg;
 }
 
