@@ -443,6 +443,11 @@ getValidationResult(rowIndex: number, colIndex: number): string | undefined {
         this.progress = (this.processedRows / this.totalRows) * 100;
         this.estimatedRemainingTime = this.formatTime(estimatedRemainingSecs);
         this.processedRows++;
+
+        this.csvsyncService.setEstimatedRemainingTime(this.estimatedRemainingTime);
+        this.csvsyncService.setProcessedRows(this.processedRows);
+        this.csvsyncService.settotalRows(this.totalRows);
+        this.csvsyncService.setprogress(this.progress);
       }
     }
 

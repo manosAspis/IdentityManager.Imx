@@ -29,8 +29,8 @@
         <span *ngIf="!processing && !hardError.length && !importError && numberOfErrors === 0">{{totalRows}} of {{totalRows}}</span>
       </p>
 
-      <mat-progress-bar mode="determinate" [value]="data.processing ? progress : data.hardError.length || data.importError ? '33' : '100' "></mat-progress-bar>
-      <p *ngIf="!data.importError" class="validation-details">{{data.preActionMsg.message}}</p>
+      <mat-progress-bar mode="determinate" [value]="processing ? progress : hardError.length || importError ? '33' : '100' "></mat-progress-bar>
+      <p *ngIf="!importError" class="validation-details">{{data.preActionMsg.message}}</p>
 
 
       <div mat-dialog-actions class="button-wrapper">
