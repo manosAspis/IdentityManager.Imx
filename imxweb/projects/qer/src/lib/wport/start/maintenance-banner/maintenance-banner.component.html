@@ -1,4 +1,4 @@
-<div *ngIf = "bannerText.message.length">
+<div *ngIf = "bannerText.message.length > 0">
     <div class="banner" *ngIf = "isShow">
         <p><span>&#9888;</span><br>{{ bannerText.message }}</p> 
         <button (click) = closeBanner()>Close</button>
