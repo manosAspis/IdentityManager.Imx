@@ -92,7 +92,7 @@ export class DelegationModule {
     logger: ClassloggerService
   ) {
     logger.info(this, '▶️ DelegationModule loaded');
-    this.setupMenu();
+    //this.setupMenu();
   }
 
   private setupMenu(): void {

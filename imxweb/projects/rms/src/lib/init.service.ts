@@ -177,7 +177,7 @@ export class InitService {
       withAnalysis: true,
     });
 
-    this.setupMenu();
+    //this.setupMenu();
 
     this.dataExplorerRegistryService.registerFactory((preProps: string[], features: string[], projectConfig: ProjectConfig, groups: string[]) => {
       if (!isRoleAdmin(features) && !isRoleStatistics(features) && !isAuditor(groups)) {

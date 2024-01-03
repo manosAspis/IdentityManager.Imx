@@ -122,7 +122,7 @@ export class ResourcesModule {
     });
     this.router.resetConfig(config);
     this.init();
-    this.setupMenu();
+    //this.setupMenu();
   }
 
   private setupMenu(): void {

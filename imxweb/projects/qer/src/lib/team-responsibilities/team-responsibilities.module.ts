@@ -79,7 +79,7 @@ export class TeamResponsibilitiesModule {
     logger: ClassloggerService
   ) {
     logger.info(this, '▶️ TeamResponsibilitiesModule loaded');
-    this.setupMenu();
+    //this.setupMenu();
     this.extService.register('Dashboard-SmallTiles', { instance:TeamResponsibilityTileComponent});
   }
 

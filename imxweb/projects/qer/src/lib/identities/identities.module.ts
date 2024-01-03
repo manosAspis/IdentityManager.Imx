@@ -128,7 +128,7 @@ export class IdentitiesModule {
     logger.info(this, '▶️ IdentitiesModule loaded');
     this.init();
     this.setupMyResponsibilitiesView();
-    this.setupMenu();
+    //this.setupMenu();
   }
 
   private setupMenu(): void {

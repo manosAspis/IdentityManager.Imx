@@ -119,7 +119,7 @@ export class InitService {
 
 
     this.addRoutes(routes);
-    this.setupMenu();
+    //this.setupMenu();
 
     this.entlTypeService.Register(() => this.loadUnsTypes());
 

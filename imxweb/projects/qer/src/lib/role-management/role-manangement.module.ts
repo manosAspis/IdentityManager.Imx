@@ -163,7 +163,7 @@ export class RoleManangementModule {
     });
     this.router.resetConfig(config);
 
-    this.setupMenu();
+    //this.setupMenu();
     this.setupDataExplorer();
     this.setupMyResponsibilitiesView();
   }

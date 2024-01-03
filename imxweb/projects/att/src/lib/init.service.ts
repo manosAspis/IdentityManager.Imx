@@ -162,7 +162,7 @@ export class InitService {
 
         return menu;
       },
-      (preProps: string[], __: string[]) => {
+      /*(preProps: string[], __: string[]) => {
         if (!preProps.includes('ITSHOP')) {
           return null;
         }
@@ -180,7 +180,7 @@ export class InitService {
             },
           ],
         };
-      }
+      }*/
     );
   }
 }
