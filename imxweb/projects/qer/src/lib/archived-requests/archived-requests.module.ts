@@ -107,7 +107,7 @@ export class ArchivedRequestsModule {
     logger: ClassloggerService
   ) {
     logger.info(this, '▶️ ArchivedRequestsModule loaded');
-    this.setupMenu();
+    //this.setupMenu();
   }
 
   private async setupMenu(): Promise<void> {

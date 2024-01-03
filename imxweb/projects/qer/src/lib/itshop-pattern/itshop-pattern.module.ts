@@ -103,7 +103,7 @@ export class ItshopPatternModule {
     logger: ClassloggerService
   ) {
     logger.info(this, '▶️ ItshopPatternModule loaded');
-    this.setupMenu();
+    //this.setupMenu();
   }
 
   private setupMenu(): void {
