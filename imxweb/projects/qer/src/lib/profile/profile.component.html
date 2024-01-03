@@ -61,7 +61,7 @@
         </button>
       </div>
     </mat-tab>
-    <mat-tab label="{{ '#LDS#Heading Email Notifications' | translate }}" data-imx-identifier="profile-email" *ngIf="hasMailSubscriptions">
+    <!--<mat-tab label="{{ '#LDS#Heading Email Notifications' | translate }}" data-imx-identifier="profile-email" *ngIf="hasMailSubscriptions">
       <ng-template matTabContent>
         <imx-mail-subscriptions [uidPerson]="userUid" [mailInfo]="mailInfo"></imx-mail-subscriptions>
       </ng-template>
@@ -70,7 +70,7 @@
       <ng-template matTabContent>
         <imx-password-questions [passwordQuestionType]="'portal'"></imx-password-questions>
       </ng-template>
-    </mat-tab>
+    </mat-tab>-->
     <mat-tab label="{{ '#LDS#Heading Security Keys' | translate }}" data-imx-identifier="profile-security-keys" *ngIf="canManageSecurityKeys">
       <ng-template matTabContent>
         <imx-security-keys></imx-security-keys>

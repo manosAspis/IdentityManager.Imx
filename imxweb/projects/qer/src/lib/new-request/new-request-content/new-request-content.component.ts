@@ -77,13 +77,13 @@ export class NewRequestContentComponent implements OnDestroy {
       link: 'allProducts',
       active: true,
     });
-    this.navLinks.push({
+    /*this.navLinks.push({
       id: 1,
       title: '#LDS#Heading Recommended Products',
       component: NewRequestPeerGroupComponent,
       link: 'productsByPeerGroup',
       active: false,
-    });
+    });*/
     this.navLinks.push({
       id: 2,
       title: '#LDS#Heading Products by Reference User',
@@ -91,13 +91,13 @@ export class NewRequestContentComponent implements OnDestroy {
       link: 'productsByReferenceUser',
       active: false,
     });
-    this.navLinks.push({
+    /*this.navLinks.push({
       id: 3,
       title: '#LDS#Heading Product Bundles',
       component: NewRequestProductBundleComponent,
       link: 'productBundles',
       active: false,
-    });
+    });*/
 
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
