@@ -120,7 +120,8 @@ imx-data-explorer-accounts {
 //==========//
 
 // Read-Only Sidesheets
-.eui-sidesheet {
+#entitlementForm,
+#form {
     .mat-form-field-appearance-outline {
         .mat-form-field-outline-end,
         .mat-form-field-outline-start,
@@ -129,11 +130,19 @@ imx-data-explorer-accounts {
         }
     } 
     .mat-form-field { pointer-events: none;}
-    .imx-suffix-container { display: none!important;}
+    .imx-suffix-container,
+    mat-select[data-imx-identifier="cdr-edit-limited-value-select-Gender"] .mat-select-arrow-wrapper
+     { display: none!important;}
+    
+    imx-cdr-editor[data-imx-identifier="cdr-editor-JPegPhoto"] .imx-suffix-container {
+        display: block!important;
+        visibility: hidden!important;
+    }
 }
 
 // Edit Application Entitlement - Hide checkbox
 mat-checkbox[data-imx-identifier="cdr-edit-boolean-checkbox-IsApproveRequiresMfa"],
+// Direct Reports - Hide Create Identity
 button[data-imx-identifier="businessowner-chartsummary-tile-button-create-new-identity"] { display: none!important; }
 
 
