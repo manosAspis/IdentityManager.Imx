@@ -6,9 +6,9 @@
       <eui-icon size="20px" icon="add"></eui-icon>
     </button>
   </div>
-  <mat-checkbox (change)="filterApplicationsWithKpiIssues()" [(ngModel)]="filterKpiChecked" [disabled]="!dstSettings?.dataSource?.totalCount">
+  <!--<mat-checkbox (change)="filterApplicationsWithKpiIssues()" [(ngModel)]="filterKpiChecked" [disabled]="!dstSettings?.dataSource?.totalCount">
     {{ '#LDS#Only show applications with KPI issues' | translate }}
-  </mat-checkbox>
+  </mat-checkbox>-->
   <imx-data-source-toolbar #dst
     [settings]="dstSettings"
     (navigationStateChanged)="getData($event)"

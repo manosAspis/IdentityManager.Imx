@@ -16,6 +16,8 @@
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
+
+  ::ng-deep .mat-checkbox { display: none; }
 }
 
 .imx-badge-container {
