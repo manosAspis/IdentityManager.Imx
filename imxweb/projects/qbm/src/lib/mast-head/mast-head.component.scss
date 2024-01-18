@@ -1,5 +1,6 @@
 @import "@elemental-ui/core/src/styles/_palette.scss";
 @import '@elemental-ui/core/src/styles/_eui_palette.scss';
+@import "variables.scss";
 
 :host {
   .imx-masthead-app-name {
@@ -30,6 +31,10 @@
       }
     }
   }
+}
+
+.eui-masthead {
+  background-color: $ING_Primary;
 }
 
 /* hide the logo inside the masthead if needed */

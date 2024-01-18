@@ -5,6 +5,7 @@ $material_icons_font_path: "~node_modules/@elemental-ui/core/assets/MaterialIcon
 $cadence_font_path: "~node_modules/@elemental-ui/core/assets/Cadence";
 $source_sans_pro_font_path: "~node_modules/@elemental-ui/core/assets/Source_Sans_Pro";
 
+@import "variables.scss";
 @import '@elemental-ui/core/src/styles/core.scss';
 
 
@@ -119,6 +120,14 @@ imx-data-explorer-accounts {
 /*ING Styles*/
 //==========//
 
+body {
+    // Header
+    .mat-toolbar.mat-primary,
+    .eui-masthead { background: $ING_Primary; }
+    //login arrow
+    .mat-select-arrow { color: $ING_Primary; }
+}
+
 // Read-Only Sidesheets
 #entitlementForm,
 #form {
@@ -144,5 +153,3 @@ imx-data-explorer-accounts {
 mat-checkbox[data-imx-identifier="cdr-edit-boolean-checkbox-IsApproveRequiresMfa"],
 // Direct Reports - Hide Create Identity
 button[data-imx-identifier="businessowner-chartsummary-tile-button-create-new-identity"] { display: none!important; }
-
-
