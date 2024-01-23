@@ -1,5 +1,6 @@
 @import "@elemental-ui/core/src/styles/_palette.scss";
 @import '@elemental-ui/core/src/styles/_eui_palette.scss';
+@import 'variables.scss';
 
 .imx-data-source-toolbar-container {
   .imx-data-source-toolbar {
@@ -240,7 +241,7 @@ imx-data-source-toolbar {
   .imx-data-source-selected-filters {
     .mat-chip {
       .eui-icon.remove {
-        color: $color-gray-60;
+        color: $ING_Primary;
       }
 
       span.tag-name {

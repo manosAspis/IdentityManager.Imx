@@ -1,5 +1,6 @@
 @import '../../../../../shared/scss/common-table.scss';
 @import '@elemental-ui/core/src/styles/_eui_palette.scss';
+@import 'variables.scss';
 
 :host {
   overflow: hidden;
@@ -22,7 +23,7 @@
     }
     &--new {
       .eui-icon {
-        color: $color-green-60;
+        color: $ING_Primary;
       }
     }
     &--alert {
@@ -77,7 +78,7 @@ imx-data-table {
         }
         &--new {
           .mat-icon {
-            color: $color-green-40;
+            color: $ING_Primary;
           }
         }
         &--alert {

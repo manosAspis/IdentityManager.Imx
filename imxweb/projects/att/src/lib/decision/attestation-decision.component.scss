@@ -1,5 +1,7 @@
 @import '@elemental-ui/core/src/styles/_eui_palette.scss';
 @import '../../../../../shared/scss/common-table.scss';
+@import 'variables.scss';
+
 :host {
   display: flex;
   flex-direction: column;
@@ -86,7 +88,7 @@
     }
     &--new {
       .mat-icon {
-        color: $color-green-60;
+        color: $ING_Primary;
       }
     }
     &--info {
@@ -160,7 +162,7 @@
         }
         &--new {
           .mat-icon {
-            color: $color-green-40;
+            color: $ING_Primary;
           }
         }
         &--info {

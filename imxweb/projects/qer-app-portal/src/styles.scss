@@ -126,28 +126,48 @@ body {
         &.eui-top-navigation-item-active,
         &.eui-top-navigation-item-active-link { border-bottom: 2px solid $ING_Primary; }
     }
-    .mat-menu-item:hover:not([disabled]) { background: $ING_lighter_orange }
+    .mat-menu-item:hover:not([disabled]),
+    //request details
+    .mat-expansion-panel:not(.mat-expanded) .mat-expansion-panel-header:hover:not([aria-disabled=true]) { background: $ING_lighter_orange }
 
     .mat-toolbar.mat-primary,
     .eui-masthead,
     .mat-button-focus-overlay,
-    // Tile button hover, close button, chips
+    // Tile button hover, close button, chips, toggle
     .mat-button.mat-primary .mat-button-focus-overlay,
     .mat-tab-nav-bar.mat-primary .mat-ink-bar,
     .mat-flat-button.mat-primary,
     .mat-raised-button.mat-primary,
     .mat-tab-group.mat-primary .mat-ink-bar,
+    .mat-slide-toggle.mat-primary.mat-checked .mat-slide-toggle-thumb,
     .mat-chip.mat-standard-chip.mat-chip-selected.mat-primary { background: $ING_Primary; }
-    // login arrow, button, info icons, popup-link, search toolbar
+    // login arrow, button, info icons, popup-link, search toolbar, shoping cart icon, forms
     .imx-loginPage .mat-select-arrow,
     .mat-button.mat-primary,
     .mat-icon-button.mat-primary,
     .imx-card.mat-tooltip-trigger .imx-content span,
     .mat-dialog-container a,
     .imx-data-source-toolbar .eui-search-icon,
-    .eui-icon.medium { color: $ING_Primary!important; }
+    .imx-data-source-toolbar .eui-icon.medium,
+    .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick,
+    .mat-form-field.mat-focused.mat-primary .mat-select-arrow,
+    .mat-form-field.mat-focused .mat-form-field-label,
+    .eui-alert.eui-alert-type--info .eui-alert-icon,
+    button[data-imx-identifier="dst-button-groupby"],
+    button[data-imx-identifier="dst-mat-chip-list-sort-toggle"],
+    .mat-expansion-indicator:after,
+    imx-new-request-product .eui-icon.medium,
+    imx-shopping-cart-empty .mat-icon { color: $ING_Primary!important; }
+    .mat-slide-toggle.mat-checked .mat-slide-toggle-bar { background-color: $ING_light_orange!important; }
+    .mat-chip.mat-standard-chip {
+        border: 1px solid $ING_Primary;
+        background-color: $ING_lighter_orange;
+    }
+    
 }
-.imx-card:hover { border: 1px solid $ING_Primary!important;}
+button[data-imx-identifier="emptycart-link-requesthistory"]:hover,
+button[data-imx-identifier="emptycart-link-saveforlater"]:hover,
+imx-new-request-recipients .imx-card:hover { border: 1px solid $ING_Primary!important; }
 
 // Sidenavigation text, toolbar buttons, no results table
 .mat-sidenav .snavigation-side .snavigation-side-content .tree-item-button,
@@ -156,6 +176,10 @@ body {
 .go-to-cart {
     color: white!important;
     background-color: $ING_Primary!important;
+}
+
+.eui-alert.eui-alert-type--info.eui-alert-colored {
+    background-color: $ING_info_orange!important;
 }
 
 // Read-Only Sidesheets
