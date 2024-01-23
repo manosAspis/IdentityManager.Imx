@@ -86,6 +86,7 @@
         rotate: -90deg;
         translate: 0 100%;
         width: 1px; // prevent content from overflowing
+        backface-visibility: hidden;
         -webkit-backface-visibility: hidden; // Handle the anti-aliasing from chrome on rotations
       }
     }

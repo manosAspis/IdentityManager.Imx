@@ -1,5 +1,6 @@
 /* You can add styles to this file, and also import other style files */
 @import '@elemental-ui/core/src/styles/_eui_palette.scss';
+@import 'variables.scss';
 
 :host {
   overflow-y: auto;
@@ -65,7 +66,7 @@
 
   // Handle background row coloring
   .imx-data-table-highlightedActive .mat-row:hover {
-    background-color: $color-blue-10;
+    background-color: $ING_lighter_orange;
   }
 
   // Handle cursor icons, make sure divs are minimal so we don't have the text icon too much
@@ -135,10 +136,10 @@
     }
 
     .imx-data-table-row-highlighted {
-      background-color: $color-gray-60;
+      background-color: $ING_lighter_orange;
     }
     .imx-data-table-highlightedActive .mat-row:hover {
-      background-color: $color-gray-60;
+      background-color: $ING_lighter_orange;
     }
 
     .imx-data-table-row-conditional {
@@ -171,7 +172,7 @@
 
     .imx-data-table-row-highlighted,
     .imx-data-table-highlightedActive .mat-row:hover {
-      background-color: $color-gray-0;
+      background-color: $ING_lighter_orange;
 
       ::ng-deep td.mat-cell {
         color: $color-gray-100;

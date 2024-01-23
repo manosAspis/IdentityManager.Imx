@@ -1,4 +1,5 @@
 @import '@elemental-ui/core/src/styles/_palette.scss';
+@import 'variables.scss';
 
 
 .column-selector {
@@ -151,16 +152,16 @@ imx-sqlwizard-singlevalue {
   :host {
     .expression-container-header {
       background-color: $color-gray-10;
-      color: $color-blue-60;
+      color: $ING_Primary;
     }
 
     .expression-container:hover .expression-container-header {
-      background-color: $color-blue-60;
+      background-color: $ING_Primary;
       color: $color-gray-0;
     }
 
     .expression-container:hover {
-      border-color: $color-blue-60;
+      border-color: $ING_Primary;
     }
 
     .selected-logical-op {

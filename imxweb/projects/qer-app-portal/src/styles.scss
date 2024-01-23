@@ -122,10 +122,40 @@ imx-data-explorer-accounts {
 
 body {
     // Header
+    .eui-top-navigation-desktop .eui-top-navigation .mat-button {
+        &.eui-top-navigation-item-active,
+        &.eui-top-navigation-item-active-link { border-bottom: 2px solid $ING_Primary; }
+    }
+    .mat-menu-item:hover:not([disabled]) { background: $ING_lighter_orange }
+
     .mat-toolbar.mat-primary,
-    .eui-masthead { background: $ING_Primary; }
-    //login arrow
-    .mat-select-arrow { color: $ING_Primary; }
+    .eui-masthead,
+    .mat-button-focus-overlay,
+    // Tile button hover, close button, chips
+    .mat-button.mat-primary .mat-button-focus-overlay,
+    .mat-tab-nav-bar.mat-primary .mat-ink-bar,
+    .mat-flat-button.mat-primary,
+    .mat-raised-button.mat-primary,
+    .mat-tab-group.mat-primary .mat-ink-bar,
+    .mat-chip.mat-standard-chip.mat-chip-selected.mat-primary { background: $ING_Primary; }
+    // login arrow, button, info icons, popup-link, search toolbar
+    .imx-loginPage .mat-select-arrow,
+    .mat-button.mat-primary,
+    .mat-icon-button.mat-primary,
+    .imx-card.mat-tooltip-trigger .imx-content span,
+    .mat-dialog-container a,
+    .imx-data-source-toolbar .eui-search-icon,
+    .eui-icon.medium { color: $ING_Primary!important; }
+}
+.imx-card:hover { border: 1px solid $ING_Primary!important;}
+
+// Sidenavigation text, toolbar buttons, no results table
+.mat-sidenav .snavigation-side .snavigation-side-content .tree-item-button,
+.imx-toolbar .eui-icon.medium { color: unset!important; }
+.imx-data-table-no-results .eui-icon.medium { color: $Imx_Ellipse_Gray!important;}
+.go-to-cart {
+    color: white!important;
+    background-color: $ING_Primary!important;
 }
 
 // Read-Only Sidesheets

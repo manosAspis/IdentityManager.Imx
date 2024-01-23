@@ -1,4 +1,5 @@
 @import "@elemental-ui/core/src/styles/_eui_palette.scss";
+@import "variables";
 
 :host {
   height: 100%;
@@ -57,6 +58,7 @@
               rotate: -90deg;
               translate: 0 100%;
               width: 1px; // prevent content from overflowing
+              backface-visibility: hidden;
               -webkit-backface-visibility: hidden; // Handle the anti-aliasing from chrome on rotations
               font-size: 16px;
             }
@@ -196,17 +198,17 @@
 
   .mat-sidenav:not(.snavigation-side--expanded) {
     .expand-control-button {
-      background-color: $color-blue-10;
-      border: 1px solid $color-blue-20;
+      background-color: $ING_lighter_orange;
+      border: 1px solid $ING_Primary;
     }
   }
   .snavigation-side-content {
-    background-color: $color-blue-10;
-    border: 1px solid $color-blue-20;
+    background-color: $ING_lighter_orange;
+    border: 1px solid $ING_Primary;
   }
   .mat-tree-node--selected {
     background-color: $color-gray-0;
-    border: 1px solid $color-blue-40;
+    border: 1px solid $ING_Primary;
     color: $color-orange-60;
   }
 
@@ -229,8 +231,8 @@
 
     .mat-sidenav:not(.snavigation-side--expanded) {
       .expand-control-button {
-        background-color: $color-blue-90;
-        border: 1px solid $color-blue-80;
+        background-color: $ING_lighter_orange;
+        border: 1px solid $ING_Primary;
       }
     }
     .snavigation-side-content {
@@ -263,8 +265,8 @@
 
     .mat-sidenav:not(.snavigation-side--expanded) {
       .expand-control-button {
-        background-color: $color-gray-90;
-        border: 1px solid $color-gray-0;
+        background-color: $ING_lighter_orange;
+        border: 1px solid $ING_Primary;
       }
     }
     .snavigation-side-content {

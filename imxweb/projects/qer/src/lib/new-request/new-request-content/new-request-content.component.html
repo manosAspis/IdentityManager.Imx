@@ -29,7 +29,7 @@
     </button>
   </ng-container>
   <span class="imx-spacer"></span>
-  <button mat-stroked-button routerLink="/shoppingcart"><eui-icon icon="forward"></eui-icon>&nbsp;<span translate>#LDS#Go to cart</span></button>
+  <button class="go-to-cart" mat-stroked-button routerLink="/shoppingcart"><eui-icon icon="forward"></eui-icon>&nbsp;<span translate>#LDS#Go to cart</span></button>
   <button mat-raised-button color="primary" class="primary-action" (click)="pushCandidatesToCart()" [disabled]="selectionService.selectedProducts == null || selectionService.selectedProducts.length === 0">
     <eui-icon icon="cart"></eui-icon>&nbsp;<span translate>#LDS#Add to cart</span>
   </button>

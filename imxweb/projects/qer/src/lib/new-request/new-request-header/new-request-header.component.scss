@@ -44,6 +44,7 @@
         display: flex;
         align-items: center;
         height: 40px; //This is for the incoming button
+        color: $ING_Primary;
       }
     }
   }
@@ -67,7 +68,7 @@
 
     .imx-content {
       span {
-        color: $color-blue-60;
+        color: $ING_Primary;
       }
 
       button:hover {
@@ -96,7 +97,7 @@
 
       .imx-content {
         span {
-          color: $color-blue-40;
+          color: $ING_Primary;
         }
 
         button:hover {
@@ -126,7 +127,7 @@
 
       .imx-content {
         span {
-          color: $color-blue-40;
+          color: $ING_Primary;
         }
 
         button:hover {
