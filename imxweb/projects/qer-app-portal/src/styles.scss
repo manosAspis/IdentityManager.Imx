@@ -121,13 +121,18 @@ imx-data-explorer-accounts {
 //==========//
 
 body {
+    //loader 
+    .mat-progress-spinner circle,
+    .mat-spinner circle { stroke: $ING_Primary!important; }
     // Header
     .eui-top-navigation-desktop .eui-top-navigation .mat-button {
         &.eui-top-navigation-item-active,
         &.eui-top-navigation-item-active-link { border-bottom: 2px solid $ING_Primary; }
     }
+
     .mat-menu-item:hover:not([disabled]),
-    //request details
+    //request details, direct reports info banner
+    .data-explorer-card-header .data-explorer-card-header-bg,
     .mat-expansion-panel:not(.mat-expanded) .mat-expansion-panel-header:hover:not([aria-disabled=true]) { background: $ING_lighter_orange }
 
     .mat-toolbar.mat-primary,
@@ -160,8 +165,10 @@ body {
     .snavigation-side-content .eui-icon.medium,
     imx-info-button button,
     imx-shopping-cart-empty .mat-icon { color: $ING_Primary!important; }
+
     .mat-slide-toggle.mat-checked .mat-slide-toggle-bar { background-color: $ING_light_orange!important; }
-    .mat-chip.mat-standard-chip {
+    .mat-chip.mat-standard-chip,
+    .data-explorer-card-header  {
         border: 1px solid $ING_Primary;
         background-color: $ING_lighter_orange;
     }
@@ -171,10 +178,17 @@ button[data-imx-identifier="emptycart-link-requesthistory"]:hover,
 button[data-imx-identifier="emptycart-link-saveforlater"]:hover,
 imx-new-request-recipients .imx-card:hover { border: 1px solid $ING_Primary!important; }
 
-// Sidenavigation text, toolbar buttons, no results table
+// Sidenavigation text, toolbar buttons, no results table, reports info icon
 .mat-sidenav .snavigation-side .snavigation-side-content .tree-item-button,
+.data-explorer-card-header .data-explorer-card-header-bg .eui-icon,
 .imx-toolbar .eui-icon.medium { color: unset!important; }
 .imx-data-table-no-results .eui-icon.medium { color: $Imx_Ellipse_Gray!important;}
+.snavigation .mat-sidenav-container .mat-sidenav .snavigation-side .snavigation-side-content .snavigation-item {
+    &.snavigation-item--selected { background-color: $ING_Primary!important; }
+    &:hover:not(.snavigation-item--selected) {
+        background-color: $ING_lighter_orange!important;
+    }
+}
 
 .go-to-cart,
 .eui-badge .eui-badge-content {
