@@ -1,5 +1,7 @@
 @import '@elemental-ui/core/src/styles/_palette.scss';
 @import '@elemental-ui/core/src/styles/_eui_palette.scss';
+@import 'variables.scss';
+
 @mixin imx-data-tile-title-mixin {
   white-space: nowrap;
   overflow: hidden;
@@ -35,7 +37,7 @@
 .imx-selected-icon-container {
   height: 25px;
   width: 25px;
-  background-color: $aspen-green;
+  background-color: $ING_Primary;
   border-radius: 50%;
   display: flex;
   align-items: center;

@@ -76,6 +76,7 @@ $imx-component-height: calc(100vh - 180px);
   height: 42px;
   align-self: center;
   object-fit: cover;
+  color: $ING_Primary;
 }
 
 @mixin textOverflowEllipsis {

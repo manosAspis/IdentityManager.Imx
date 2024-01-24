@@ -1,5 +1,6 @@
 @import '@elemental-ui/core/src/styles/_eui_palette.scss';
 @import '../stat-mixins.scss';
+@import 'variables.scss';
 
 :host {
   height: 100%;
@@ -58,7 +59,7 @@
 // Theming
 :host {
   .cards-container {
-    background-color: $color-gray-5;
+    background-color: $ING_lighter_orange;
     border: 1px solid $color-gray-10;
   }
 
@@ -75,7 +76,7 @@
 .eui-dark-theme {
   :host {
     .cards-container {
-      background-color: $color-gray-60;
+      background-color: $ING_lighter_orange;
       border: 1px solid $color-gray-50;
     }
 
@@ -93,7 +94,7 @@
 .eui-contrast-theme {
   :host {
     .cards-container {
-      background-color: $color-gray-100;
+      background-color: $ING_lighter_orange;
       border: 1px solid $color-gray-90;
     }
 

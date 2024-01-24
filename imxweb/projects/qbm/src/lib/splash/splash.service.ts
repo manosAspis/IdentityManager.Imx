@@ -46,11 +46,11 @@ export class SplashService {
 
   public init(options: EuiSplashScreenOptions): void {
     // open splash screen with fix values
-    const config = {
+    /*const config = {
       ...this.defaultOptions,
       ...options
     };    
-    this.splash.open(config);
+    this.splash.open(config);*/
   }
 
   public async update(options: EuiSplashScreenOptions): Promise<void> {

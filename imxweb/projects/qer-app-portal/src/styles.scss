@@ -157,6 +157,8 @@ body {
     button[data-imx-identifier="dst-mat-chip-list-sort-toggle"],
     .mat-expansion-indicator:after,
     imx-new-request-product .eui-icon.medium,
+    .snavigation-side-content .eui-icon.medium,
+    imx-info-button button,
     imx-shopping-cart-empty .mat-icon { color: $ING_Primary!important; }
     .mat-slide-toggle.mat-checked .mat-slide-toggle-bar { background-color: $ING_light_orange!important; }
     .mat-chip.mat-standard-chip {
@@ -173,7 +175,9 @@ imx-new-request-recipients .imx-card:hover { border: 1px solid $ING_Primary!impo
 .mat-sidenav .snavigation-side .snavigation-side-content .tree-item-button,
 .imx-toolbar .eui-icon.medium { color: unset!important; }
 .imx-data-table-no-results .eui-icon.medium { color: $Imx_Ellipse_Gray!important;}
-.go-to-cart {
+
+.go-to-cart,
+.eui-badge .eui-badge-content {
     color: white!important;
     background-color: $ING_Primary!important;
 }

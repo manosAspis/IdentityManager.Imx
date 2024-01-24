@@ -1,5 +1,6 @@
 @use '@angular/material' as mat;
 @import '@elemental-ui/core/src/styles/_eui_palette.scss';
+@import 'variables.scss';
 
 :host {
   display: flex;
@@ -302,12 +303,12 @@ li {
   }
 
   .imx-application-published-state {
-    color: $color-green-60;
+    color: $ING_Primary;
   }
 
   .imx-application-progress {
     .mat-icon {
-      color: $color-green-60;
+      color: $ING_Primary;
     }
   }
 
@@ -337,13 +338,13 @@ li {
       }
 
       .imx-application-published-state {
-        color: $color-green-40;
+        color: $ING_Primary;
       }
     }
 
     .imx-application-progress {
       .mat-icon {
-        color: $color-green-40;
+        color: $ING_Primary;
       }
     }
   }
@@ -377,13 +378,13 @@ li {
       }
 
       .imx-application-published-state {
-        color: $color-green-20;
+        color: $ING_Primary;
       }
     }
 
     .imx-application-progress {
       .mat-icon {
-        color: $color-green-20;
+        color: $ING_Primary;
       }
     }
   }

@@ -1,4 +1,5 @@
 @import '@elemental-ui/core/src/styles/_eui_palette.scss';
+@import 'variables.scss';
 
 $imx-component-width: 400px;
 
@@ -134,7 +135,7 @@ $imx-component-width: 400px;
     }
 
     ::ng-deep .imx-selected-icon-container {
-      background-color: $color-green-40;
+      background-color: $ING_Primary;
     }
   }
 }
@@ -154,7 +155,7 @@ $imx-component-width: 400px;
     }
 
     ::ng-deep .imx-selected-icon-container {
-      background-color: $color-green-40;
+      background-color: $ING_Primary;
     }
   }
 }

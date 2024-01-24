@@ -1,5 +1,6 @@
 @import "@elemental-ui/core/src/styles/_eui_palette.scss";
 @import "../../stat-mixins.scss";
+@import 'variables.scss';
 
 :host {
 
@@ -161,18 +162,18 @@
     .above {
       button {
         .colored-icon {
-          color: $color-blue-60;
+          color: $ING_Primary;
         }
-        .colored-icon:hover {
+        /*.colored-icon:hover {
           color: $color-orange-60;
-        }
+        }*/
       }
 
     }
 
     .list-header {
-      color: $color-blue-60;
-      border-bottom: 2px solid $color-blue-60;
+      color: $ING_Primary;
+      border-bottom: 2px solid $ING_Primary;
 
       button:not(.mat-button-disabled) {
         eui-icon:hover {
