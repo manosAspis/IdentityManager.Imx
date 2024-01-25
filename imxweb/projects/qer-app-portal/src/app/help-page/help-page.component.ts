@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 import { AppConfigService, AuthenticationService } from 'qbm';
-import { ContactInterface, parseContactValues } from './contact-parser';
+import { ContactInterface, parseContactValues } from './contact_parser'
 
 
 export interface PeriodicElement {
