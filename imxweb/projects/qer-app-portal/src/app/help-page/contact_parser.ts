@@ -21,4 +21,4 @@ export function parseContactValues(text: string): ContactInterface[] {
         matches.push(link);
     }
     return matches;
-
+}
