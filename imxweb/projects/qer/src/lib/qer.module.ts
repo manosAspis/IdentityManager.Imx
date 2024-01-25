@@ -44,6 +44,7 @@ import {
   QbmModule,
   RouteGuardService,
   TileModule,
+  MenuService
 } from 'qbm';
 
 import { ApprovalWorkFlowModule } from './approval-workflows/approval-workflows.module';
@@ -132,12 +133,31 @@ const routes: Routes = [
   ],
 })
 export class QerModule {
+
   constructor(
     logger: ClassloggerService,
+    private readonly menuService: MenuService,
     private readonly config: AppConfigService,
     @Inject('environment') private readonly environment,
     @Inject('appConfigJson') private readonly appConfigJson
   ) {
     logger.info(this, '▶️ QerModule loaded');
+    this.setupMenu();
+  }
+
+  private setupMenu(): void {
+    this.menuService.addMenuFactories(
+      
+      (preProps: string[], __: string[]) => {
+        return {
+          id: 'ROOT_HOME',
+          title: '#LDS#Home',
+          route: 'dashboard',
+          sorting: '0'
+        };
+      }  
+    );
+      
   }
 }
+

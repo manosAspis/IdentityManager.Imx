@@ -25,9 +25,36 @@
  */
 
 import { Injectable } from "@angular/core";
+import { Route } from "@angular/router";
 import { BusyService } from "qbm";
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService extends BusyService {
+    router: any;
+    menuService: any;
 
+    public onInit(routes: Route[]): void {
+        this.addRoutes(routes);
+      }
+    
+      private addRoutes(routes: Route[]): void {
+        const config = this.router.config;
+        routes.forEach((route) => {
+          config.unshift(route);
+        });
+        this.router.resetConfig(config);
+      }
+    
+      private setupMenu(): void {
+        this.menuService.addMenuFactories(
+          
+          (preProps: string[], __: string[]) => {
+            return {
+              id: 'ROOT_HOME',
+              title: '#LDS#Home',
+              route: 'dashboard'
+            };
+        }
+        );
+      }
 }

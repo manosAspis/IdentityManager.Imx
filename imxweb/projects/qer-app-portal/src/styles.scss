@@ -200,9 +200,12 @@ imx-new-request-recipients .imx-card:hover { border: 1px solid $ING_Primary!impo
     background-color: $ING_info_orange!important;
 }
 
+.eui-sidesheet .mat-toolbar { background-color: $ING_blue!important;}
+
 // Read-Only Sidesheets
 #entitlementForm,
-#form {
+#form,
+form {
     .mat-form-field-appearance-outline {
         .mat-form-field-outline-end,
         .mat-form-field-outline-start,
@@ -212,8 +215,11 @@ imx-new-request-recipients .imx-card:hover { border: 1px solid $ING_Primary!impo
     } 
     .mat-form-field { pointer-events: none;}
     .imx-suffix-container,
-    mat-select[data-imx-identifier="cdr-edit-limited-value-select-Gender"] .mat-select-arrow-wrapper
-     { display: none!important;}
+    mat-select[data-imx-identifier="cdr-edit-limited-value-select-Gender"] .mat-select-arrow-wrapper,
+    imx-cdr-editor[data-imx-identifier="cdr-editor-IsNoInheriteToPerson"],
+    imx-cdr-editor[data-imx-identifier="cdr-editor-IsForITShop"],
+    imx-cdr-editor mat-checkbox[data-imx-identifier="cdr-edit-boolean-checkbox-IsITShopOnly"]
+    { display: none!important;}
     
     imx-cdr-editor[data-imx-identifier="cdr-editor-JPegPhoto"] .imx-suffix-container {
         display: block!important;
@@ -223,5 +229,10 @@ imx-new-request-recipients .imx-card:hover { border: 1px solid $ING_Primary!impo
 
 // Edit Application Entitlement - Hide checkbox
 mat-checkbox[data-imx-identifier="cdr-edit-boolean-checkbox-IsApproveRequiresMfa"],
-// Direct Reports - Hide Create Identity
+// Responsibilities toolbar buttons
+button[data-imx-identifier="roles-overview-button-restore"],
+button[data-imx-identifier*="roles-overview-edit-element-button"],
+button[data-imx-identifier="roles-overview-button-create-new"],
+button[data-imx-identifier="groups-button-actions"],
+// Direct Reports - Hide Create Identity,
 button[data-imx-identifier="businessowner-chartsummary-tile-button-create-new-identity"] { display: none!important; }

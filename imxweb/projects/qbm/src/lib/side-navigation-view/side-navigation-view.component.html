@@ -22,6 +22,7 @@
             </ng-container>
           </div>
           <ng-container *ngFor="let item of navigationItems">
+            <ng-container *ngIf="item.name!=='identities'&&item.name!=='devices'">
             <div
               [matTooltip]="item.translationKey | translate"
               [matTooltipPosition]="'after'"
@@ -35,6 +36,7 @@
             >
               <span translate>{{ item.translationKey }}</span>
             </div>
+            </ng-container>
           </ng-container>
         </div>
       </div>
