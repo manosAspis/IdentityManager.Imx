@@ -73,7 +73,6 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
     try {
       const userConfig = await this.userModelService.getUserConfig();
       this.ownerships = userConfig.Ownerships;
-
       this.projectConfig = await this.configService.getConfig();
 
       await this.getData();

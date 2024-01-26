@@ -236,6 +236,6 @@ export class DynamicRoleComponent implements OnInit {
 
   LdsUnsupportedExpression = '#LDS#You cannot edit these automatic memberships conditions in the Web Portal.';
   LdsNoDynamicRole =
-    '#LDS#Currently, no identities automatically become members through a dynamic role. You can create a dynamic role through which identities automatically become members.';
+    '#LDS#Currently, no identities automatically become members through a dynamic role.';
   LdsWizardInfo = '#LDS#Identities automatically become members through this dynamic role if they meet the following conditions.';
 }

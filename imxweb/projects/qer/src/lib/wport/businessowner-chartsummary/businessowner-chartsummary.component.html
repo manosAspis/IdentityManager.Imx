@@ -7,10 +7,12 @@
   <div class="imx-tile-content">
     <ul class="imx-valuelist">
       <li *ngFor="let currentOwnerships of ownerships">
+        <ng-container *ngIf="currentOwnerships.TableName!=='UNSGroup'">
         <a (click)="openOwnership(currentOwnerships)" tabindex="0">
           <span class="imx-col imx-col80">{{currentOwnerships.TableNameDisplay}}</span>
           <span class="imx-col imx-col20 imx-colright">{{currentOwnerships.Count}}</span>
         </a>
+        </ng-container>
       </li>
     </ul>
   </div>

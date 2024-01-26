@@ -145,7 +145,8 @@ body {
     .mat-raised-button.mat-primary,
     .mat-tab-group.mat-primary .mat-ink-bar,
     .mat-slide-toggle.mat-primary.mat-checked .mat-slide-toggle-thumb,
-    .mat-chip.mat-standard-chip.mat-chip-selected.mat-primary { background: $ING_Primary; }
+    .mat-chip.mat-standard-chip.mat-chip-selected.mat-primary,
+    .mat-form-field.mat-focused .mat-form-field-ripple { background: $ING_Primary; }
     // login arrow, button, info icons, popup-link, search toolbar, shoping cart icon, forms
     .imx-loginPage .mat-select-arrow,
     .mat-button.mat-primary,
@@ -158,6 +159,7 @@ body {
     .mat-form-field.mat-focused.mat-primary .mat-select-arrow,
     .mat-form-field.mat-focused .mat-form-field-label,
     .eui-alert.eui-alert-type--info .eui-alert-icon,
+    .mat-primary .mat-option.mat-selected:not(.mat-option-disabled),
     button[data-imx-identifier="dst-button-groupby"],
     button[data-imx-identifier="dst-mat-chip-list-sort-toggle"],
     .mat-expansion-indicator:after,
@@ -229,10 +231,28 @@ form {
 
 // Edit Application Entitlement - Hide checkbox
 mat-checkbox[data-imx-identifier="cdr-edit-boolean-checkbox-IsApproveRequiresMfa"],
-// Responsibilities toolbar buttons
+// Responsibilities toolbar buttons / Direct reports buttons
 button[data-imx-identifier="roles-overview-button-restore"],
 button[data-imx-identifier*="roles-overview-edit-element-button"],
 button[data-imx-identifier="roles-overview-button-create-new"],
 button[data-imx-identifier="groups-button-actions"],
-// Direct Reports - Hide Create Identity,
-button[data-imx-identifier="businessowner-chartsummary-tile-button-create-new-identity"] { display: none!important; }
+button[data-imx-identifier="roles-secondary-memberships-request-button"],
+button[data-imx-identifier="roles-secondary-memberships-remove-button"],
+button[data-imx-identifier="button-dynamic-role-create"],
+button[data-imx-identifier*="roles-entitlements"],
+
+// Direct Reports
+mat-select[data-imx-identifier="cdr-edit-limited-value-select-IdentityType"] .mat-select-arrow-wrapper,
+mat-select[data-imx-identifier="cdr-edit-limited-value-select-EmployeeType"] .mat-select-arrow-wrapper,
+mat-select[data-imx-identifier="cdr-edit-limited-value-select-LeaveOfAbsenceReason"] .mat-select-arrow-wrapper,
+mat-slide-toggle[data-imx-identifier="identity-sidesheet-toggle-for-column-IsSecurityIncident"],
+.mat-form-field-suffix,
+button[data-imx-identifier="businessowner-chartsummary-tile-button-create-new-identity"],
+button[data-imx-identifier="identities-button-create-new-identity"],
+button[data-imx-identifier*="save"],
+button[data-imx-identifier="attestation-case--button-actions"] { display: none!important; }
+
+mat-checkbox[data-imx-identifier="cdr-edit-boolean-checkbox-IsPwdResetByHelpdeskAllowed"],
+mat-checkbox[data-imx-identifier="cdr-edit-boolean-checkbox-IsTemporaryDeactivated"],
+mat-checkbox[data-imx-identifier="cdr-edit-boolean-checkbox-IsExternal"],
+mat-checkbox[data-imx-identifier="cdr-edit-boolean-checkbox-IsInActive"] { pointer-events: none; }
