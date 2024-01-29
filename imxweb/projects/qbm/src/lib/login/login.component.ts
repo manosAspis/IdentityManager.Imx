@@ -146,6 +146,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   public async ngOnInit(): Promise<void> {
+    //Maintenance banner flag
+    localStorage.setItem('isShow', 'true');
+
     const config = await this.systemInfoService.getImxConfig();
     if (config.DefaultHtmlTheme) {
       let key = Object.keys(EuiTheme).find((x) => x.toUpperCase() == config.DefaultHtmlTheme?.toUpperCase());

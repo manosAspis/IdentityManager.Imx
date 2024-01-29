@@ -24,6 +24,8 @@
  *
  */
 
+import { from } from 'rxjs';
+
 /*
  * Public API Surface of qer
  */
@@ -203,4 +205,5 @@ export { ViewDevicesSidesheetComponent } from './lib/view-devices/view-devices-s
 export { AuthenticationFactors } from './lib/admin/authentication-factors.interface';
 export { SupportPageModule } from './lib/support-page/support-page.module';
 export { SupportPageComponent } from './lib/support-page/support-page/support-page.component'
+export { MaintenanceBannerComponent }from './lib/wport/start/maintenance-banner/maintenance-banner.component'
 

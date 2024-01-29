@@ -2,6 +2,8 @@
 
 <imx-busy-indicator *ngIf="!viewReady"></imx-busy-indicator>
 
+<imx-maintenance-banner></imx-maintenance-banner>
+
 <ng-container>
   <div [ngClass]="{ hidden: !viewReady, 'imx-flexible-tile-row': true}">
     <imx-badge-tile

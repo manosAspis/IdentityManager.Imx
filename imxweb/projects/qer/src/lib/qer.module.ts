@@ -70,6 +70,7 @@ import { BusinessOwnerChartSummaryComponent } from './wport/businessowner-charts
 import { StartComponent } from './wport/start/start.component';
 import { SupportPageModule } from './support-page/support-page.module'
 import { SupportPageComponent } from './support-page/support-page/support-page.component';
+import { MaintenanceBannerComponent } from './wport/start/maintenance-banner/maintenance-banner.component';
 
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
@@ -98,7 +99,7 @@ const routes: Routes = [
 
 // @dynamic
 @NgModule({
-  declarations: [StartComponent, BusinessOwnerChartSummaryComponent, SettingsComponent],
+  declarations: [StartComponent, BusinessOwnerChartSummaryComponent, SettingsComponent,  MaintenanceBannerComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
