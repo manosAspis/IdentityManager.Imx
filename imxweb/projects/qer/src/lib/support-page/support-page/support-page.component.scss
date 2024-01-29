@@ -1,0 +1,42 @@
+@import 'variables.scss';
+
+table {
+    width: 100%;
+    margin-top: 50px;
+    //display: none!important;
+  }
+
+h1 {
+    margin-bottom: 30px;
+    font-size: 26px;
+    font-weight: 500;
+  }
+
+p {
+  color: #616566;
+  &.no-margin {
+    margin: 0;
+  }  
+  &.title {
+    color: #FF6200;
+    font-size: 18px;
+    margin: 10px 0;
+  }
+}
+
+a.support-info {
+  background-color: #FF6200;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: 600;
+  margin-top: 30px;
+  transition: .3s;
+  text-decoration: none;
+  border: 1px solid transparent;
+  &:hover {
+    background-color: white;
+    color: #FF6200;
+    border: 1px solid #FF6200;
+  }
+}

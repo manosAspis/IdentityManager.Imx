@@ -68,6 +68,8 @@ import { TilesModule } from './tiles/tiles.module';
 import { UserModule } from './user/user.module';
 import { BusinessOwnerChartSummaryComponent } from './wport/businessowner-chartsummary/businessowner-chartsummary.component';
 import { StartComponent } from './wport/start/start.component';
+import { SupportPageModule } from './support-page/support-page.module'
+import { SupportPageComponent } from './support-page/support-page/support-page.component';
 
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
@@ -86,6 +88,12 @@ const routes: Routes = [
     canActivate: [RouteGuardService],
     resolve: [RouteGuardService],
   },
+  {
+    path: 'support',
+    component: SupportPageComponent,
+    canActivate: [RouteGuardService],
+    resolve: [RouteGuardService],
+  },
 ];
 
 // @dynamic
@@ -99,6 +107,7 @@ const routes: Routes = [
     TranslateModule,
     FormsModule,
     ServiceItemsModule,
+    SupportPageModule,
     PatternItemsModule,
     ReactiveFormsModule,
     EuiCoreModule,
@@ -120,7 +129,7 @@ const routes: Routes = [
     DataExplorerViewModule,
     ApprovalsModule,
   ],
-  exports: [PasscodeViewerComponent, ObjectOverviewPersonComponent, RecommendationSidesheetComponent],
+  exports: [PasscodeViewerComponent, ObjectOverviewPersonComponent, RecommendationSidesheetComponent, SupportPageComponent],
   providers: [
     {
       provide: APP_INITIALIZER,
