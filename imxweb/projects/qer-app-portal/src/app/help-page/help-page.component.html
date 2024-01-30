@@ -7,57 +7,59 @@
 </p>
 
 <p>If you encounter any technical problems you can create a ticket on <a href="https://ing.service-now.com/navpage.do" target="_blank">SNOW</a> or contact the IT Service Desk.</p>
- 
+
 <p class="title">For further support:</p>
 <p style="margin-bottom:30px;">Contact your Center of Excellence</p>
 
 <!--<a href="https://confluence.ing.net/pages/viewpage.action?pageId=1213908324" target="_blank" class="support-info">Support information >></a>-->
- 
+
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
-  
+
     <!-- Head of CoE Column -->
     <ng-container matColumnDef="headCoe">
       <th mat-header-cell *matHeaderCellDef> Head of CoE</th>
       <td mat-cell *matCellDef="let element"> {{element.headCoe}} </td>
     </ng-container>
-  
-    <!-- Contact information Column -->
+
+       <!-- Contact information Column -->
     <ng-container matColumnDef="contactInfo">
       <th mat-header-cell *matHeaderCellDef> Operational contact information </th>
-      <td mat-cell *matCellDef="let element"> 
-        <div *ngIf="contactInfo.length < 3">
-
-          {{contactInfo[0]}}: <a target="_blank" href="{{contactInfo[1]}}">{{longFirstLink? (contactInfo[1] | slice:0:30)+'...':(contactInfo[1])}}</a>
-
-        </div>
-
-        <div *ngIf="contactInfo.length >= 3">
-
-          {{contactInfo[0]}}: <a target="_blank" href="{{contactInfo[1]}}">{{longFirstLink? (contactInfo[1] | slice:0:30)+'...':(contactInfo[1])}}</a><br>
-
-          {{contactInfo[2]}}: <a target="_blank" href="{{contactInfo[3]}}">{{longSecondLink? (contactInfo[3] | slice:0:30)+'...':(contactInfo[3])}}</a>
-
+      <td mat-cell *matCellDef="let link">
+        <div *ngFor="let link of hyperlinks">
+          <ng-container *ngFor="let key of ['CoE', 'AM']">
+            <ng-container *ngIf="link[key] !== undefined">
+              {{ key }}:
+              <ng-container *ngIf="isLink(link[key])">
+                <a target="_blank" [href]="link[key]">
+                      {{ link[key].length > 40 ? link[key].substring(0, 40) + '...' : link[key] }}
+                </a>
+              </ng-container>
+              <ng-container *ngIf="!isLink(link[key])">
+                    {{ link[key] }}
+              </ng-container>
+            <br>
+            </ng-container>
+          </ng-container>
         </div>
       </td>
     </ng-container>
-  
     <!-- ServiceNow Column -->
     <ng-container matColumnDef="serviceNow">
       <th mat-header-cell *matHeaderCellDef> ServiceNow assignment group </th>
       <td mat-cell *matCellDef="let element"> {{element.serviceNow}} </td>
     </ng-container>
-  
+
     <!-- confluence Column -->
     <ng-container matColumnDef="confluence">
       <th mat-header-cell *matHeaderCellDef> Confluence page </th>
       <td mat-cell *matCellDef="let element"> <a href="{{element.confluence}}" target="_blank">{{element.confluence}}</a> </td>
     </ng-container>
-  
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
-  
-  
+
+

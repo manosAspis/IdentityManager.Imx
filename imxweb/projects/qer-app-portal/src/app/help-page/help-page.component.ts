@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 import { AppConfigService, AuthenticationService } from 'qbm';
+import { ContactInterface, parseContactValues } from './contact_parser'
+
 
 export interface PeriodicElement {
   contactInfo: string;
@@ -11,10 +13,8 @@ export interface PeriodicElement {
 
 let ELEMENT_DATA: PeriodicElement[] = [
   {headCoe: '', contactInfo: '', serviceNow: '', confluence: ''},
-  
+
 ];
-
-
 
 @Component({
   selector: 'help-page',
@@ -26,42 +26,33 @@ export class HelpPageComponent {
 
   displayedColumns: string[] = ['headCoe', 'contactInfo', 'serviceNow', 'confluence'];
   dataSource = ELEMENT_DATA;
-  contactInfo = [];
-  longFirstLink:boolean = false;
-  longSecondLink:boolean = false;
+  hyperlinks: ContactInterface[] = [];
 
 
   constructor(
     private readonly config: AppConfigService,
     private readonly authentication: AuthenticationService
   ) {}
-  
+
   public async ngOnInit(): Promise<void> {
 
     this.authentication.update();
     this.getCustom();
-    
+
   }
 
  public async getCustom(): Promise<PeriodicElement> {
   const data = await this.config.apiClient.processRequest(this.getFeatureConfigDescriptor());
   ELEMENT_DATA = [data];
   this.dataSource = ELEMENT_DATA;
+  this.hyperlinks = parseContactValues(data.contactInfo)
 
-  data.contactInfo.split(", ").forEach(i => {
-    i.split(": ").forEach(j => {
-      this.contactInfo.push(j)
-    })
-  })
-
-  if (this.contactInfo[1].length > 30) {
-    this.longFirstLink = true;
-  }
-  if (this.contactInfo[3].length > 30) {
-    this.longSecondLink = true;
-  }
-    
   return data;
+ }
+
+ isLink(value: string): boolean {
+  const linkPattern = /^https:\/\//;
+  return linkPattern.test(value);
  }
 
  private getFeatureConfigDescriptor(): MethodDescriptor<PeriodicElement> {
@@ -104,6 +95,4 @@ export class HelpPageComponent {
 
   }*/
 }
-
-
 
