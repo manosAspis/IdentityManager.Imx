@@ -174,6 +174,66 @@
         }
       }
     },
+    "data-explorer-plus": {
+      "root": "projects/data-explorer-plus",
+      "sourceRoot": "projects/data-explorer-plus/src",
+      "projectType": "library",
+      "prefix": "imx",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "tsConfig": "projects/data-explorer-plus/tsconfig.lib.json",
+            "project": "projects/data-explorer-plus/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/data-explorer-plus/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/data-explorer-plus/tsconfig.lib.json"
+            },
+            "dynamic": {
+              "project": "projects/data-explorer-plus/ng-package.dynamic.json"
+            },
+            "remote-dev": {
+              "tsConfig": "projects/data-explorer-plus/tsconfig.lib.json"
+            },
+            "remote-qs": {
+              "tsConfig": "projects/data-explorer-plus/tsconfig.lib.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/data-explorer-plus/src/test.ts",
+            "tsConfig": "projects/data-explorer-plus/tsconfig.spec.json",
+            "karmaConfig": "projects/data-explorer-plus/karma.conf.js",
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "./shared/assets",
+                "./node_modules",
+                "./node_modules/@elemental-ui/cadence-icon",
+                "./node_modules/@elemental-ui/core"
+              ]
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": ["projects/data-explorer-plus/tsconfig.lib.json", "projects/data-explorer-plus/tsconfig.spec.json"],
+            "exclude": ["**/node_modules/**", "**/*.spec.ts", "**/*.json"]
+          }
+        }
+      }
+    },
     "att": {
       "root": "projects/att",
       "sourceRoot": "projects/att/src",

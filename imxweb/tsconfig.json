@@ -33,7 +33,11 @@
       "aad": ["dist/aad"],
       "aad/*": ["dist/aad/*"],
       "apc": ["dist/apc"],
-      "apc/*": ["dist/apc/*"]
+      "apc/*": ["dist/apc/*"],
+      "data-explorer-plus": [
+        "dist/data-explorer-plus"],
+      "data-explorer-plus/*": [
+        "dist/data-explorer-plus/*"]
     },
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
