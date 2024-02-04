@@ -6,6 +6,11 @@ import { EuiLoadingService } from '@elemental-ui/core';
 import { SystemInfo } from 'imx-api-qbm';
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 
+interface ExplorerItem {
+  ConfigParm: string;
+  Value: string;
+  Children: ExplorerItem[];
+}
 
 @Injectable({ providedIn: 'root' })
 export class DataExplorerPlusService {
@@ -13,7 +18,7 @@ export class DataExplorerPlusService {
   public systemInfo: SystemInfo;
   public viewReady: boolean;
   public userUid: string;
-  dataSource: string[] = [];
+  dataSource: ExplorerItem[] = [];
   explores: number = 0;
 
   constructor(
@@ -64,10 +69,11 @@ export class DataExplorerPlusService {
 
 
   public async ExplorerList(): Promise<void> {
-    const explorers = await this.config.apiClient.processRequest<string[]>(this.GetExplorers());
+    const explorers = await this.config.apiClient.processRequest<ExplorerItem[]>(this.GetExplorers());
     console.log(explorers);
     this.dataSource = explorers;
   }
+
 
 
   private GetExplorers(): MethodDescriptor<void> {
@@ -85,28 +91,35 @@ export class DataExplorerPlusService {
     };
   }
 
-  private setupMenuAfterAuthentication(): void {
-    this.ExplorerList();
+  private async setupMenuAfterAuthentication(): Promise<void> {
+    await this.ExplorerList();
     this.calculateKeyCounts();
-    if (1===1) {
+    if (1 === 1) {
       this.menuService.addMenuFactories((preProps: string[], features: string[]) => {
 
-          const menu: MenuItem = {
-            id: 'ROOT_DataExplorerPlus',
-            title: '#LDS#Data Explorer +',
-            sorting: '20',
-            items: [
-              {
-                id: 'DATA-EXPLORER-PLUS_test',
-                route: 'data-explorer-plus',
-                title: '#LDS#Test menu item',
-                sorting: '20-10',
-              }
-            ],
-          };
-          return menu;
-        }
-      );
+        const menu: MenuItem = {
+          id: 'ROOT_DataExplorerPlus',
+          title: '#LDS#Data Explorer +',
+          sorting: '20',
+          items: []
+        };
+
+        this.dataSource.forEach(parentItem => {
+          const displayName = parentItem.Children.find(child => child.ConfigParm === "DisplayName")?.Value;
+          if (displayName) {
+            menu.items.push({
+              id: `DATA-EXPLORER-PLUS_${parentItem.ConfigParm}`,
+              route: parentItem.ConfigParm.toLowerCase().replace(/\s+/g, '-'),
+              title: `#LDS#${displayName}`,
+              sorting: '20-10',
+            });
+          }
+        });
+
+
+        return menu;
+      });
     }
-}
+  }
+
 }
