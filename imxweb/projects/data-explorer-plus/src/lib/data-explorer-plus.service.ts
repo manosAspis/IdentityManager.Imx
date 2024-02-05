@@ -1,10 +1,12 @@
 import { Injectable, OnInit } from '@angular/core';
-import { Router, Route } from '@angular/router';
+import { Router, Route, NavigationExtras } from '@angular/router';
 import { MenuItem, MenuService, AppConfigService, AuthenticationService } from 'qbm';
 import { OverlayRef } from '@angular/cdk/overlay';
 import { EuiLoadingService } from '@elemental-ui/core';
 import { SystemInfo } from 'imx-api-qbm';
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
+import { BehaviorSubject } from 'rxjs';
+
 
 interface ExplorerItem {
   ConfigParm: string;
@@ -14,11 +16,15 @@ interface ExplorerItem {
 
 @Injectable({ providedIn: 'root' })
 export class DataExplorerPlusService {
+  // BehaviorSubject to manage the dataSource state
+  private dataSource = new BehaviorSubject<ExplorerItem[] | null>(null);
+
+  // Publicly exposed observable for components to subscribe to
+  public currentData = this.dataSource.asObservable();
 
   public systemInfo: SystemInfo;
   public viewReady: boolean;
   public userUid: string;
-  dataSource: ExplorerItem[] = [];
   explores: number = 0;
 
   constructor(
@@ -58,29 +64,23 @@ export class DataExplorerPlusService {
   }
 
   calculateKeyCounts(): void {
-    if (this.dataSource && this.dataSource.length > 0) {
-      this.explores = this.dataSource.reduce((count, item) => {
+    if (this.dataSource.value && this.dataSource.value.length > 0) {
+      this.explores = this.dataSource.value.reduce((count, item) => {
         count += Object.keys(item).length;
         return count;
       }, 0);
     }
   }
 
-
-
   public async ExplorerList(): Promise<void> {
     const explorers = await this.config.apiClient.processRequest<ExplorerItem[]>(this.GetExplorers());
-    console.log(explorers);
-    this.dataSource = explorers;
+    this.dataSource.next(explorers); // Update the BehaviorSubject with the new data
   }
 
-
-
   private GetExplorers(): MethodDescriptor<void> {
-    const parameters = [];
     return {
       path: `/portal/dataexplorerplus/configparms`,
-      parameters,
+      parameters: [],
       method: 'GET',
       headers: {
         'imx-timezone': TimeZoneInfo.get(),
@@ -94,32 +94,39 @@ export class DataExplorerPlusService {
   private async setupMenuAfterAuthentication(): Promise<void> {
     await this.ExplorerList();
     this.calculateKeyCounts();
-    if (1 === 1) {
-      this.menuService.addMenuFactories((preProps: string[], features: string[]) => {
+    this.menuService.addMenuFactories((preProps: string[], features: string[]) => {
+      const menu: MenuItem = {
+        id: 'ROOT_DataExplorerPlus',
+        title: '#LDS#Data Explorer +',
+        sorting: '20',
+        items: []
+      };
 
-        const menu: MenuItem = {
-          id: 'ROOT_DataExplorerPlus',
-          title: '#LDS#Data Explorer +',
-          sorting: '20',
-          items: []
-        };
-
-        this.dataSource.forEach(parentItem => {
-          const displayName = parentItem.Children.find(child => child.ConfigParm === "DisplayName")?.Value;
-          if (displayName) {
-            menu.items.push({
-              id: `DATA-EXPLORER-PLUS_${parentItem.ConfigParm}`,
-              route: parentItem.ConfigParm.toLowerCase().replace(/\s+/g, '-'),
-              title: `#LDS#${displayName}`,
-              sorting: '20-10',
-            });
-          }
-        });
-
-
-        return menu;
+      this.dataSource.value?.forEach(parentItem => {
+        const displayName = parentItem.Children.find(child => child.ConfigParm === "DisplayName")?.Value;
+        if (displayName) {
+          menu.items.push({
+            id: `DATA-EXPLORER-PLUS_${parentItem.ConfigParm}`,
+            title: `#LDS#${displayName}`,
+            sorting: '20-10',
+            navigationCommands: {
+              commands: ['/data-explorer-plus'],
+            },
+            trigger: () => {
+              // This will directly update the data for subscribers, including components
+              const test = parentItem.ConfigParm
+              this.setData(parentItem.Children);
+            },
+          });
+        }
       });
-    }
+
+      return menu;
+    });
   }
 
+  // Method to update the data
+  public setData(data: ExplorerItem[]) {
+    this.dataSource.next(data);
+  }
 }
