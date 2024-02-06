@@ -23,18 +23,25 @@ interface ExplorerItem {
 export class DataExplorerPlusComponent implements OnInit, OnDestroy {
   data: ExplorerItem[] | null = null;
   private subscription: Subscription;
+  configParm: string;
 
-  constructor(private service: DataExplorerPlusService) {}
+  constructor(private route: ActivatedRoute, private service: DataExplorerPlusService) {}
 
   ngOnInit() {
-    this.subscription = this.service.currentData.subscribe(data => {
-      this.data = data;
+    this.route.params.subscribe(params => {
+      this.configParm = params['configParm'];
+
+        console.log(this.configParm);
+
     });
-    console.log(this.data);
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
+
+
 }
 

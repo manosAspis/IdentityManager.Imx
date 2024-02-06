@@ -16,11 +16,16 @@ interface ExplorerItem {
 
 @Injectable({ providedIn: 'root' })
 export class DataExplorerPlusService {
-  // BehaviorSubject to manage the dataSource state
+e
   private dataSource = new BehaviorSubject<ExplorerItem[] | null>(null);
 
-  // Publicly exposed observable for components to subscribe to
   public currentData = this.dataSource.asObservable();
+
+  private selectedConfigParmSource = new BehaviorSubject<string | null>(null);
+  public selectedConfigParm = this.selectedConfigParmSource.asObservable();
+
+
+
 
   public systemInfo: SystemInfo;
   public viewReady: boolean;
@@ -34,6 +39,7 @@ export class DataExplorerPlusService {
     private readonly authentication: AuthenticationService,
     private readonly menuService: MenuService,
   ) {
+
     this.authentication.onSessionResponse.subscribe({
       next: sessionState => {
         if (sessionState?.IsLoggedOut === false) {
@@ -74,8 +80,10 @@ export class DataExplorerPlusService {
 
   public async ExplorerList(): Promise<void> {
     const explorers = await this.config.apiClient.processRequest<ExplorerItem[]>(this.GetExplorers());
-    this.dataSource.next(explorers); // Update the BehaviorSubject with the new data
+    this.dataSource.next(explorers);
+    this.setupMenuAfterAuthentication();
   }
+
 
   private GetExplorers(): MethodDescriptor<void> {
     return {
@@ -110,13 +118,12 @@ export class DataExplorerPlusService {
             title: `#LDS#${displayName}`,
             sorting: '20-10',
             navigationCommands: {
-              commands: ['/data-explorer-plus'],
+              commands: ['/data-explorer-plus' , { configParm: parentItem.ConfigParm }],
             },
             trigger: () => {
-              // This will directly update the data for subscribers, including components
-              const test = parentItem.ConfigParm
-              this.setData(parentItem.Children);
+              this.selectedConfigParmSource.next(parentItem.ConfigParm);
             },
+
           });
         }
       });
