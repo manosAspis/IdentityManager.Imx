@@ -16,9 +16,8 @@ interface ExplorerItem {
 
 @Injectable({ providedIn: 'root' })
 export class DataExplorerPlusService {
-e
   private dataSource = new BehaviorSubject<ExplorerItem[] | null>(null);
-
+  private dataFetched = false;
   public currentData = this.dataSource.asObservable();
 
   private selectedConfigParmSource = new BehaviorSubject<string | null>(null);
@@ -81,7 +80,7 @@ e
   public async ExplorerList(): Promise<void> {
     const explorers = await this.config.apiClient.processRequest<ExplorerItem[]>(this.GetExplorers());
     this.dataSource.next(explorers);
-    this.setupMenuAfterAuthentication();
+    //this.setupMenuAfterAuthentication();
   }
 
 

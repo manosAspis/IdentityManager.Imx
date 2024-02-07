@@ -1,1 +1,13 @@
-<h1>Data Explorer+ works!</h1>
+<div class="snavigation">
+  <mat-sidenav-container class="page-wrapper">
+    <mat-sidenav mode="side" opened>
+      <div class="snavigation-side">
+        <div class="snavigation-side-content">
+          <div *ngFor="let option of sideNavOptions" class="snavigation-item" (click)="selectOption(option.configParm)">
+            {{ option.displayName }}
+          </div>
+        </div>
+      </div>
+    </mat-sidenav>
+  </mat-sidenav-container>
+<div>
