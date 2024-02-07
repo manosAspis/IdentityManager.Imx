@@ -17,6 +17,10 @@ interface ExplorerItem {
   Children: ExplorerItem[];
 }
 
+interface IdentQBMLimitedSQLType {
+  IdentQBMLimitedSQL: string | null;
+}
+
 @Component({
   selector: 'imx-data-explorer-plus',
   templateUrl: './data-explorer-plus.component.html',
@@ -29,6 +33,8 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   configParm: string;
   selectedCategory: string | null = null;
+  IdentQBMLimitedSQL: IdentQBMLimitedSQLType | null = null;
+  SQLresults: string[] = [];
 
 
   constructor(
@@ -62,7 +68,32 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy {
 
   public selectOption(configParm: string): void {
     this.selectedCategory = configParm;
-    console.log('Selected category:', this.selectedCategory);
+    this.IdentQBMLimitedSQL = null;
+
+    // Find the corresponding ExplorerItem for the selected category
+    const findSelectStmt = (items: ExplorerItem[]): string | null => {
+      for (const item of items) {
+        if (item.ConfigParm === configParm) {
+          // If this is the selected category, look for the selectStmt in its children
+          const selectStmtItem = item.Children.find(child => child.ConfigParm === 'selectStmt');
+          return selectStmtItem ? selectStmtItem.Value : null;
+        } else if (item.Children.length > 0) {
+          // Recursively search in children
+          const result = findSelectStmt(item.Children);
+          if (result) return result; // If found in sub-children, return it
+        }
+      }
+      return null; // Return null if not found at all
+    };
+
+    // Set the IdentQBMLimitedSQL based on the found selectStmt, or keep it null if not found
+    const selectStmtValue = findSelectStmt(this.dataSourcedynamic);
+    if (selectStmtValue) {
+      this.IdentQBMLimitedSQL = { IdentQBMLimitedSQL: selectStmtValue };
+    }
+    console.log('IdentQBMLimitedSQL:', this.IdentQBMLimitedSQL);
+    console.log(this.selectedCategory);
+    this.executeSQL(this.IdentQBMLimitedSQL);
   }
 
   setSideNavOptions() {
@@ -96,6 +127,32 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy {
       path: `/portal/dataexplorerplus/configparms`,
       parameters: [],
       method: 'GET',
+      headers: {
+        'imx-timezone': TimeZoneInfo.get(),
+      },
+      credentials: 'include',
+      observe: 'response',
+      responseType: 'json',
+    };
+  }
+
+  public async executeSQL(limitedSQL: IdentQBMLimitedSQLType): Promise<void> {
+    const results = await this.config.apiClient.processRequest<string[]>(this.predefinedSQL(limitedSQL));
+    this.SQLresults = results;
+    console.log(results);
+  }
+
+  private predefinedSQL(limitedSQL: IdentQBMLimitedSQLType): MethodDescriptor<void> {
+    return {
+      path: `/portal/predefinedsql/fulldynamic`,
+      parameters: [
+        {
+          name: 'limitedSQL',
+          value: limitedSQL,
+          in: 'body'
+        },
+      ],
+      method: 'POST',
       headers: {
         'imx-timezone': TimeZoneInfo.get(),
       },

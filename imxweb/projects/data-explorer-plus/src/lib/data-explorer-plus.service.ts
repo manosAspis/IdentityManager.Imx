@@ -80,7 +80,6 @@ export class DataExplorerPlusService {
   public async ExplorerList(): Promise<void> {
     const explorers = await this.config.apiClient.processRequest<ExplorerItem[]>(this.GetExplorers());
     this.dataSource.next(explorers);
-    //this.setupMenuAfterAuthentication();
   }
 
 
@@ -104,7 +103,7 @@ export class DataExplorerPlusService {
     this.menuService.addMenuFactories((preProps: string[], features: string[]) => {
       const menu: MenuItem = {
         id: 'ROOT_DataExplorerPlus',
-        title: '#LDS#Data Explorer +',
+        title: '#LDS#Data Explorer+',
         sorting: '20',
         items: []
       };
