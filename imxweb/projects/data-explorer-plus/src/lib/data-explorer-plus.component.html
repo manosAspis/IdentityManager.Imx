@@ -2,12 +2,63 @@
   <mat-sidenav-container class="page-wrapper">
     <mat-sidenav mode="side" opened>
       <div class="snavigation-side">
-        <div class="snavigation-side-content">
-          <div *ngFor="let option of sideNavOptions" class="snavigation-item" (click)="selectOption(option.configParm)">
-            {{ option.displayName }}
-          </div>
+        <div>
+
+            <div class="snavigation-side-content">
+              <div class="snavigation-side-heading">
+                <span>Data Explorer+</span>
+              </div>
+
+              <div *ngFor="let option of sideNavOptions"
+                  class="snavigation-item"
+                  [class.snavigation-item--selected]="option.configParm === selectedCategory"
+                  (click)="selectOption(option.configParm)">
+                {{ option.displayName }}
+              </div>
+
+            </div>
         </div>
       </div>
     </mat-sidenav>
+    <mat-sidenav-content>
+
+      <div class="data-explorer-card-header">
+        <div class="data-explorer-card-header-bg">
+          <span>{{ getSelectedDisplayName() }}</span>
+
+        </div>
+      </div>
+      <div>
+        <mat-form-field appearance="outline" class="search-width">
+            <mat-label>Search</mat-label>
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput (keyup)="applyFilter()" [formControl]="searchControl" [disabled]="!dataSource.data.length">
+            <button mat-icon-button matSuffix *ngIf="searchControl.value" (click)="searchControl.setValue('')">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-form-field>
+      </div>
+
+      <div *ngIf="dataSource.data.length > 0; else noDataTemplate" class="table-container">
+      <!-- Add mat-table to display query results -->
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <!-- Dynamically create columns for each displayedColumn -->
+        <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+          <th mat-header-cell *matHeaderCellDef> {{ column }} </th>
+          <td mat-cell *matCellDef="let element"> {{ element[column] }} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      </div>
+      <mat-paginator [pageSizeOptions]="[20, 50, 100]" showFirstLastButtons></mat-paginator>
+      <ng-template #noDataTemplate>
+        <div class="no-results">
+          <eui-icon icon="table"></eui-icon>
+          <p>No data</p>
+        </div>
+      </ng-template>
+    </mat-sidenav-content>
   </mat-sidenav-container>
 <div>

@@ -4,6 +4,7 @@
       <div class="snavigation-side">
         <div class="snavigation-side-toggle" *ngIf="showSidenavHeader">
           <h3 class="snavigation-side-toggle-header">{{ headerText }}</h3>
+
           <button
             *ngIf="dynamicDataSource?.dstSettings"
             [@fadeIcon]="searchState"

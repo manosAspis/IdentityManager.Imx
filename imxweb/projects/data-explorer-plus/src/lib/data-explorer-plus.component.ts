@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild, AfterViewInit  } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
@@ -26,7 +26,8 @@ interface IdentQBMLimitedSQLType {
   templateUrl: './data-explorer-plus.component.html',
   styleUrls: ['./data-explorer-plus.component.scss'],
 })
-export class DataExplorerPlusComponent implements OnInit, OnDestroy {
+export class DataExplorerPlusComponent implements OnInit, OnDestroy, AfterViewInit  {
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   data: ExplorerItem[] | null = null;
   dataSourcedynamic: ExplorerItem[] = [];
   sideNavOptions: { displayName: string; configParm: string }[] = [];
@@ -35,6 +36,9 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy {
   selectedCategory: string | null = null;
   IdentQBMLimitedSQL: IdentQBMLimitedSQLType | null = null;
   SQLresults: string[] = [];
+  displayedColumns: string[] = [];
+  dataSource = new MatTableDataSource<any>([]);
+  searchControl = new FormControl('');
 
 
   constructor(
@@ -46,16 +50,21 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy {
 
     public ngOnInit(): void {
       this.subscription = this.route.params.subscribe(async params => {
-      if (this.configParm !== params['configParm']) {
-        this.configParm = params['configParm'];
-        console.log(this.configParm);
+        // Check if configParm has actually changed to prevent unnecessary reloads
+        if (this.configParm !== params['configParm']) {
+          this.configParm = params['configParm'];
 
-        await this.ExplorerList();
-        console.log(this.dataSourcedynamic);
-        this.setSideNavOptions();
-        console.log(this.sideNavOptions);
-        this.cdr.detectChanges();
-      }
+          // Reset component state for the new configParm
+          this.resetComponentState();
+
+          console.log(this.configParm);
+
+          await this.ExplorerList();
+          console.log(this.dataSourcedynamic);
+          this.setSideNavOptions();
+          console.log(this.sideNavOptions);
+          this.cdr.detectChanges();
+        }
       });
     }
 
@@ -64,6 +73,25 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
+
+  private resetComponentState(): void {
+    // Clear the MatTableDataSource
+    this.dataSource.data = [];
+    // Reset displayed columns
+    this.displayedColumns = [];
+    // Optionally reset the paginator to the first page
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
+    // Reset any additional state as needed
+    this.selectedCategory = null;
+    this.IdentQBMLimitedSQL = null;
+    // Ensure any other state relevant to the view is reset or reinitialized here
   }
 
   public selectOption(configParm: string): void {
@@ -96,6 +124,25 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy {
     this.executeSQL(this.IdentQBMLimitedSQL);
   }
 
+  applyFilter(): void {
+    const filterValue = this.searchControl.value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    // Reset the paginator to the first page (important if you have pagination)
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  getSelectedDisplayName(): string {
+    if (!this.selectedCategory) {
+      return 'No selection'; // Default message or you can return an empty string
+    }
+
+    const option = this.sideNavOptions.find(o => o.configParm === this.selectedCategory);
+    return option ? option.displayName : 'No selection';
+  }
+
   setSideNavOptions() {
     const matchingConfig = this.dataSourcedynamic.find(item => item.ConfigParm === this.configParm);
     if (matchingConfig) {
@@ -114,6 +161,13 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy {
         });
     }
     this.cdr.detectChanges();
+
+    // Automatically select the first category if available
+    if (this.sideNavOptions.length > 0) {
+      const firstOption = this.sideNavOptions[0].configParm;
+      // Delay the selection to ensure view initialization is complete
+      setTimeout(() => this.selectOption(firstOption), 0);
+    }
   }
 
   public async ExplorerList(): Promise<void> {
@@ -137,9 +191,27 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy {
   }
 
   public async executeSQL(limitedSQL: IdentQBMLimitedSQLType): Promise<void> {
-    const results = await this.config.apiClient.processRequest<string[]>(this.predefinedSQL(limitedSQL));
-    this.SQLresults = results;
-    console.log(results);
+    this.dataSource.data = [];
+    this.displayedColumns = [];
+
+    const results = await this.config.apiClient.processRequest<any[]>(this.predefinedSQL(limitedSQL));
+    if (results.length > 0) {
+      this.dataSource.data = results.map(row => {
+        const flattenedRow = {};
+        row.forEach(column => {
+          flattenedRow[column.Column] = column.Value;
+        });
+        return flattenedRow;
+      });
+
+      // Set displayed columns based on the first row keys
+      this.displayedColumns = Object.keys(this.dataSource.data[0]);
+    }
+    if (this.paginator) {
+      this.paginator.firstPage();
+      this.dataSource.paginator = this.paginator;
+    }
+    console.log('DataSource:', this.dataSource.data);
   }
 
   private predefinedSQL(limitedSQL: IdentQBMLimitedSQLType): MethodDescriptor<void> {
