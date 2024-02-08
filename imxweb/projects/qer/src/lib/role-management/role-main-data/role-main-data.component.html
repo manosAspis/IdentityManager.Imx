@@ -1,7 +1,7 @@
 <div class="imx-tab-content">
   <div eui-sidesheet-content class="imx-tab-content-body">
     <mat-card>
-      <form class="imx-cdr-group" [formGroup]="formGroup">
+      <form class="imx-cdr-group custom-read-only" [formGroup]="formGroup">
         <ng-container *ngFor="let cdr of properties">
           <imx-cdr-editor [cdr]="cdr" (valueChange)="onValueChanged()"
             (controlCreated)="addControl(cdr.column.ColumnName, $event)">

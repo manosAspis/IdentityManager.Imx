@@ -207,7 +207,8 @@ imx-new-request-recipients .imx-card:hover { border: 1px solid $ING_Primary!impo
 // Read-Only Sidesheets
 #entitlementForm,
 #form,
-form {
+form.custom-read-only,
+.governance-sidesheet__tab-content form {
     .mat-form-field-appearance-outline {
         .mat-form-field-outline-end,
         .mat-form-field-outline-start,
@@ -227,6 +228,7 @@ form {
         display: block!important;
         visibility: hidden!important;
     }
+
 }
 
 // Edit Application Entitlement - Hide checkbox
@@ -250,9 +252,20 @@ mat-slide-toggle[data-imx-identifier="identity-sidesheet-toggle-for-column-IsSec
 button[data-imx-identifier="businessowner-chartsummary-tile-button-create-new-identity"],
 button[data-imx-identifier="identities-button-create-new-identity"],
 button[data-imx-identifier*="save"],
-button[data-imx-identifier="attestation-case--button-actions"] { display: none!important; }
+button[data-imx-identifier="attestation-case--button-actions"],
+button[data-imx-identifier="roles-main-save-button"],
+button[data-imx-identifier="roles-main-button-actions"] { display: none!important; }
 
 mat-checkbox[data-imx-identifier="cdr-edit-boolean-checkbox-IsPwdResetByHelpdeskAllowed"],
 mat-checkbox[data-imx-identifier="cdr-edit-boolean-checkbox-IsTemporaryDeactivated"],
 mat-checkbox[data-imx-identifier="cdr-edit-boolean-checkbox-IsExternal"],
 mat-checkbox[data-imx-identifier="cdr-edit-boolean-checkbox-IsInActive"] { pointer-events: none; }
+
+button[data-imx-identifier="bulk-item-button-save"],
+button[data-imx-identifier="attestation-action-button-save"],
+button[data-imx-identifier="workflow-action-button-save"],
+button[data-imx-identifier="workflow-action-save-button"],
+button[data-imx-identifier="subscription-details-button-save"],
+imx-cdr-editor[data-imx-identifier="cdr-editor-ValidFrom"] .mat-form-field-suffix,
+imx-subscription-properties .mat-form-field-suffix
+ { display: block!important; }
