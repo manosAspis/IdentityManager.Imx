@@ -136,11 +136,11 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy, AfterViewIn
 
   getSelectedDisplayName(): string {
     if (!this.selectedCategory) {
-      return 'No selection'; // Default message or you can return an empty string
+      return 'No data'; // Default message or you can return an empty string
     }
 
     const option = this.sideNavOptions.find(o => o.configParm === this.selectedCategory);
-    return option ? option.displayName : 'No selection';
+    return option ? option.displayName : 'No data';
   }
 
   setSideNavOptions() {
