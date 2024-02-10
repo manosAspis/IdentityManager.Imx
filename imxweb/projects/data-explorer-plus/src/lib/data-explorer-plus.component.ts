@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild, AfterViewInit  } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild, AfterViewInit, Renderer2, Inject  } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
@@ -27,6 +28,7 @@ interface IdentQBMLimitedSQLType {
   styleUrls: ['./data-explorer-plus.component.scss'],
 })
 export class DataExplorerPlusComponent implements OnInit, OnDestroy, AfterViewInit  {
+  private styleTag: HTMLStyleElement;
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   data: ExplorerItem[] | null = null;
   dataSourcedynamic: ExplorerItem[] = [];
@@ -46,9 +48,10 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy, AfterViewIn
     private service: DataExplorerPlusService,
     private readonly config: AppConfigService,
     private readonly authentication: AuthenticationService,
-    private cdr: ChangeDetectorRef) {}
+    private cdr: ChangeDetectorRef, private renderer: Renderer2, @Inject(DOCUMENT) private document: Document) {}
 
     public ngOnInit(): void {
+      this.addCustomStyles();
       this.subscription = this.route.params.subscribe(async params => {
         // Check if configParm has actually changed to prevent unnecessary reloads
         if (this.configParm !== params['configParm']) {
@@ -70,6 +73,7 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy, AfterViewIn
 
 
   ngOnDestroy() {
+    this.removeCustomStyles();
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
@@ -92,6 +96,19 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy, AfterViewIn
     this.selectedCategory = null;
     this.IdentQBMLimitedSQL = null;
     // Ensure any other state relevant to the view is reset or reinitialized here
+  }
+
+  private addCustomStyles(): void {
+    const styleContent = `.pageContent { margin: 0 !important; }`;
+    this.styleTag = this.renderer.createElement('style');
+    this.styleTag.textContent = styleContent;
+    this.renderer.appendChild(this.document.head, this.styleTag);
+  }
+
+  private removeCustomStyles(): void {
+    if (this.styleTag) {
+      this.renderer.removeChild(this.document.head, this.styleTag);
+    }
   }
 
   public selectOption(configParm: string): void {
