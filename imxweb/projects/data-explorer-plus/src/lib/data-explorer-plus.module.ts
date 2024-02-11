@@ -34,6 +34,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { CdkTableModule } from '@angular/cdk/table';
+import { DataExplorerPlusDetailsComponent } from './data-explorer-plus-details/data-explorer-plus-details.component';
 
 
 const routes: Routes = [
@@ -48,6 +49,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     DataExplorerPlusComponent,
+    DataExplorerPlusDetailsComponent,
   ],
   imports: [
     CdkTableModule,

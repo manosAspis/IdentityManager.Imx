@@ -35,7 +35,7 @@ export class SplashService {
 
   private defaultOptions: EuiSplashScreenConfig = {
     applicationName: 'One Identity Manager',
-    icon: 'oi-horizontal',
+    icon: '',
     showSpinner: true,
     message: 'Loading...'
   };
@@ -49,7 +49,7 @@ export class SplashService {
     const config = {
       ...this.defaultOptions,
       ...options
-    };    
+    };
     this.splash.open(config);
   }
 

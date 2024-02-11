@@ -11,7 +11,7 @@ $inputWidth: calc(40vw + 2px);
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: $iris-blue;
+  background-color: #1a529c;
   color: $white;
   align-items: center;
 }
@@ -82,6 +82,7 @@ $inputWidth: calc(40vw + 2px);
   display: inline-block;
 
   button {
+    background-color: #1a529c;
     margin: 0 10px;
   }
 }

@@ -6,12 +6,12 @@
     <div *ngIf="logoUrl">
       <img class="custom-logo" [src]="logoUrl">
     </div>
-    <h1 data-imx-identifier="product-name-title">{{ product.name }}
+    <!--<h1 data-imx-identifier="product-name-title">{{ product.name }}
       <br>
       <ng-container *ngIf="!appConfigService.Config.DoNotShowAppNameWithProduct">
         {{ title }}
       </ng-container>
-    </h1>
+    </h1>-->
     <imx-usermessage class="usermessage" panelClass="imx-small-message"></imx-usermessage>
     <div *ngIf="sessionState?.isOAuth; else loginMask" class="imx-loginButtonpanel">
       <button data-imx-identifier="logout-oauth-button" mat-button type="button" class="imx-button"

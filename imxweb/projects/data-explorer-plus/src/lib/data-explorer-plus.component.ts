@@ -11,6 +11,9 @@ import { DataExplorerPlusService } from './data-explorer-plus.service';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { EuiSidesheetRef, EuiSidesheetService, EUI_SIDESHEET_DATA } from '@elemental-ui/core';
+import { TranslateService } from '@ngx-translate/core';
+import { DataExplorerPlusDetailsComponent } from './data-explorer-plus-details/data-explorer-plus-details.component';
 
 interface ExplorerItem {
   ConfigParm: string;
@@ -44,6 +47,8 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy, AfterViewIn
 
 
   constructor(
+    private readonly sideSheet: EuiSidesheetService,
+    private readonly translator: TranslateService,
     private route: ActivatedRoute,
     private service: DataExplorerPlusService,
     private readonly config: AppConfigService,
@@ -249,6 +254,26 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy, AfterViewIn
       observe: 'response',
       responseType: 'json',
     };
+  }
+
+  public async viewDetails(): Promise<void> {
+    console.log("hello!");
+
+
+
+      this.sideSheet.open(DataExplorerPlusDetailsComponent, {
+        title: await this.translator.get('#LDS#Metallica').toPromise(),
+        //subTitle: attestationCaseWithPolicy.GetEntity().GetDisplay(),
+        padding: '0',
+        width: '1800px',
+        testId: 'data-explorer-plus-sidesheet',
+        data: {
+          /*case: attestationCaseWithPolicy,
+          approvers,
+          showApprovalActions: this.parameters != null,*/
+        },
+      });
+
   }
 }
 
