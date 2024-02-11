@@ -265,7 +265,7 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy, AfterViewIn
         title: await this.translator.get('#LDS#Metallica').toPromise(),
         //subTitle: attestationCaseWithPolicy.GetEntity().GetDisplay(),
         padding: '0',
-        width: '1800px',
+        width: 'max(70%,600px)',
         testId: 'data-explorer-plus-sidesheet',
         data: {
           /*case: attestationCaseWithPolicy,
