@@ -23,6 +23,8 @@ interface ExplorerItem {
 
 interface IdentQBMLimitedSQLType {
   IdentQBMLimitedSQL: string | null;
+  xKey: string | null;
+  xSubKey: string | null;
 }
 
 @Component({
@@ -139,7 +141,11 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy, AfterViewIn
     // Set the IdentQBMLimitedSQL based on the found selectStmt, or keep it null if not found
     const selectStmtValue = findSelectStmt(this.dataSourcedynamic);
     if (selectStmtValue) {
-      this.IdentQBMLimitedSQL = { IdentQBMLimitedSQL: selectStmtValue };
+      this.IdentQBMLimitedSQL = {
+        IdentQBMLimitedSQL: selectStmtValue,
+        xKey: "something",
+        xSubKey: "something"
+      };
     }
     console.log('IdentQBMLimitedSQL:', this.IdentQBMLimitedSQL);
     console.log(this.selectedCategory);
@@ -225,9 +231,9 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy, AfterViewIn
         });
         return flattenedRow;
       });
+    // Set displayed columns based on the first row keys but exclude 'xKey'
+    this.displayedColumns = Object.keys(this.dataSource.data[0]).filter(key => key !== 'xKey' && key !== 'xSubKey');
 
-      // Set displayed columns based on the first row keys
-      this.displayedColumns = Object.keys(this.dataSource.data[0]);
     }
     if (this.paginator) {
       this.paginator.firstPage();
@@ -256,9 +262,11 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy, AfterViewIn
     };
   }
 
-  public async viewDetails(): Promise<void> {
-    console.log("hello!");
+  public async viewDetails(row: any): Promise<void> {
+    console.log("Row clicked:", row);
 
+    const xKey = row.xKey ?? null
+    const xSubKey = row.xSubKey ?? null;
 
 
       this.sideSheet.open(DataExplorerPlusDetailsComponent, {
@@ -268,9 +276,8 @@ export class DataExplorerPlusComponent implements OnInit, OnDestroy, AfterViewIn
         width: 'max(70%,600px)',
         testId: 'data-explorer-plus-sidesheet',
         data: {
-          /*case: attestationCaseWithPolicy,
-          approvers,
-          showApprovalActions: this.parameters != null,*/
+          xKey: xKey,
+          xSubKey: xSubKey,
         },
       });
 

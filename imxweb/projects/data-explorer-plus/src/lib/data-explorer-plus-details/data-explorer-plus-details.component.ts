@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { EUI_SIDESHEET_DATA } from '@elemental-ui/core';
 
 @Component({
   selector: 'imx-data-explorer-plus-details',
@@ -7,7 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DataExplorerPlusDetailsComponent implements OnInit {
 
-  constructor() { }
+  constructor(@Inject(EUI_SIDESHEET_DATA) public data: any) {
+    console.log("Received in side sheet:", data.xKey, data.xSubKey);
+
+  }
 
   ngOnInit(): void {
   }
