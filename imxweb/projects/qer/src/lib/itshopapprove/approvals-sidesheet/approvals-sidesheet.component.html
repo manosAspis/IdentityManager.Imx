@@ -44,7 +44,7 @@
     >
       {{ '#LDS#Reroute approval' | translate }}
     </button>
-    <button
+    <!--<button
       mat-stroked-button
       *ngIf="data.pwo.canAddApprover(currentUserId)"
       data-imx-identifier="approvals-sidesheet-button-add-approver"
@@ -61,7 +61,7 @@
       (click)="actionService.delegateDecisions([data.pwo])"
     >
       {{ '#LDS#Delegate approval' | translate }}
-    </button>
+    </button>-->
     <button
       mat-stroked-button
       *ngIf="canDenyApproval()"
@@ -81,7 +81,7 @@
       {{ '#LDS#Withdraw additional approver' | translate }}
     </button>
 
-    <button
+    <!--<button
       mat-stroked-button
       *ngIf="data.pwo.canEscalateDecision"
       data-imx-identifier="approvals-sidesheet-button-escalate-approval"
@@ -108,7 +108,7 @@
     (click)="actionService.recallInquiry([data.pwo])"
   >
     {{ '#LDS#Withdraw inquiry' | translate }}
-  </button>
+  </button>-->
 
   <button
     mat-stroked-button
@@ -121,7 +121,7 @@
   </button>
   </ng-container>
 
-  <button
+  <!--<button
     mat-raised-button
     *ngIf="data.fromInquiry"
     color="primary"
@@ -130,7 +130,7 @@
     (click)="actionService.answerQuestion(data.pwo, currentUserId)"
   >
     {{ '#LDS#Reply to inquiry' | translate }}
-  </button>
+  </button>-->
   <!-- TODO later
     <button mat-stroked-button
     data-imx-identifier="approvals-sidesheet-button-change-priority"

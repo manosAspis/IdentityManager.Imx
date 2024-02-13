@@ -22,7 +22,7 @@
             </ng-container>
           </div>
           <ng-container *ngFor="let item of navigationItems">
-            <ng-container *ngIf="item.name!=='identities'&&item.name!=='devices'&&item.name!=='UNSGroup'">
+            <ng-container *ngIf="item.name=='Org'||item.name=='ESet'||item.name=='Department'">
             <div
               [matTooltip]="item.translationKey | translate"
               [matTooltipPosition]="'after'"
