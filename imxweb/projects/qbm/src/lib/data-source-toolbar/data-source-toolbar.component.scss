@@ -3,6 +3,9 @@
 @import 'variables.scss';
 
 .imx-data-source-toolbar-container {
+  display: flex;
+  flex-direction: column;
+  
   .imx-data-source-toolbar {
     display: flex;
     overflow: hidden;
@@ -42,10 +45,6 @@
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-  }
-
-  .imx-chip-container-grouped {
-    min-height: 15px;
   }
 
   .imx-data-source-selected-filters {
