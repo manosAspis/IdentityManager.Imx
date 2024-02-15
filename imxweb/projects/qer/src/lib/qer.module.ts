@@ -93,6 +93,7 @@ const routes: Routes = [
   declarations: [StartComponent, BusinessOwnerChartSummaryComponent, SettingsComponent,  MaintenanceBannerComponent],
   imports: [
     CommonModule,
+    RouterModule.forChild(routes),
     QbmModule,
     CdrModule,
     TranslateModule,
