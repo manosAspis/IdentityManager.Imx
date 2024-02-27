@@ -63,16 +63,15 @@
     *ngIf="GetCountNewProcesses() > 0"
     </imx-badge-tile>-->
 
-    <!--<imx-badge-tile
+    <imx-badge-tile
       data-imx-identifier="start-tile-request-ending-soon"
       [caption]="'#LDS#Heading Products Expiring Soon' | translate"
-      *ngIf="userConfig?.IsITShopEnabled"
+      *ngIf="userConfig?.IsITShopEnabled && userConfig?.CountRequestsEndingSoon > 0"
       [value]="userConfig?.CountRequestsEndingSoon"
       [identifier]="'requests ending soon'"
       (actionClick)="router.navigate(['requesthistory'], { queryParams: { ShowEndingSoon: 1 } })"
     >
-    && userConfig?.CountRequestsEndingSoon > 0
-    </imx-badge-tile>-->
+    </imx-badge-tile>
 
     <imx-ext class="imx-flexible-tile-row" id="Dashboard-SmallTiles" [referrer]="this"></imx-ext>
   </div>
