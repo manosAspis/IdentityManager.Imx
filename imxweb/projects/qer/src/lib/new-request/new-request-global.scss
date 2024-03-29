@@ -45,7 +45,7 @@
     height: 100%;
     display: flex;
     padding: 16px 24px;
-    row-gap: 10px;
+    row-gap: 16px;
     column-gap: 24px;
     overflow: hidden;
 
@@ -95,7 +95,7 @@
 
 
 @mixin Table-Styles {
-  :host {    
+  :host {
     img {
       width: 32px;
       height: auto;
@@ -105,7 +105,7 @@
       font-size: 32px;
       line-height: 32px;
     }
- 
+
     .imx-progress-bar {
       display: flex;
       column-gap: 5px;
@@ -168,7 +168,7 @@
         tr.mat-row:hover .imx-request-col-status {
           color: $color-gray-100;
         }
-      }    
+      }
 
       imx-data-table ::ng-deep {
         margin: 10px;
@@ -181,7 +181,7 @@
         tr.mat-row.imx-data-table-row-highlighted .imx-request-col-status {
           color: $color-gray-100;
         }
-      }    
+      }
 
       .imx-request-col-text, .imx-request-col-status {
         color: $color-gray-0;

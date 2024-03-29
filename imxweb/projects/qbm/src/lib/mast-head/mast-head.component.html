@@ -6,8 +6,8 @@
         tabindex="0" (keydown.enter)="goHome()" (click)="goHome()">
 
       <h1 class="imx-masthead-app-name" data-imx-identifier="masthead-button-goHome"
-        tabindex="0" (keydown.enter)="goHome()" (click)="goHome()">
-        Web Portal
+        tabindex="0" [ngStyle]="{'cursor': isAppOverview ? 'default' : 'pointer'}" (keydown.enter)="goHome()" (click)="goHome()">
+        User Access Portal
         <!--{{ productName }} {{ appConfig?.Config?.Title }}-->
       </h1>
       <span class="imx-masthead-space"></span>

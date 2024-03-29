@@ -27,20 +27,28 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { PortalServicecategories, PortalShopServiceitems } from 'imx-api-qer';
-import { CollectionLoadParameters, DisplayColumns, IClientProperty, IWriteValue, MultiValue } from 'imx-qbm-dbts';
-import { Busy, BusyService, DynamicDataSource, DynamicDataApiControls, DataSourceToolbarSettings, DataSourceToolbarComponent, ClassloggerService } from 'qbm';
+import { CollectionLoadParameters, CompareOperator, DisplayColumns, IClientProperty, IWriteValue, MultiValue } from 'imx-qbm-dbts';
+import {
+  Busy,
+  BusyService,
+  DynamicDataSource,
+  DynamicDataApiControls,
+  DataSourceToolbarSettings,
+  DataSourceToolbarComponent,
+  ClassloggerService,
+} from 'qbm';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { NewRequestOrchestrationService } from '../new-request-orchestration.service';
 import { NewRequestCategoryApiService } from './new-request-category-api.service';
 import { NewRequestProductApiService } from './new-request-product-api.service';
 import { ServiceItemParameters } from './service-item-parameters';
 import { from } from 'rxjs';
-import {
-  SelectedProductSource,
-} from '../new-request-selected-products/selected-product-item.interface';
+import { SelectedProductSource } from '../new-request-selected-products/selected-product-item.interface';
 import { ProductDetailsService } from './product-details-sidesheet/product-details.service';
 import { NewRequestSelectionService } from '../new-request-selection.service';
 import { CurrentProductSource } from '../current-product-source';
+import { ActivatedRoute } from '@angular/router';
+import { skip } from 'rxjs/operators';
 
 export interface NewRequestCategoryNode {
   isSelected?: boolean;
@@ -75,18 +83,32 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
   public displayedProductColumns: IClientProperty[];
   public recipients: IWriteValue<string>;
   public serviceCategoriesTotalCount = -1;
+  public resetSidenav = false;
+  public selectedServiceCategoryUID: string;
+  public selectedServiceItemUID: string;
 
   public categoryTreeControl = new FlatTreeControl<NewRequestCategoryNode>(
     (leaf) => leaf.level,
-    (leaf) => leaf.entity.HasChildren.Column.GetValue()
+    (leaf) => leaf.entity.HasChildren.Column.GetValue(),
   );
   public apiControls: DynamicDataApiControls<NewRequestCategoryNode> = {
     setup: async () => {
       // We only expect a single root node
-      const userParams = {
-        UID_Person: this.orchestration.recipients ? MultiValue.FromString(this.orchestration.recipients.value).GetValues().join(',') : undefined,
+      let userParams: CollectionLoadParameters = {
+        UID_Person: this.orchestration.recipients
+          ? MultiValue.FromString(this.orchestration.recipients.value).GetValues().join(',')
+          : undefined,
         ParentKey: '',
       };
+      if (this.selectedServiceCategoryUID && !this.resetSidenav) {
+        userParams.filter = [
+          {
+            ColumnName: 'UID_AccProductGroup',
+            CompareOp: CompareOperator.Equal,
+            Value1: this.selectedServiceCategoryUID,
+          },
+        ];
+      }
       const servicecategories = await this.categoryApi.get(userParams);
       this.serviceCategoriesTotalCount = servicecategories?.totalCount;
       const dstSettings: DataSourceToolbarSettings = {
@@ -126,8 +148,11 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
         return [];
       }
       leaf.isLoading = true;
-      const userParams = {
-        UID_Person: this.orchestration.recipients ? MultiValue.FromString(this.orchestration.recipients.value).GetValues().join(',') : undefined,
+      const userParams: CollectionLoadParameters = {
+        UID_Person: this.orchestration.recipients
+          ? MultiValue.FromString(this.orchestration.recipients.value).GetValues().join(',')
+          : undefined,
+        PageSize: 1000,
       };
       if (!leaf.entity) {
         return [];
@@ -147,7 +172,9 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
     loadMore: async (root) => {
       // Get children count from root
       const userParams = {
-        UID_Person: this.orchestration.recipients ? MultiValue.FromString(this.orchestration.recipients.value).GetValues().join(',') : undefined,
+        UID_Person: this.orchestration.recipients
+          ? MultiValue.FromString(this.orchestration.recipients.value).GetValues().join(',')
+          : undefined,
         ParentKey: '',
       };
       const data = await this.categoryApi.get({ StartIndex: root.children.length, ...userParams });
@@ -164,7 +191,9 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
     },
     search: async (params: CollectionLoadParameters) => {
       const userParams = {
-        UID_Person: this.orchestration.recipients ? MultiValue.FromString(this.orchestration.recipients.value).GetValues().join(',') : undefined,
+        UID_Person: this.orchestration.recipients
+          ? MultiValue.FromString(this.orchestration.recipients.value).GetValues().join(',')
+          : undefined,
       };
       const response = await this.categoryApi.get({ ParentKey: '', ...params, ...userParams });
       const searchNodes = response.Data.map((datum) => {
@@ -178,9 +207,9 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
       const rootNode: NewRequestCategoryNode = {
         isSelected: true,
         level: 0,
-        children: searchNodes
-      }
-      return { searchNodes, totalCount: response.totalCount, rootNode};
+        children: searchNodes,
+      };
+      return { searchNodes, totalCount: response.totalCount, rootNode };
     },
     changeSelection: (data: NewRequestCategoryNode[], selectedNode: NewRequestCategoryNode) => {
       // Reset all other selections and set this one if its keys match
@@ -217,7 +246,8 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
     private readonly logger: ClassloggerService,
     private readonly productDetailsService: ProductDetailsService,
     private readonly cd: ChangeDetectorRef,
-    private readonly busyService: BusyService
+    private readonly busyService: BusyService,
+    private readonly route: ActivatedRoute,
   ) {
     this.orchestration.selectedView = SelectedProductSource.AllProducts;
     this.orchestration.searchApi$.next(this.searchApi);
@@ -230,36 +260,38 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
     ];
 
     //#region Subscriptions
-    this.subscriptions.push(this.orchestration.currentProductSource$.subscribe((source: CurrentProductSource) => {
-      if (source?.view === SelectedProductSource.AllProducts) {
-        this.dst = source.dst;
-        this.dst.busyService = this.busyService;
-        this.dst.clearSearch();
-        this.orchestration.dstSettingsAllProducts = this.dstSettings;
+    this.subscriptions.push(
+      this.orchestration.currentProductSource$.subscribe((source: CurrentProductSource) => {
+        if (source?.view === SelectedProductSource.AllProducts) {
+          this.dst = source.dst;
+          this.dst.busyService = this.busyService;
+          this.dst.clearSearch();
+          this.orchestration.dstSettingsAllProducts = this.dstSettings;
 
-        this.subscriptions.push(
-          this.dst.searchResults$.subscribe((data) => {
-            if (data) {
-              this.dstSettings = {
-                dataSource: data,
-                displayedColumns: this.displayedProductColumns,
-                entitySchema: this.productApi.entitySchema,
-                navigationState: this.productNavigationState,
-              };
-              this.orchestration.dstSettingsAllProducts = this.dstSettings;
-            }
-            this.busy.endBusy(true);
-          })
-        );
-      }
-    }));
+          this.subscriptions.push(
+            this.dst.searchResults$.subscribe((data) => {
+              if (data) {
+                this.dstSettings = {
+                  dataSource: data,
+                  displayedColumns: this.displayedProductColumns,
+                  entitySchema: this.productApi.entitySchema,
+                  navigationState: this.productNavigationState,
+                };
+                this.orchestration.dstSettingsAllProducts = this.dstSettings;
+              }
+              this.busy.endBusy(true);
+            }),
+          );
+        }
+      }),
+    );
 
     this.subscriptions.push(
-      this.orchestration.navigationState$.subscribe(async (navigation: CollectionLoadParameters | ServiceItemParameters) => {
+      this.orchestration.navigationState$.pipe(skip(1)).subscribe(async (navigation: CollectionLoadParameters | ServiceItemParameters) => {
         this.productNavigationState = navigation;
         this.updateDisplayedColumns(this.displayedProductColumns);
         await this.getProductData(true);
-      })
+      }),
     );
 
     this.subscriptions.push(
@@ -268,12 +300,14 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
           this.includeChildCategories = includeChilds;
           await this.getProductData();
         }
-      })
+      }),
     );
 
-    this.subscriptions.push(this.selectionService.selectedProducts$.subscribe(() => {
-      this.orchestration.preselectBySource(SelectedProductSource.AllProducts, this.dst);
-    }));
+    this.subscriptions.push(
+      this.selectionService.selectedProducts$.subscribe(() => {
+        this.orchestration.preselectBySource(SelectedProductSource.AllProducts, this.dst);
+      }),
+    );
 
     this.subscriptions.push(this.selectionService.selectedProductsCleared$.subscribe(() => this.dst?.clearSelection()));
 
@@ -284,12 +318,24 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
     this.productNavigationState = { StartIndex: 0 };
     this.orchestration.selectedCategory = null;
     this.updateDisplayedColumns(this.displayedProductColumns);
-    this.subscriptions.push(this.orchestration.recipients$.subscribe(async (recipients: IWriteValue<string>) => {
-      this.recipients = recipients;
-      // if the recipients changes, update the service categories
-      await this.dynamicDataSource.setup(true);
-    }));
 
+    this.selectedServiceCategoryUID = this.route.snapshot.queryParams['serviceCategory'];
+    this.selectedServiceItemUID = this.route.snapshot.queryParams['serviceItem'];
+    let firstIteration = true;
+    this.subscriptions.push(
+      this.orchestration.recipients$.subscribe(async (recipients: IWriteValue<string>) => {
+        // if the recipients changes, update the service categories
+        this.recipients = recipients;
+        // if the serviceCategory or the serviceItem url param available load only the filtered data
+        if (firstIteration && (this.selectedServiceCategoryUID || this.selectedServiceItemUID)) {
+          this.setupSelection();
+          firstIteration = false;
+        } else {
+          this.dynamicDataSource.setup(true);
+          this.getProductData(true);
+        }
+      }),
+    );
   }
 
   public ngOnDestroy(): void {
@@ -300,9 +346,8 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
     this.categorySideNavExpanded = !expanded;
   }
 
-  public categorySelectedNode(node: NewRequestCategoryNode): void {
+  public async categorySelectedNode(node: NewRequestCategoryNode): Promise<void> {
     this.productNavigationState.StartIndex = 0;
-
     if (node.entity) {
       // This is a category
       let category = node?.entity?.GetEntity();
@@ -328,6 +373,16 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
 
   public async onRowSelected(item: PortalShopServiceitems): Promise<void> {
     this.productDetailsService.showProductDetails(item, this.recipients);
+  }
+
+  /**
+   * Reset the category tree and the product table to default.
+   */
+  public async onResetTree(): Promise<void> {
+    this.serviceCategoriesTotalCount = -1;
+    this.dynamicDataSource.setup(true);
+    this.resetSidenav = false;
+    this.categorySelectedNode({});
   }
 
   private updateDisplayedColumns(displayedColumns: IClientProperty[]): void {
@@ -366,7 +421,9 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
   private getCollectionLoadParameter(): CollectionLoadParameters | ServiceItemParameters {
     let parameters: CollectionLoadParameters | ServiceItemParameters = {
       ...this.productNavigationState,
-      UID_Person: this.orchestration.recipients ? MultiValue.FromString(this.orchestration.recipients.value).GetValues().join(',') : undefined,
+      UID_Person: this.orchestration.recipients
+        ? MultiValue.FromString(this.orchestration.recipients.value).GetValues().join(',')
+        : undefined,
     };
 
     if (this.accProductGroup) {
@@ -377,5 +434,47 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
       parameters.IncludeChildCategories = this.includeChildCategories;
     }
     return parameters;
+  }
+
+  private async setupSelection(): Promise<void> {
+    if (!!this.selectedServiceCategoryUID) {
+      this.setupSelectionByCategory();
+    } else if (!!this.selectedServiceItemUID) {
+      this.setupSelectionByProduct();
+    }
+  }
+
+  private async setupSelectionByCategory(): Promise<void> {
+    await this.dynamicDataSource.setup(true);
+    if (this.dynamicDataSource.data.length > 1) {
+      this.dynamicDataSource.setSelection(this.dynamicDataSource.data[1]);
+      this.categorySelectedNode(this.dynamicDataSource.data[1]);
+    } else {
+      this.dynamicDataSource.dataChange.next([]);
+    }
+    this.resetSidenav = true;
+  }
+
+  private async setupSelectionByProduct(): Promise<void> {
+    this.productNavigationState.filter = [
+      {
+        ColumnName: 'UID_AccProduct',
+        CompareOp: CompareOperator.Equal,
+        Value1: this.selectedServiceItemUID,
+      },
+    ];
+    try {
+      await this.getProductData();
+      if (this.dstSettings.dataSource.Data.length > 0) {
+        this.selectedServiceCategoryUID = this.dstSettings.dataSource.Data[0].GetEntity().GetColumn('UID_AccProductGroup').GetValue();
+        await this.dynamicDataSource.setup(true);
+        if (this.dynamicDataSource.data.length > 1) {
+          this.dynamicDataSource.setSelection(this.dynamicDataSource.data[1]);
+        }
+      }
+    } finally {
+      this.productNavigationState.filter = [];
+      this.resetSidenav = true;
+    }
   }
 }
