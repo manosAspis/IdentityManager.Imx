@@ -231,6 +231,12 @@ form.custom-read-only,
 
 }
 
+//splash screen
+.splash-screen-container { background-color: inherit!important;}
+.splash-screen-container .ss-app-logo,
+.splash-screen-container .ss-app-name,
+.splash-screen-container .ss-message,
+
 // Edit Application Entitlement - Hide checkbox
 mat-checkbox[data-imx-identifier="cdr-edit-boolean-checkbox-IsApproveRequiresMfa"],
 // Responsibilities toolbar buttons / Direct reports buttons

@@ -34,7 +34,7 @@ import { EuiSplashScreenConfig, EuiSplashScreenOptions, EuiSplashScreenService }
 export class SplashService {
 
   private defaultOptions: EuiSplashScreenConfig = {
-    applicationName: 'One Identity Manager',
+    applicationName: '',
     icon: 'oi-horizontal',
     showSpinner: true,
     message: 'Loading...'
@@ -46,11 +46,11 @@ export class SplashService {
 
   public init(options: EuiSplashScreenOptions): void {
     // open splash screen with fix values
-    /*const config = {
+    const config = {
       ...this.defaultOptions,
       ...options
     };    
-    this.splash.open(config);*/
+    this.splash.open(config);
   }
 
   public async update(options: EuiSplashScreenOptions): Promise<void> {

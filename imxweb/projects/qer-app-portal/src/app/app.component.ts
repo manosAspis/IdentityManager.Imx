@@ -170,7 +170,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.hideUserMessage = true;
         if (this.isLoggedIn && event.url === '/') {
           // show the splash screen, when the user logs out!
-          this.splash.init({ applicationName: 'One Identity Manager Portal' });
+          this.splash.init({ applicationName: '' });
         }
       }
 
