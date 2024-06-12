@@ -103,6 +103,8 @@ export class NewRequestOrchestrationService implements OnDestroy {
     this.disableSearch$.next(value);
   }
   public disableSearch$ = new BehaviorSubject<boolean>(null);
+
+  public keywords: string = '';
   //#endregion
 
   //#region Navigation State

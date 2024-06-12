@@ -1,5 +1,5 @@
 <imx-data-source-toolbar #dst data-imx-identifier="product-entitlements-dst" [settings]="dstSettings"
-[options]="[]" [isDataSourceLocal]="true">
+[options]="[]" (navigationStateChanged)="navigate($event)">
 </imx-data-source-toolbar>
 <imx-data-table #dataTable data-imx-identifier="product-entitlements-table" [dst]="dst" detailViewVisible="false"
 [noDataText]="'#LDS#There are currently no entitlements assigned.'|translate" mode="manual" [selectable]="false"

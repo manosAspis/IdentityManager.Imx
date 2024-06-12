@@ -37,7 +37,10 @@ import { EntityColumnContainer } from '../entity-column-container';
 import { MultiValueService } from '../../multi-value/multi-value.service';
 
 /**
- * A component for viewing / editing multi limited value columns
+ * Provides a {@link CdrEditor | CDR editor} for editing / viewing multi limited value columns
+ * 
+ * To change the value it uses a list of check boxes with one box per possible value.
+ * When set to read-only, it uses a {@link ViewPropertyComponent | view property component} to display the content.
  */
 @Component({
   selector: 'imx-edit-multi-limited-value',
@@ -47,10 +50,20 @@ import { MultiValueService } from '../../multi-value/multi-value.service';
 export class EditMultiLimitedValueComponent implements CdrEditor, OnDestroy {
   public readonly updateRequested = new Subject<void>();
 
+  /**
+   * The form control associated with the editor.
+   */
   // TODO: Check Upgrade
   public control = new UntypedFormArray([]);
 
+  /**
+   * The container that wraps the column functionality.
+   */
   public readonly columnContainer = new EntityColumnContainer<string>();
+
+  /**
+   * Event that is emitted, after a value has been changed.
+   */
   public readonly valueHasChanged = new EventEmitter<ValueHasChangedEventArg>();
   public readonly pendingChanged = new EventEmitter<boolean>();
 
@@ -63,12 +76,16 @@ export class EditMultiLimitedValueComponent implements CdrEditor, OnDestroy {
     private readonly multiValueProvider: MultiValueService
   ) {}
 
+  /**
+   * Unsubscribes all events, after the 'OnDestroy' hook is triggered.
+   */
   public ngOnDestroy(): void {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
   /**
-   * Binds a column dependent reference to the component
+   * Binds a column dependent reference to the component.
+   * Subscribes to subjects from the column dependent reference and its container.
    * @param cdref a column dependent reference
    */
   public bind(cdref: ColumnDependentReference): void {
@@ -120,6 +137,9 @@ export class EditMultiLimitedValueComponent implements CdrEditor, OnDestroy {
     }
   }
 
+  /**
+   * Initializes possible values and marks all selected ones.
+   */
   public initValues(): void {
     if (this.control.controls?.length > 0) {
       return;
@@ -136,8 +156,8 @@ export class EditMultiLimitedValueComponent implements CdrEditor, OnDestroy {
   }
 
   /**
-   * updates the value for the CDR
-   * @param values the new values
+   * Updates the value for the CDR.
+   * @param values The boolean values, that will be used as new values.
    */
   private async writeValue(values: boolean[]): Promise<void> {
     this.logger.debug(this, 'writeValue called with value', values);

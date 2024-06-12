@@ -3,6 +3,52 @@
 # Identity Manager HTML5 applications
 
 ## Change log
+
+### May 24, 2024
+
+The v92 branch has been updated with fixes for the following issues.
+
+- 453132: Attestation Policies: Edit Attestation Policy: Setting Condition: The objects matching the condition are not displayed hierarchically
+- 449292: Fixed an issue during creation of a cart item
+- 455291: Fixed the output paths for the compodoc files
+- 453350: Fixed an issue where the user could not save dynamic role membership changes after adding another condition to a new role
+- 455703: Fixed a state issue of the save button during creation of a report
+
+### May 6, 2024
+
+We are integrating [Compodoc](https://compodoc.app/) to provide Angular documentation for our components. Please see the [Documentation](#documentation) section for more information on how to generate documentation.
+
+The package versions have been updated to 9.2.1.
+
+The `v92` branch has been updated with fixes for the following issues.
+
+**Important**: Integrating these changes will require a server-side hotfix for the issue 454356 to be installed if the server has *not* been upgraded to 9.2.1.
+
+- 454675: Fixed an issue where sometimes a blank screen was displayed instead of the login page
+- 446439: Fixed the preselection of a child service category on the new request page
+- 440745: Fixed the preset of the search term on the new request page
+- 454356: Data Explorer identities needs to load interactive entities.
+- 453350/447417/453346: Fixed issues where the filter wizard could enter an inconsistent state
+- 453132: Fixed an issue in the attestation policy editor where the "objects matching the condition" were not displayed hierarchically
+- 438231: Added documentation of some basic components
+- 450070: Fixed an issue where switching to another page while loading a page caused an error
+- 453932: Fixed an issue where approving multiple requests in bulk could cause an error
+- 439918: Fixed some issues in the product bundles component
+- 450675: Fixed an issue where some help text was shown in an incorrect language
+- 452886: Fixed an issue in the attestation policy editor
+- 449616: Fixed an issue where reports could not be saved in format other then PDF
+- 450404: Fixed an issue in the overview of attestation case approvers.
+- 442324: Duplicate (additional) "Target system" columns in the Data Explorer
+- 448531: Fixed a scrolling issue on the organizational chart view
+- 449891: Fixed the inherited group membership pagination
+- 448406: Fixed an issue where the list of entitlements assigned to a role was incomplete
+- 418493: Fixed an issue in the overview of request approvers
+- 447713: Fixed a styling issue with the login button
+- 449124: Fixed the declaration of the metadata service
+- 447723: Fixed an issue with additional columns in a grouped table view
+- 442324: Fixed the duplicate "Target system" columns in the Data Explorer
+- 447039: Fixed an issue where the FK picker could enter an inconsistent state
+
 ### March 11, 2024
 The v92 branch has been updated with fixes for the following issues.
 
@@ -256,6 +302,22 @@ We plan to push updates for each minor and major product release, allowing devel
 
 - [Theming guide](./imxweb/custom-theme/readme.md)
 - [CDR guide](./imxweb/projects/qbm/src/lib/cdr/Readme.md)
+
+## Documentation
+
+There are two ways to install the documentation locally. The result will be stored in _\imxweb\documentation\<projectname>_.
+
+### 1. Using Compodoc (preferred)
+1. Install the Compodoc package globally by running `npm install -g @compodoc/compodoc`.
+2. Navigate to the library to create documentation for (e.g. `imxweb\projects\qer`).
+3. Run `compodoc -p tsconfig.lib.json` for a library or `compodoc -p tsconfig.app.json` for an application.
+
+### 2. Using npm only
+
+This method only works for `qbm`, `qer` and the applications.
+
+1. Navigate to _imxweb_.
+2. run `npm run doc:<projectname>`
 
 ## Contributing
 

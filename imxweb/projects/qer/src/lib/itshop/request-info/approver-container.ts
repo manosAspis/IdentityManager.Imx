@@ -129,6 +129,7 @@ export class ApproverContainer {
           ? []
           : this.request.pwoData.WorkflowData.Entities.filter(
               (data) =>
+                !this.isDecided(data,this.request.pwoData.WorkflowData.Entities.filter((elem) => elem.Columns.Decision?.Value !== '')) &&
                 data.Columns.UID_PersonHead.Value &&
                 currentSteps.some((step) => data.Columns.UID_QERWorkingStep.Value === step.uidWorkingStep) &&
                 this.request.approvers.includes(data.Columns.UID_PersonHead.Value)
@@ -150,6 +151,17 @@ export class ApproverContainer {
             ).sort((data1, data2) => data1.Columns.UID_PersonHead.DisplayValue.localeCompare(data2.Columns.UID_PersonHead.DisplayValue));
       this.logger?.trace(this, 'personWantsOrg should be approved in the future by', this.approverFuture);
     }
+  }
+
+  /*
+   *  Checks, if a workflowData item is already decided (by any person in the same sub step)
+   */
+  private isDecided(data: EntityData, decidedEntries:EntityData[]): boolean {
+    return decidedEntries.some(
+      (elem) =>
+        elem.Columns.LevelNumber.Value === data.Columns.LevelNumber.Value &&
+        elem.Columns.SubLevelNumber.Value === data.Columns.SubLevelNumber.Value
+    );
   }
 
   private buildOrderedWorkingSteps(): OrderedWorkingStep[] {

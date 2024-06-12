@@ -24,10 +24,18 @@
  *
  */
 import { Component, Inject, ErrorHandler, OnDestroy, OnInit } from '@angular/core';
-import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterEvent } from '@angular/router';
+import { EventType, NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterEvent } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { AuthenticationService, IeWarningService, ImxTranslationProviderService, ISessionState, MenuService, SplashService, SystemInfoService } from 'qbm';
+import {
+  AuthenticationService,
+  IeWarningService,
+  ImxTranslationProviderService,
+  ISessionState,
+  MenuService,
+  SplashService,
+  SystemInfoService,
+} from 'qbm';
 
 import { ProjectConfigurationService, UserModelService, SettingsComponent, QerApiService } from 'qer';
 
@@ -50,7 +58,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public hideMenu = false;
   public hideUserMessage = false;
   public showPageContent = true;
-
+  private routerStatus: EventType;
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
@@ -76,7 +84,7 @@ export class AppComponent implements OnInit, OnDestroy {
           // Needs to close here when there is an error on sessionState
           splash.close();
         } else {
-          if (sessionState.IsLoggedOut) {
+          if (sessionState.IsLoggedOut && this.routerStatus !== EventType.NavigationEnd) {
             this.showPageContent = false;
           }
         }
@@ -95,18 +103,12 @@ export class AppComponent implements OnInit, OnDestroy {
           // Set session culture if isUseProfileLangChecked is true, set browser culture otherwise
           if (isUseProfileLangChecked) {
             await this.translationProvider.init(sessionState.culture, sessionState.cultureFormat);
-          }else{
+          } else {
             const browserCulture = this.translateService.getBrowserCultureLang();
             await this.translationProvider.init(browserCulture);
           }
 
-          this.menuItems = await menuService.getMenuItems(
-            systemInfo.PreProps,
-            features,
-            true,
-            config,
-            groups
-          );
+          this.menuItems = await menuService.getMenuItems(systemInfo.PreProps, features, true, config, groups);
 
           ieWarningService.showIe11Banner();
 
@@ -153,7 +155,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public async openSettingsDialog(): Promise<void> {
-    this.dialog.open(SettingsComponent,{minWidth: '600px'});
+    this.dialog.open(SettingsComponent, { minWidth: '600px' });
   }
 
   public async goToMyProcesses(): Promise<void> {
@@ -168,6 +170,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.router.events.subscribe((event: RouterEvent) => {
       if (event instanceof NavigationStart) {
         this.hideUserMessage = true;
+        this.routerStatus = event.type;
         if (this.isLoggedIn && event.url === '/') {
           // show the splash screen, when the user logs out!
           this.splash.init({ applicationName: 'One Identity Manager Portal' });
@@ -176,29 +179,30 @@ export class AppComponent implements OnInit, OnDestroy {
 
       if (event instanceof NavigationCancel) {
         this.hideUserMessage = false;
+        this.routerStatus = event.type;
       }
 
       if (event instanceof NavigationEnd) {
         this.hideUserMessage = false;
         this.hideMenu = event.url === '/';
         this.showPageContent = true;
+        this.routerStatus = event.type;
       }
 
       if (event instanceof NavigationError) {
         this.hideUserMessage = false;
+        this.routerStatus = event.type;
       }
     });
   }
 
-  private async applyProfileSettings()
-  {
+  private async applyProfileSettings() {
     try {
       let profileSettings: ProfileSettings = await this.qerClient.client.portal_profile_get();
       if (profileSettings?.PreferredAppThemes) {
         this.themeService.setTheme(<EuiTheme>profileSettings.PreferredAppThemes);
       }
-    }
-    catch (error) {
+    } catch (error) {
       this.errorHandler.handleError(error);
     }
   }
