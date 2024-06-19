@@ -7,7 +7,7 @@
       <mat-tab label="{{ '#LDS#Heading Details' | translate }}">
         <div class="details-container">
           <div class="details-text">
-            <div class="details-item">
+            <div class="details-item" *ngIf="propertyExists('ServiceCategoryFullPath')">
               <div class="details-label">
                 {{'#LDS#Service category' | translate}}:
               </div>
@@ -15,7 +15,7 @@
                 <ng-template *ngTemplateOutlet="formatValue; context: {$implicit: getValue('ServiceCategoryFullPath')}"></ng-template>
               </div>
             </div>
-            <div class="details-item">
+            <div class="details-item" *ngIf="propertyExists('TableName')">
               <div class="details-label">
                 {{'#LDS#Entitlement type' | translate}}:
               </div>
@@ -23,7 +23,7 @@
                 <ng-template *ngTemplateOutlet="formatValue; context: {$implicit: getDisplay('TableName')}"></ng-template>
               </div>
             </div>
-            <div class="details-item">
+            <div class="details-item" *ngIf="propertyExists('ArticleCode')">
               <div class="details-label">
                 {{'#LDS#Product code' | translate}}:
               </div>
@@ -40,7 +40,7 @@
                 <ng-template *ngTemplateOutlet="formatValue; context: {$implicit: getValue('Web')}"></ng-template>
               </div>
             </div> -->
-            <div class="details-item">
+            <div class="details-item" *ngIf="propertyExists('Tags')">
               <div class="details-label">
                 {{'#LDS#Tags' | translate}}:
               </div>
@@ -48,7 +48,7 @@
                 <ng-template *ngTemplateOutlet="formatValue; context: {$implicit: getValue('Tags')}"></ng-template>
               </div>
             </div>
-            <div class="details-item">
+            <div class="details-item" *ngIf="propertyExists('Description')">
               <div class="details-label">
                 {{'#LDS#Description' | translate}}:
               </div>

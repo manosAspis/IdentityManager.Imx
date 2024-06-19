@@ -62,7 +62,7 @@ export class IdentityRuleViolationsComponent implements OnInit {
     private readonly settingService: SettingsService,
     private readonly sidesheet: EuiSidesheetService,
     private readonly translate: TranslateService,
-    dataProvider: DynamicTabDataProviderDirective
+    dataProvider: DynamicTabDataProviderDirective,
   ) {
     this.referrer = dataProvider.data;
     this.entitySchema = this.roleMembershipsService.nonComplianceSchema;
@@ -79,7 +79,7 @@ export class IdentityRuleViolationsComponent implements OnInit {
   public async ngOnInit(): Promise<void> {
     const overlay = this.busyService.show();
     try {
-      await this.metadataService.update([this.referrer.objecttable]);
+      await this.metadataService.updateNonExisting([this.referrer.objecttable]);
     } finally {
       this.busyService.hide(overlay);
     }

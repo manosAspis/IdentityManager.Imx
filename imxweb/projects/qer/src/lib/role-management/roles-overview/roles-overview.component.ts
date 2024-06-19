@@ -114,7 +114,7 @@ export class RolesOverviewComponent implements OnInit, OnDestroy, SideNavigation
     private readonly translate: TranslateService,
     private readonly permission: QerPermissionsService,
     private readonly errorService: ErrorService,
-    private readonly userModelService: UserModelService
+    private readonly userModelService: UserModelService,
   ) {}
 
   public ngOnDestroy(): void {
@@ -127,7 +127,7 @@ export class RolesOverviewComponent implements OnInit, OnDestroy, SideNavigation
     this.canCreateAeRole = (await this.userModelService.getUserConfig()).CanCreateAERole;
 
     try {
-      await this.metadataProvider.update([this.ownershipInfo.TableName]);
+      await this.metadataProvider.updateNonExisting([this.ownershipInfo.TableName]);
       this.isStructureAdmin = await this.permission.isStructAdmin();
     } catch (error) {
       this.navigateToStartPage(error);
@@ -157,7 +157,8 @@ export class RolesOverviewComponent implements OnInit, OnDestroy, SideNavigation
     this.hasHierarchy = (await this.roleService.getEntitiesForTree(this.ownershipInfo.TableName, { PageSize: -1 }))?.Hierarchy != null;
     this.useTree = this.isAdmin && this.hasHierarchy;
     this.canCreate =
-      ((this.isAdmin && this.isStructureAdmin) || !this.isAdmin) && this.roleService.canCreate(this.ownershipInfo.TableName, this.isAdmin, this.canCreateAeRole);
+      ((this.isAdmin && this.isStructureAdmin) || !this.isAdmin) &&
+      this.roleService.canCreate(this.ownershipInfo.TableName, this.isAdmin, this.canCreateAeRole);
 
     this.navigationState = this.useTree
       ? {

@@ -29,7 +29,14 @@ import { EuiSidesheetService } from '@elemental-ui/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { CollectionLoadParameters, DataModel, DisplayColumns, EntitySchema, IClientProperty, TypedEntity } from 'imx-qbm-dbts';
-import { BusyService, DataSourceToolbarSettings, HelpContextualValues, LdsReplacePipe, MetadataService, SideNavigationComponent } from 'qbm';
+import {
+  BusyService,
+  DataSourceToolbarSettings,
+  HelpContextualValues,
+  LdsReplacePipe,
+  MetadataService,
+  SideNavigationComponent,
+} from 'qbm';
 import { SoftwareSidesheetComponent } from './software-sidesheet/software-sidesheet.component';
 import { SoftwareService } from './software.service';
 
@@ -56,14 +63,14 @@ export class SoftwareComponent implements OnInit, SideNavigationComponent {
     private readonly metadata: MetadataService,
     private readonly sidesheet: EuiSidesheetService,
     private readonly ldsReplace: LdsReplacePipe,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
   ) {}
 
   public async ngOnInit(): Promise<void> {
     const isBusy = this.busyService.beginBusy();
     try {
       this.entitySchema = this.resourceProvider.getSchema(false);
-      await this.metadata.update(['Application']);
+      await this.metadata.updateNonExisting(['Application']);
       this.dataModel = await this.resourceProvider.getDataModel(undefined);
     } finally {
       isBusy.endBusy();

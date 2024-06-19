@@ -27,7 +27,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { EUI_SIDESHEET_DATA } from '@elemental-ui/core';
-import { PortalServiceitems } from 'imx-api-qer';
+import { PortalServiceitems, QerProjectConfig } from 'imx-api-qer';
 
 @Component({
   selector: 'imx-product-details-sidesheet',
@@ -37,6 +37,7 @@ import { PortalServiceitems } from 'imx-api-qer';
 export class ProductDetailsSidesheetComponent implements OnInit {
   public hasEntitlements: boolean;
   public onEntitlements = false;
+  private properties: string[] = [];
 
   constructor(
     @Inject(EUI_SIDESHEET_DATA) public data: {
@@ -45,12 +46,14 @@ export class ProductDetailsSidesheetComponent implements OnInit {
         statusIcon: string,
         statusDisplay: string
       } | null,
-      imageUrl: string
+      imageUrl: string,
+      projectConfig: QerProjectConfig
     },
   ) { }
 
   public ngOnInit(): void {
-    this.hasEntitlements = ['ESet', 'QERAssign'].includes(this.getValue('TableName'));
+    this.hasEntitlements = ['ESet', 'QERAssign'].includes(this.getValue('TableName'));  
+    this.properties = this.data.projectConfig.ITShopConfig.AccProductProperties;
   }
 
   public getValue(column: string): string {
@@ -65,6 +68,21 @@ export class ProductDetailsSidesheetComponent implements OnInit {
 
   public onTabChange(change: MatTabChangeEvent) {
     this.onEntitlements = change.index === 1;
+  }
+
+
+  /**
+   * Returns true, if the given property name was found in the AccProductProperties or in the entity schema.
+   */
+  public propertyExists(name: string): boolean {
+    let found = this.properties.indexOf(name) > -1;
+    if (found) {
+      return true;
+    }
+    for (const key in this.data.item.GetEntity().GetSchema().Columns) {
+      found ||= key === name;
+    }
+    return found;
   }
 
 }

@@ -446,7 +446,7 @@ export class DataSourceToolbarComponent implements OnChanges, OnInit, OnDestroy 
     }
 
     if (config?.IsReadOnly && currentDefault) {
-      // We need to update the last config to be not-default, we cannot update the chosen as it is read only
+      // We need to update the last config to be not-default, we cannot update the chosen as it is read-sonly
       //TODO: We do nothing if the chosen is readonly and the last was also readonly, there is no API for this
       currentDefault?.IsReadOnly ? null : this.updateConfig.emit(currentDefault);
     }
@@ -888,7 +888,7 @@ export class DataSourceToolbarComponent implements OnChanges, OnInit, OnDestroy 
         }
 
         this.filterType = this.filterTreeItems?.Description;
-        this.columnForTree = this.filterTreeItems?.Elements.length > 0 ? this.filterTreeItems?.Elements[0]?.Filter?.ColumnName : '';
+        this.columnForTree = this.filterTreeItems?.Elements?.length > 0 ? this.filterTreeItems?.Elements[0]?.Filter?.ColumnName : '';
         this.internalDataSource = new MatTableDataSource<TypedEntity>(this.settings.dataSource?.Data);
         if (this.isDataSourceLocal && (this.searchCurrenltyApplied || this.filtersCurrentlyApplied)) {
           // We need to apply a filter still over the local data since it was skipped earlier. Do so now.

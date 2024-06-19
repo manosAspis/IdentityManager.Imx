@@ -49,6 +49,7 @@ import {
   GroupInfoData,
   MethodDefinition,
   MethodDescriptor,
+  TypedEntityBuilder,
 } from 'imx-qbm-dbts';
 import { AppConfigService, ClassloggerService, DataSourceToolbarExportMethod, ElementalUiConfigService } from 'qbm';
 import { ApiService } from '../api.service';
@@ -96,13 +97,13 @@ export class PolicyService {
       getMethod: (withProperties: string, PageSize?: number) => {
         let method: MethodDescriptor<EntityCollectionData>;
         if (PageSize) {
-          method = this.apiClientMethodFactory.portal_attestation_policy_get({...parameters, withProperties, PageSize, StartIndex: 0})
+          method = this.apiClientMethodFactory.portal_attestation_policy_get({ ...parameters, withProperties, PageSize, StartIndex: 0 });
         } else {
-          method = this.apiClientMethodFactory.portal_attestation_policy_get({...parameters, withProperties})
+          method = this.apiClientMethodFactory.portal_attestation_policy_get({ ...parameters, withProperties });
         }
         return new MethodDefinition(method);
-      }
-    }
+      },
+    };
   }
 
   public async getPolicyEditInteractive(uid: string): Promise<ExtendedTypedEntityCollection<PortalAttestationPolicyEditInteractive, {}>> {
@@ -137,7 +138,21 @@ export class PolicyService {
     policyfilter: PolicyFilter,
     parameters: CollectionLoadParameters
   ): Promise<ExtendedTypedEntityCollection<PortalAttestationFilterMatchingobjects, {}>> {
-    return this.api.typedClient.PortalAttestationFilterMatchingobjects.Get(uidAttestatation, {
+    const data = await this.getObjectsForFilterUntyped(uidAttestatation, uidPickCategory, policyfilter, parameters);
+
+    return new TypedEntityBuilder(PortalAttestationFilterMatchingobjects).buildReadWriteEntities(
+      data,
+      PortalAttestationFilterMatchingobjects.GetEntitySchema()
+    );
+  }
+
+  public async getObjectsForFilterUntyped(
+    uidAttestatation: string,
+    uidPickCategory: string,
+    policyfilter: PolicyFilter,
+    parameters: CollectionLoadParameters
+  ): Promise<EntityCollectionData> {
+    return this.api.client.portal_attestation_filter_matchingobjects_get(uidAttestatation, {
       uidpickcategory: uidPickCategory,
       ...parameters,
       ...{ policyfilter },
@@ -174,14 +189,14 @@ export class PolicyService {
   }
 
   public canSeeAttestations(preProps: string[], features: string[]): boolean {
-    return (preProps.includes('ATTESTATION') && features.some((elem) => elem === 'Portal_UI_PolicyAdmin'));
+    return preProps.includes('ATTESTATION') && features.some((elem) => elem === 'Portal_UI_PolicyAdmin');
   }
 
   public async getGroupInfo(parameters: { by?: string; def?: string } & CollectionLoadParameters = {}): Promise<GroupInfoData> {
     const { withProperties, OrderBy, search, ...params } = parameters;
 
     const test = await this.api.client.portal_attestation_policy_group_get({
-     ...params,
+      ...params,
       withcount: true,
     });
     return test;
@@ -243,9 +258,9 @@ export class PolicyService {
 
     // build a new title (shorten it, if maxlength is exceeded)
     let newTitle = `${reference.Ident_AttestationPolicy.value} (${await this.translator.get('#LDS#New').toPromise()})`;
-    const max=entity.Ident_AttestationPolicy.GetMetadata().GetMaxLength();
-    if ( max < newTitle.length) {
-      newTitle = newTitle.substring(0,max);
+    const max = entity.Ident_AttestationPolicy.GetMetadata().GetMaxLength();
+    if (max < newTitle.length) {
+      newTitle = newTitle.substring(0, max);
     }
 
     entity.Ident_AttestationPolicy.value = newTitle;

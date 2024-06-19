@@ -57,6 +57,7 @@ import { GroupPaginatorInformation } from './group-paginator/group-paginator.com
 import { EuiLoadingService } from '@elemental-ui/core';
 import { OverlayRef } from '@angular/cdk/overlay';
 import { debounce } from 'lodash';
+import { ColumnOptions } from '../data-source-toolbar/column-options';
 
 /**
  * A data table component with a detail view specialized on typed entities.
@@ -649,12 +650,19 @@ export class DataTableComponent<T> implements OnInit, OnChanges, AfterViewInit, 
     // TODO: hier die additional columns berücksichtigen?
     if (this.settings && this.settings.entitySchema) {
       this.entitySchema = this.settings.entitySchema;
-      this.manualColumns.forEach((item: DataTableColumnComponent<any>) => {
+      //update schema with additionals
+      this.parentAdditionals.concat(this.additional).forEach((element) => {
+        const key = ColumnOptions.findKey(element.ColumnName, this.entitySchema);
+        (this.entitySchema.Columns[key] as any) = element;
+      });
+      this.manualColumns?.forEach((item: DataTableColumnComponent<any>) => {
         item.entitySchema = this.entitySchema;
       });
     }
 
     if (this.settings && this.settings.dataSource) {
+      //Apply schema to elements
+      this.settings.dataSource.Data.forEach((elem) => elem.GetEntity().ApplySchema(this.entitySchema));
       this.dataSource = new MatTableDataSource<TypedEntity>(this.settings.dataSource.Data);
     }
 
@@ -682,7 +690,7 @@ export class DataTableComponent<T> implements OnInit, OnChanges, AfterViewInit, 
       this.columnDefs.forEach((colDef) => this.table.removeColumnDef(colDef));
     }
 
-    if ((this.dst.dataSourceChanged || this.dst.shownColumnsSelectionChanged) ) {
+    if (this.dst.dataSourceChanged || this.dst.shownColumnsSelectionChanged) {
       this.displayedColumns = [];
       this.additional = this.dst == null || this.dst.additionalColumns?.length === 0 ? this.parentAdditionals : this.dst.additionalColumns;
       // filter additionals for columns, that are already set in the DataSourceToolbarSettings

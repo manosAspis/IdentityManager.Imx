@@ -109,7 +109,7 @@ export class AttestationCaseComponent implements OnDestroy, OnInit {
     private readonly systemInfoService: SystemInfoService,
     private readonly logger: ClassloggerService,
     private readonly metadataService: MetadataService,
-    authentication: AuthenticationService
+    authentication: AuthenticationService,
   ) {
     this.case = data.case;
     this.approvers = data.approvers;
@@ -236,13 +236,13 @@ export class AttestationCaseComponent implements OnDestroy, OnInit {
         this.data.case.data?.RelatedObjects.map(async (relatedObject) => {
           const objectType = DbObjectKey.FromXml(relatedObject.ObjectKey);
           if (!this.metadataService.tables[objectType.TableName]) {
-            await this.metadataService.update([objectType.TableName]);
+            await this.metadataService.updateNonExisting([objectType.TableName]);
           }
           return {
             ObjectKey: relatedObject.ObjectKey,
             Display: `${relatedObject.Display} - ${this.metadataService.tables[objectType.TableName].DisplaySingular}`,
           };
-        })
+        }),
       )) || [];
   }
 

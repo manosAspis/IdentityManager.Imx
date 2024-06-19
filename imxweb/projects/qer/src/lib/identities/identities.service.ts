@@ -190,18 +190,8 @@ export class IdentitiesService {
    * @returns Details of admin person.
    */
   public async getAdminPerson(id: string): Promise<PortalAdminPerson> {
-    const getPersonNavigationState: CollectionLoadParameters = {
-      filter: [
-        {
-          ColumnName: 'UID_Person',
-          Type: FilterType.Compare,
-          CompareOp: CompareOperator.Equal,
-          Value1: id,
-        },
-      ],
-    };
     this.logger.debug(this, `Retrieving admin person with Id ${id}`);
-    return (await this.qerClient.typedClient.PortalAdminPerson.Get(getPersonNavigationState)).Data[0];
+    return (await this.qerClient.typedClient.PortalAdminPersonInteractive.Get_byid(id)).Data[0];
   }
 
   public async getPersonInteractive(uid: string): Promise<TypedEntityCollectionData<PortalPersonReports>> {
