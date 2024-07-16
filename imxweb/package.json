@@ -46,6 +46,7 @@
     "@ngx-translate/http-loader": "^4.0.0",
     "@types/cytoscape": "^3.19.9",
     "@types/cytoscape-edgehandles": "^4.0.0",
+    "@types/lodash": "^4.17.5",
     "@types/systemjs": "^6.1.1",
     "applicationinsights-js": "^1.0.21",
     "billboard.js": "^3.11.3",
