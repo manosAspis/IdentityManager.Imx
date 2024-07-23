@@ -32,9 +32,11 @@ import { EuiLoadingService, EuiSidesheetService } from '@elemental-ui/core';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
+import { MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
 
 import { CollectionLoadParameters, CompareOperator, DataModel, FilterType, TypedEntity, ValType } from 'imx-qbm-dbts';
 import {
+  AppConfigService,
   AuthenticationService,
   DataSourceToolbarFilter,
   DataSourceToolbarGroupData,
@@ -65,6 +67,7 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
   public dstSettings: DataSourceToolbarSettings;
   public selectedCases: AttestationCase[] = [];
   public userUid: string;
+  public DataExplorerPlusAttestations: string[];
 
   public get canReRouteDecision(): boolean {
     return this.selectedCases.every((item) => item.canRerouteDecision(this.userUid));
@@ -107,6 +110,7 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
   @ViewChild(DataTableComponent) private readonly table: DataTableComponent<TypedEntity>;
 
   constructor(
+    private readonly config: AppConfigService,
     public readonly attestationAction: AttestationActionService,
     private readonly attestationCases: AttestationCasesService,
     private readonly busyService: EuiLoadingService,
@@ -160,6 +164,7 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
     setTimeout(() => (busyIndicator = this.busyService.show()));
 
     try {
+      this.DataExplorerPlusAttestations = await this.config.apiClient.processRequest<string[]>(this.GetDataExplorerPlusAttestations());
       const config = await this.attService.client.portal_attestation_config_get();
       this.approvalThreshold = config.ApprovalThreshold;
       this.autoRemovalScope = config.AutoRemovalScope;
@@ -275,10 +280,16 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
       if (this.dataModel == null) {
         this.dataModel = await this.attestationCases.getDataModel();
       }
-      const dataSource = await this.attestationCases.get({
+      const OlddataSource = await this.attestationCases.get({
         Escalation: this.attestationCases.isChiefApproval,
         ...this.navigationState,
       });
+      const filteredData  = OlddataSource.Data.filter((item: any) => { return !this.DataExplorerPlusAttestations.includes(item.UID_AttestationPolicy?.Column?.data?.Value) });
+      const dataSource = {
+        ...OlddataSource,
+        Data: filteredData,
+        totalCount: filteredData.length
+      };
       const entitySchema = this.attestationCases.attestationApproveSchema;
       this.dstSettings = {
         dataSource,
@@ -454,5 +465,19 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
         this.edit(this.dstSettings.dataSource.Data[0] as AttestationCase);
         break;
     }
+  }
+
+  private GetDataExplorerPlusAttestations(): MethodDescriptor<void> {
+    return {
+      path: `/portal/dataexplorerplus/attestations`,
+      parameters: [],
+      method: 'GET',
+      headers: {
+        'imx-timezone': TimeZoneInfo.get(),
+      },
+      credentials: 'include',
+      observe: 'response',
+      responseType: 'json',
+    };
   }
 }
