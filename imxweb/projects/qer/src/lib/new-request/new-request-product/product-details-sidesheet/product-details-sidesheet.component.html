@@ -12,7 +12,7 @@
                 {{'#LDS#Service category' | translate}}:
               </div>
               <div class="details-value link">
-                <ng-template *ngTemplateOutlet="formatValue; context: {$implicit: getValue('ServiceCategoryFullPath')}"></ng-template>
+                <ng-template *ngTemplateOutlet="formatValue; context: {$implicit: getDisplay('ServiceCategoryFullPath')}"></ng-template>
               </div>
             </div>
             <div class="details-item" *ngIf="propertyExists('TableName')">
@@ -28,7 +28,7 @@
                 {{'#LDS#Product code' | translate}}:
               </div>
               <div class="details-value bold">
-                <ng-template *ngTemplateOutlet="formatValue; context: {$implicit: getValue('ArticleCode')}"></ng-template>
+                <ng-template *ngTemplateOutlet="formatValue; context: {$implicit: getDisplay('ArticleCode')}"></ng-template>
               </div>
             </div>
             <!-- This one doesn't exist yet -->
@@ -37,7 +37,7 @@
                 {{'ADD TEXT HERE' | translate}}
               </div>
               <div class="details-value link">
-                <ng-template *ngTemplateOutlet="formatValue; context: {$implicit: getValue('Web')}"></ng-template>
+                <ng-template *ngTemplateOutlet="formatValue; context: {$implicit: getDisplay('Web')}"></ng-template>
               </div>
             </div> -->
             <div class="details-item" *ngIf="propertyExists('Tags')">
@@ -45,7 +45,7 @@
                 {{'#LDS#Tags' | translate}}:
               </div>
               <div class="details-value bold">
-                <ng-template *ngTemplateOutlet="formatValue; context: {$implicit: getValue('Tags')}"></ng-template>
+                <ng-template *ngTemplateOutlet="formatValue; context: {$implicit: getDisplay('Tags')}"></ng-template>
               </div>
             </div>
             <div class="details-item" *ngIf="propertyExists('Description')">
@@ -53,7 +53,7 @@
                 {{'#LDS#Description' | translate}}:
               </div>
               <div class="details-value">
-                <ng-template *ngTemplateOutlet="formatValue; context: {$implicit: getValue('Description')}"></ng-template>
+                <ng-template *ngTemplateOutlet="formatValue; context: {$implicit: getDisplay('Description')}"></ng-template>
               </div>
             </div>
           </div>

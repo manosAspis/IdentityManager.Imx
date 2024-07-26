@@ -32,7 +32,6 @@ import { ObjectHyperviewService } from './object-hyperview.service';
 import { Subscription } from 'rxjs';
 import { ObjectHyperview } from './object-hyperview-interface';
 import { DbObjectKey } from 'imx-qbm-dbts';
-import { ProjectConfigurationService } from '../project-configuration/project-configuration.service';
 
 @Component({
   selector: 'imx-object-hyperview',
@@ -79,7 +78,6 @@ export class ObjectHyperviewComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private readonly objectHyperviewService: ObjectHyperviewService,
-    private readonly configService: ProjectConfigurationService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -98,16 +96,10 @@ export class ObjectHyperviewComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public async ngOnInit(): Promise<void> {
-    //If the user has navigation permission subscribe to the selected event emitter and set hyperviewStates to initial state.
-    const projectConfig = await this.configService.getConfig();
-    if (!projectConfig.DisableHyperViewNavigation) {
-      this.navigation.navigation = true;
-      this.navigationSubscriptions = this.selected.subscribe((shape) => {
-        const hyperviewObject = DbObjectKey.FromXml(shape.objectKey);
-        this.addHyperviewObject(hyperviewObject.TableName, hyperviewObject.Keys[0], this.selectedHyperviewIndex + 1);
-      });
-      this.hyperviewStates = [{ type: this.objectType, uid: this.objectUid, selected: true }];
-    }
+    if (await this.objectHyperviewService.getNavigationPermission()) {
+      // If the user has navigation permission: subscribe to the selected event emitter and set hyperviewStates to initial state.
+      this.activateNavigation();      
+    } 
     await this.reload();
   }
 
@@ -125,6 +117,16 @@ export class ObjectHyperviewComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.setSelectedHyperview(0);
     }
+  }
+
+  // Subscribe to the selected event emitter and set hyperviewStates to initial state.
+  private activateNavigation(): void {
+    this.navigation.navigation = true;
+    this.navigationSubscriptions = this.selected.subscribe((shape) => {
+      const hyperviewObject = DbObjectKey.FromXml(shape.objectKey);
+      this.addHyperviewObject(hyperviewObject.TableName, hyperviewObject.Keys.join(','), this.selectedHyperviewIndex + 1);
+    });
+    this.hyperviewStates = [{ type: this.objectType, uid: this.objectUid, selected: true }];
   }
 
   private async reload(objectType?: string, objectUid?: string): Promise<void> {

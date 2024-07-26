@@ -72,6 +72,15 @@ export class NewRequestContentComponent implements OnInit, OnDestroy {
     private readonly sidesheetService: EuiSidesheetService,
     private readonly translate: TranslateService,
   ) {
+    
+    this.navLinks.push({
+      id: 0,
+      title: '#LDS#Heading All Products',
+      component: NewRequestProductComponent,
+      link: 'allProducts',
+      active: true,
+    });
+
     this.subscriptions.push(
       this.router.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
@@ -104,13 +113,6 @@ export class NewRequestContentComponent implements OnInit, OnDestroy {
     const canSelectFromTemplate = projectConfig.ITShopConfig.VI_ITShop_ProductSelectionFromTemplate;
     const canSelectByRefUser = projectConfig.ITShopConfig.VI_ITShop_ProductSelectionByReferenceUser;
 
-    this.navLinks.push({
-      id: 0,
-      title: '#LDS#Heading All Products',
-      component: NewRequestProductComponent,
-      link: 'allProducts',
-      active: true,
-    });
     if (canSelectByRefUser) {
       /*this.navLinks.push({
         id: 1,

@@ -1,8 +1,37 @@
-**One Identity open source projects are supported through [One Identity GitHub issues](https://github.com/OneIdentity/IdentityManager.Imx/issues) and the [One Identity Community](https://www.oneidentity.com/community/). This includes all scripts, plugins, SDKs, modules, code snippets or other solutions. For assistance with any One Identity GitHub project, please raise a new Issue on the [One Identity GitHub project](https://github.com/OneIdentity/IdentityManager.Imx/issues) page. You may also visit the [One Identity Community](https://www.oneidentity.com/community/) to ask questions.  Requests for assistance made through official One Identity Support will be referred back to GitHub and the One Identity Community forums where those requests can benefit all users.**
+**One Identity open source projects are supported through [One Identity GitHub issues](https://github.com/OneIdentity/IdentityManager.Imx/issues) and the [One Identity Community](https://www.oneidentity.com/community/). This includes all scripts, plugins, SDKs, modules, code snippets or other solutions. For assistance with any One Identity GitHub project, please raise a new Issue on the [One Identity GitHub project](https://github.com/OneIdentity/IdentityManager.Imx/issues) page. You may also visit the [One Identity Community](https://www.oneidentity.com/community/) to ask questions. Requests for assistance made through official One Identity Support will be referred back to GitHub and the One Identity Community forums where those requests can benefit all users.**
 
 # Identity Manager HTML5 applications
 
 ## Change log
+
+### July 3, 2024
+
+We have added a [list of changes from v91 to v92](imxweb/changes/changesFrom9.1.1To9.2.0.md).
+
+The v92 branch has been updated with fixes for the following issues.
+
+- 456920: Error during approval of ITShop equest, if the request contains a parameter with a ValuationScript
+- 457344: Members of the chief approval team can't open an attestation case by using a direct URL
+- 434023: Fixed loading a saved view using target system filtering
+- 458023: Fixed the display of additional approvers in history view
+- 455928: Fixed an issue where the Device Ownership menu item was still visible even when the  VI_Hardware_Enabled configuration setting was disabled
+- 456918: Added Compodoc sample for MenuFactory
+- 458137: The attestation case was saved once before it is approved, which is often unnecessary
+- 455931: System entitlements: Restoring view with multiple target systems fails
+- 459617: Fixed an issue with line-break characters in CDR editor view components
+- 458984: Fixed an issue with formatting script processing
+- 455119: The configuration setting `DisableHyperViewNavigation`, scoped to Portal, also affected hyperview navigation in Operations Support Web Portal.
+- 455118: Fixed an issue where Operations Support Web Portal accessed a Web Portal endpoint
+- 458570: Fixed an issue with showing the currently selected service category and other options
+- 458294: Fixed an issue with Hyperview navigation ("Number of primary key columns does not match")
+- 454798: Fixed an issue where the list of service items was not updated when requesting by reference user
+- 456379: Fixed an issue where a service category's properties were not translated
+- 458001: Fixed an issue with theme's color settings not being applied to the login page
+- 456786: Fixed an accessibility issue with the entries in a drop-down list
+- 456472: Fixed a navigation issue in accountability HyperViews
+- 458688: Fixed the plugin view in Administration Portal
+- 453124: Fixed the "show selected" button caption on new requests page (issue 134)
+- 455930: Fixed an issue with device management menu items still showing when the "Hardware" configuration parameter was disabled
 
 ### May 24, 2024
 
@@ -22,7 +51,7 @@ The package versions have been updated to 9.2.1.
 
 The `v92` branch has been updated with fixes for the following issues.
 
-**Important**: Integrating these changes will require a server-side hotfix for the issue 454356 to be installed if the server has *not* been upgraded to 9.2.1.
+**Important**: Integrating these changes will require a server-side hotfix for the issue 454356 to be installed if the server has _not_ been upgraded to 9.2.1.
 
 - 454675: Fixed an issue where sometimes a blank screen was displayed instead of the login page
 - 446439: Fixed the preselection of a child service category on the new request page
@@ -50,6 +79,7 @@ The `v92` branch has been updated with fixes for the following issues.
 - 447039: Fixed an issue where the FK picker could enter an inconsistent state
 
 ### March 11, 2024
+
 The v92 branch has been updated with fixes for the following issues.
 
 - 447996: In DataSource Toolbar, opening a view which has custom filters, adds custom filters to the GET, but not the UI
@@ -63,6 +93,7 @@ The v92 branch has been updated with fixes for the following issues.
 - 447474: Fixed masthead color when applying a custom theme
 
 ### February 28, 2024
+
 The v92 branch has been updated with fixes for the following issues.
 
 - Bug 447702: Web Portal: Filtering: Canceling the definition a filter does not reset filters (reappearing)
@@ -104,15 +135,16 @@ The v92 branch has been updated with fixes for the following issues.
 - Bug 443469: In Filter Data sidesheet, existing custom filters can be mutated in sneaky ways, even if the user cancels the sidesheet
 - Bug 441058: Portal: Select page index is not reset when the filter changes
 
-
 ### January 16, 2024
+
 The v92 branch has been updated with fixes for the following issues.
+
 - Bug 441844: In Filter Data sidesheet, within Custom Filters, picking a different limited value does not cause the form to be submittable
 - Bug 441185: Exception when trying to add entitlements to a role
 - Bug 427186: Exporting table views: "Export Data"-SideSheet: Names of columns to export ignores the user interface setting "Use profile language"=OFF
 - Bug 436033: Extra word in the no-data message for Archived Requests
 - Bug 439550: Tiles no longer update the number of open items
-- Bug 441967: Requests: Product bundles: Changes to product bundles are applied to overview table without saving 
+- Bug 441967: Requests: Product bundles: Changes to product bundles are applied to overview table without saving
 - Bug 439915: New request: Product bundles: Filter icon and search bar displayed incorrectly/cut
 - Bug 433912: In Edit Identity sidesheet, within Rule Violations tab, upon searching, filtering or paging, the data table gets more and more columns
 - Bug 441745: Search by keywords: Unnecessary space before colon
@@ -124,7 +156,7 @@ The v92 branch has been updated with fixes for the following issues.
 - Bug 441320: Inactive identities listed in "My Direct Reports" start page tile but not if you follow the "VIEW" link of that tile
 - Bug 440754: Compliance Rules: Defining filters on "View Compliance Rule Details sidesheet" also applies filter to "Compliance Rules" page; results in bugged out Material Chips and JS errors (TypeError: e is undefined)
 - Bug 440143: Grouping a data table, after additional columns were added, results in 400 Bad Request in most pages
-- Bug 441161: The "No Product Bundle Selected" information disappear 
+- Bug 441161: The "No Product Bundle Selected" information disappear
 - Bug 439720: Drop-down CDR editor clears itself too easily
 - Bug 440478: HTML5-Web: Missing scrollbar in View Attestation Run Details\Attestors in OneIM 9.2.0 (issue does not exist in 9.1.1)
 - Bug 440952: Requests: Pending requests: Useless information in details of a request
@@ -144,14 +176,17 @@ The v92 branch has been updated with fixes for the following issues.
 - Bug 443316: ServiceCategoryComponent snackbar message are not translated
 
 ### December 12, 2023
+
 - Added some [code samples](sdk_samples/README.md) with explanations.
 
 ### December 7, 2023
+
 The v92 branch has been updated with fixes for the following issues.
+
 - Add missing translation keys
 - Bug 432754: In Filter Data Sidesheet, by toggling a predefined filter, client side validation can be bypassed, which causes frontend and backend errors.
 - Bug 432757: In Filter Data Sidesheet, by editing a custom filter, multiple copies of the same filter is appended to the url growing it to huge lengths.
--  Bug 432826: In Data Explorer, Business Roles, custom filters cannot be added or removed, instead they raise JS errors.
+- Bug 432826: In Data Explorer, Business Roles, custom filters cannot be added or removed, instead they raise JS errors.
 - Bug 435259: Portal: The title of the PeerGroupDiscardSelectedComponent dialog is not translated.
 - Bug 433890: In DataSource Toolbar, overriding an existing saved view adds a new saved view entry to the UI.
 - Bug 436537: 9.2 - Operations Portal: bug in Pending Provisioning Process.
@@ -166,7 +201,6 @@ The v92 branch has been updated with fixes for the following issues.
 - Bug 440143: Grouping a data table, after additional columns were added, results in 400 Bad Request in most pages.
 - Bug 440283: Error opening sidesheet in addressbook - TypeError: Reduce of empty array with no initial value.
 - Bug 440037: OpsWeb cannot be started (endless loop).
-
 
 ### October 20, 2023
 
@@ -213,23 +247,23 @@ Each Angular library and app belongs to a folder in the `projects` directory. Th
 
 ### Angular libraries
 
-|Name|Type|Dependencies inside the workspace|
-|-|-|-|
-|`qbm`|Angular library|none|
-|`qer`|Angular library|`qbm`|
-|`tsb`|Angular plugin library|`qbm`, `qer`|
-|`att`|Angular plugin library|`qbm`, `qer`|
-|`rms`|Angular plugin library|`qbm`, `qer`|
-|`rps`|Angular plugin library|`qbm`, `qer`|
-|`aad`|Angular plugin library|`qbm`, `qer`, `tsb`|
-|`aob`|Angular plugin library|`qbm`, `qer`|
-|`uci`|Angular plugin library|`qbm`, `qer`|
-|`cpl`|Angular plugin library|`qbm`, `qer`|
-|`hds`|Angular plugin library|`qbm`, `qer`|
-|`dpr`|Angular plugin library|`qbm`|
-|`o3t`|Angular plugin library|`qbm`, `qer`, `tsb`|
-|`olg`|Angular plugin library|`qbm`, `qer`|
-|`pol`|Angular plugin library|`qbm`, `qer`|
+| Name  | Type                   | Dependencies inside the workspace |
+| ----- | ---------------------- | --------------------------------- |
+| `qbm` | Angular library        | none                              |
+| `qer` | Angular library        | `qbm`                             |
+| `tsb` | Angular plugin library | `qbm`, `qer`                      |
+| `att` | Angular plugin library | `qbm`, `qer`                      |
+| `rms` | Angular plugin library | `qbm`, `qer`                      |
+| `rps` | Angular plugin library | `qbm`, `qer`                      |
+| `aad` | Angular plugin library | `qbm`, `qer`, `tsb`               |
+| `aob` | Angular plugin library | `qbm`, `qer`                      |
+| `uci` | Angular plugin library | `qbm`, `qer`                      |
+| `cpl` | Angular plugin library | `qbm`, `qer`                      |
+| `hds` | Angular plugin library | `qbm`, `qer`                      |
+| `dpr` | Angular plugin library | `qbm`                             |
+| `o3t` | Angular plugin library | `qbm`, `qer`, `tsb`               |
+| `olg` | Angular plugin library | `qbm`, `qer`                      |
+| `pol` | Angular plugin library | `qbm`, `qer`                      |
 
 Each Angular library belongs to the Identity Manager module of the same name. You do not need to build Angular libraries for modules that are not part of your Identity Manager installation.
 
@@ -239,13 +273,13 @@ For more information about each project, see the `readme.md` files in each proje
 
 ### Angular apps
 
-|Name|Description|Project type|Static dependencies|
-|-|-|-|-|
-|`qbm-app-landingpage`|API Server landing page and Server Administration|Angular app|`qbm`|
-|`qer-app-portal`|Portal|Angular app|`qbm`, `qer`|
-|`qer-app-operationssupport`|Operations Support Portal|Angular app|`qbm`, `qer`|
-|`qer-app-pwdportal`|Password Reset Portal|Angular app|`qbm`, `qer`|
-|`custom-app`|Template for custom applications|Angular app|`qbm`|
+| Name                        | Description                                       | Project type | Static dependencies |
+| --------------------------- | ------------------------------------------------- | ------------ | ------------------- |
+| `qbm-app-landingpage`       | API Server landing page and Server Administration | Angular app  | `qbm`               |
+| `qer-app-portal`            | Portal                                            | Angular app  | `qbm`, `qer`        |
+| `qer-app-operationssupport` | Operations Support Portal                         | Angular app  | `qbm`, `qer`        |
+| `qer-app-pwdportal`         | Password Reset Portal                             | Angular app  | `qbm`, `qer`        |
+| `custom-app`                | Template for custom applications                  | Angular app  | `qbm`               |
 
 ## Installing Node.js
 
@@ -256,6 +290,7 @@ Verify that you have installed a compatible `node.js` version for your branch. T
 To install the required dependencies, run `npm install` in the root folder of the workspace.
 
 To build any library or app, run `npm build <name>`. Note that you must build each library in the correct order; along with any plugins that you want to include. For example, to build `qer-app-portal`, you need to build at least the following in this order:
+
 - `qbm`
 - `qer`
 - `qer-app-portal`
@@ -286,13 +321,13 @@ Please refer to the [HTML Development Guide](https://support.oneidentity.com/tec
 
 The following table shows the branches in this repository corresponding to each product version.
 
-|Branch|Product version|Angular version|
-|-|-|-|
-|`v92`|Identity Manager 9.2.x|14|
-|`v91`|Identity Manager 9.1.x|13|
-|`v90`|Identity Manager 9.0|13|
-|`v82`|Identity Manager 8.2.x|11|
-|`master`|The `master` branch does not correspond to a supported version of Identity Manager. Do not use this branch for development purposes.||
+| Branch   | Product version                                                                                                                      | Angular version |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------ | --------------- |
+| `v92`    | Identity Manager 9.2.x                                                                                                               | 14              |
+| `v91`    | Identity Manager 9.1.x                                                                                                               | 13              |
+| `v90`    | Identity Manager 9.0                                                                                                                 | 13              |
+| `v82`    | Identity Manager 8.2.x                                                                                                               | 11              |
+| `master` | The `master` branch does not correspond to a supported version of Identity Manager. Do not use this branch for development purposes. |                 |
 
 Please also see the [version compatibility table](https://angular.io/guide/versions).
 
@@ -308,6 +343,7 @@ We plan to push updates for each minor and major product release, allowing devel
 There are two ways to install the documentation locally. The result will be stored in _\imxweb\documentation\<projectname>_.
 
 ### 1. Using Compodoc (preferred)
+
 1. Install the Compodoc package globally by running `npm install -g @compodoc/compodoc`.
 2. Navigate to the library to create documentation for (e.g. `imxweb\projects\qer`).
 3. Run `compodoc -p tsconfig.lib.json` for a library or `compodoc -p tsconfig.app.json` for an application.
@@ -330,7 +366,7 @@ We welcome and appreciate contributions. Here's how you can open a pull request 
 5. Open a pull request
 
 <!-- LICENSE -->
+
 ## License
 
 Distributed under the One Identity - Open Source License. See [LICENSE](LICENSE) for more information.
-

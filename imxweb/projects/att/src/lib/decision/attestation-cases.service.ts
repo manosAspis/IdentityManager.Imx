@@ -86,8 +86,11 @@ export class AttestationCasesService {
     return this.attClient.typedClient.PortalAttestationCase.GetSchema();
   }
 
-  public async get(attDecisionParameters?: AttestationDecisionLoadParameters): Promise<TypedEntityCollectionData<AttestationCase>> {
-    const collection = await this.attClient.typedClient.PortalAttestationApprove.Get(attDecisionParameters);
+  public async get(attDecisionParameters?: AttestationDecisionLoadParameters, isUserEscalationApprover= false): Promise<TypedEntityCollectionData<AttestationCase>> {
+
+    const navigationState = { ...attDecisionParameters, Escalation: (attDecisionParameters.uid_attestationcase !== '' && isUserEscalationApprover) || attDecisionParameters.Escalation  };
+   
+    const collection = await this.attClient.typedClient.PortalAttestationApprove.Get(navigationState);
     return {
       tableName: collection.tableName,
       totalCount: collection.totalCount,

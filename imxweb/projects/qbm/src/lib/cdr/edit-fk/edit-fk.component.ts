@@ -25,39 +25,37 @@
  */
 
 import {
-  Component,
-  OnDestroy,
-  ViewChild,
   AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  EventEmitter,
-  OnInit,
+  Component,
   ErrorHandler,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  ViewChild,
 } from '@angular/core';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { UntypedFormControl } from '@angular/forms';
-import { Subscription, Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { ListRange } from '@angular/cdk/collections';
+import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { EuiSidesheetService } from '@elemental-ui/core';
 import { TranslateService } from '@ngx-translate/core';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
+import { CollectionLoadParameters, DbObjectKey, IForeignKeyInfo, ValueStruct } from 'imx-qbm-dbts';
+import { MetadataService } from '../../base/metadata.service';
 import { ClassloggerService } from '../../classlogger/classlogger.service';
+import { Candidate } from '../../fk-advanced-picker/candidate.interface';
 import { FkAdvancedPickerComponent } from '../../fk-advanced-picker/fk-advanced-picker.component';
-import { ValueStruct, IForeignKeyInfo, CollectionLoadParameters, DbObjectKey } from 'imx-qbm-dbts';
+import { ForeignKeySelection } from '../../fk-advanced-picker/foreign-key-selection.interface';
+import { FkHierarchicalDialogComponent } from '../../fk-hierarchical-dialog/fk-hierarchical-dialog.component';
+import { CdrEditor, ValueHasChangedEventArg } from '../cdr-editor.interface';
 import { ColumnDependentReference } from '../column-dependent-reference.interface';
 import { EntityColumnContainer } from '../entity-column-container';
-import { CdrEditor, ValueHasChangedEventArg } from '../cdr-editor.interface';
-import { ForeignKeySelection } from '../../fk-advanced-picker/foreign-key-selection.interface';
-import { Candidate } from '../../fk-advanced-picker/candidate.interface';
-import { MetadataService } from '../../base/metadata.service';
-import { FkHierarchicalDialogComponent } from '../../fk-hierarchical-dialog/fk-hierarchical-dialog.component';
 
 /**
  * Provides a {@link CdrEditor | CDR editor} for editing / viewing foreign key value columns.
- * 
+ *
  * There are two methods for selecting values available:
  * <ol>
  * <li>using an auto complete control - this is used for a flat list, containing values from a single table. </li>
@@ -147,7 +145,7 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
   private readonly subscribers: Subscription[] = [];
   private isWriting = false;
 
-  @ViewChild('viewport') private viewport: CdkVirtualScrollViewport;
+  @ViewChild('autocomplete') private autocomplete: MatAutocomplete;
   /**
    * Creates a new EditFkComponent.
    * @param logger The log service, that is used for logging.
@@ -160,7 +158,7 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly translator: TranslateService,
     public readonly metadataProvider: MetadataService,
-    private readonly errorHandler: ErrorHandler,
+    private readonly errorHandler: ErrorHandler
   ) {
     this.subscribers.push(
       this.control.valueChanges.pipe(debounceTime(500)).subscribe(async (keyword) => {
@@ -170,7 +168,7 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
         }
 
         return this.search(keyword);
-      }),
+      })
     );
   }
 
@@ -183,28 +181,11 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
   }
 
   /**
-   * Initializes the viewport for dynamic scrolling, after the 'AfterViewInit' hook is triggered.
+   * Initializes the autocomplete opened for dynamic scrolling, after the 'AfterViewInit' hook is triggered.
    */
   public async ngAfterViewInit(): Promise<void> {
-    if (this.columnContainer && this.columnContainer.canEdit && this.viewport) {
-      // Give a debounce to the stream so we don't get multiple calls and lose data
-      this.subscribers.push(
-        this.viewport.renderedRangeStream.pipe(debounceTime(100)).subscribe(async (value: ListRange) => {
-          const bottom = this.parameters.StartIndex + this.pageSize;
-          if (value.end >= bottom) {
-            // Save old data, extend start index and delay the detecting of changes until we call within this function
-            const tmpCandidates: Candidate[] = this.candidates.map((candidate) => candidate);
-            this.parameters.StartIndex += this.pageSize;
-            await this.updateCandidates(this.parameters, false);
-
-            // Append new data to old, keep scroll at the bottom, check the size, and detect changes
-            this.candidates = tmpCandidates.concat(...this.candidates);
-            this.viewport.scrollToIndex(bottom);
-            this.viewport.checkViewportSize();
-            this.changeDetectorRef.detectChanges();
-          }
-        }),
-      );
+    if (this.columnContainer && this.columnContainer.canEdit && this.autocomplete) {
+      this.subscribers.push(this.autocomplete.opened.subscribe(() => this.registerPanelScrollEvent()));
     }
   }
 
@@ -234,12 +215,6 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
       this.candidates = this.savedCandidates;
     } else if (this.parameters.search || this.parameters.filter || this.control.value == null) {
       await this.updateCandidates({ search: undefined, filter: undefined, StartIndex: 0 }, false);
-    }
-
-    if (this.viewport) {
-      this.viewport.scrollToIndex(0);
-      this.viewport.checkViewportSize();
-      this.changeDetectorRef.detectChanges();
     }
   }
 
@@ -280,7 +255,6 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
       this.parameters.StartIndex = 0;
       await this.updateCandidates({ search: undefined, filter: undefined });
     }
-    this.viewport?.scrollToIndex(0);
 
     /* 298890
     if (this.candidatesTotalCount === 0) {
@@ -361,7 +335,7 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
           cdref.minlengthSubject.subscribe((elem) => {
             this.setControlValue();
             this.changeDetectorRef.detectChanges();
-          }),
+          })
         );
       }
 
@@ -379,7 +353,7 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
                 this,
                 `Control (${this.columnContainer.name}) set to new value:`,
                 this.columnContainer.value,
-                this.control.value,
+                this.control.value
               );
               this.candidates = [];
               this.setControlValue();
@@ -389,7 +363,7 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
             }
           }
           this.valueHasChanged.emit({ value: this.control.value });
-        }),
+        })
       );
 
       this.subscribers.push(
@@ -405,12 +379,16 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
             }
             this.valueHasChanged.emit({ value: this.control.value });
           });
-        }),
+        })
       );
       this.logger.trace(this, 'Control initialized', this.control.value);
     } else {
       this.logger.error(this, 'The Column Dependent Reference is undefined');
     }
+  }
+
+  public candidateTrackByFn(index: number, candidate: Candidate): string {
+    return candidate.DataValue;
   }
 
   private setControlValue(): void {
@@ -491,7 +469,7 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
     }
   }
 
-  private async updateCandidates(newState?: CollectionLoadParameters, isCheck: boolean = true): Promise<void> {
+  private async updateCandidates(newState?: CollectionLoadParameters, isCheck: boolean = true, concatCandidates = false): Promise<void> {
     if (this.selectedTable) {
       try {
         this.loading = true;
@@ -507,7 +485,7 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
         const multipleFkRelations = this.columnContainer.fkRelations && this.columnContainer.fkRelations.length > 1;
         const identityRelatedTable = this.selectedTable.TableName === 'Person';
 
-        this.candidates = candidateCollection.Entities.map((entityData) => {
+        const newCandidates = candidateCollection.Entities.map((entityData) => {
           let key: string = null;
           let detailValue: string = entityData.LongDisplay;
           const defaultEmailColumn = entityData.Columns['DefaultEmailAddress'];
@@ -541,11 +519,14 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
             displayLong: detailValue,
           };
         });
+        if (concatCandidates) {
+          this.candidates.push(...newCandidates);
+        } else {
+          this.candidates = newCandidates;
+        }
       } finally {
         this.loading = false;
-        if (isCheck) {
-          this.changeDetectorRef.detectChanges();
-        }
+        this.changeDetectorRef.detectChanges();
       }
     }
   }
@@ -570,7 +551,30 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
     this.parameters.StartIndex = 0;
 
     await this.updateCandidates({ search: keyword });
-    this.viewport?.scrollToIndex(0);
     this.changeDetectorRef.detectChanges();
+  }
+
+  private registerPanelScrollEvent(): void {
+    setTimeout(() => {
+      const panel = this.autocomplete.panel;
+      //Remove any listener that might have been added before
+      panel.nativeElement.removeEventListener('scroll', (event: any) => this.onScroll(event));
+      if (panel) {
+        panel.nativeElement.addEventListener('scroll', (event: any) => this.onScroll(event));
+      }
+    }, 0);
+  }
+
+  private async onScroll(event: any): Promise<void> {
+    if (
+      event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight - 10 &&
+      !this.loading &&
+      this.candidatesTotalCount > this.pageSize + this.parameters.StartIndex
+    ) {
+      this.changeDetectorRef.detectChanges();
+      this.parameters.StartIndex += this.pageSize;
+      await this.updateCandidates(this.parameters, false, true);
+      this.changeDetectorRef.detectChanges();
+    }
   }
 }

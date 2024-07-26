@@ -24,7 +24,7 @@
  *
  */
 
-import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { ShapeData, ShapeListEntry } from 'imx-api-qbm';
 import { ShapeClickArgs } from './hyperview-types';
@@ -42,15 +42,15 @@ export class ListShapeComponent {
   @Input() public selected: EventEmitter<ShapeClickArgs> = new EventEmitter();
   @Output() public changeShapeSize = new EventEmitter<void>();
 
-  public isLinkEnabled() {
-    return this.selected.observers.length > 0;
+  public isLinkEnabled(elem: ShapeListEntry): boolean {
+    return !!elem?.ObjectKey && this.selected.observers.length > 0;
   }
   /**
    * Emit selection event for this {@link ShapeListEntry|element}.
    * @param elem the element the user clicked
    */
   public click(elem: ShapeListEntry): void {
-    if (this.selected.observers.length > 0) {
+    if (this.isLinkEnabled(elem)) {
       this.selected.emit({ objectKey: elem.ObjectKey, caption: this.shape.Caption });
     }
   }

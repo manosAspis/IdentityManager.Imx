@@ -70,6 +70,8 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
   public selectedCases: AttestationCase[] = [];
   public userUid: string;
 
+  public hideToolbar:boolean = false;
+
   public recApprove = RecommendationEnum.Approve;
   public recDeny = RecommendationEnum.Deny;
 
@@ -300,7 +302,7 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
         Escalation: this.attestationCases.isChiefApproval,
         ...this.navigationState,
       };
-      const dataSource = await this.attestationCases.get(params);
+      const dataSource = await this.attestationCases.get(params,this.isUserEscalationApprover);
       const exportMethod = this.attestationCases.exportData(params);
       this.dstSettings = {
         dataSource,
@@ -343,7 +345,7 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
     try {
       const groupedData = this.groupedData[groupKey];
       const navigationState = { ...groupedData.navigationState, Escalation: this.viewEscalation };
-      groupedData.data = await this.attestationCases.get(navigationState);
+      groupedData.data = await this.attestationCases.get(navigationState,this.isUserEscalationApprover);
       groupedData.settings = {
         displayedColumns: this.dstSettings.displayedColumns,
         dataModel: this.dstSettings.dataModel,
@@ -380,7 +382,7 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
               Value1: attestationCase.GetEntity().GetKeys()[0],
             },
           ],
-        })
+        },this.isUserEscalationApprover)
       ).Data[0];
       // Add additional violation data to this case
       attestationCaseWithPolicy.data.CanSeeComplianceViolations = attestationCase.data.CanSeeComplianceViolations;
@@ -491,6 +493,7 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
     if (queryParams['uid_attestationcase']) {
       this.navigationState.uid_attestationcase = queryParams['uid_attestationcase'];
       this.decisionAction = AttestationDecisionAction.showcase;
+      this.hideToolbar = true;
       return;
     }
 

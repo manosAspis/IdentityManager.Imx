@@ -9,7 +9,7 @@ The HTML5 applications support the integration of **custom themes**. Before proc
   - `$primary`
   - `$accent`
   - `$warn`
-- Rename the `.custom-theme` class to your theme's name. (e.g. `.space-theme`)
+- Rename the `$theme-name` variable to your theme's name. (e.g. `space-theme`)
 - In a terminal, change to the `imxweb/custom-theme` folder and run the `npm run build` command
 - Take the `custom-theme.css` file and create a .zip file. The naming convention is to use `Html_<ThemeName>.zip` (for example `Html_space-theme.zip`).
 - Copy the .zip file to the `imxweb` folder.

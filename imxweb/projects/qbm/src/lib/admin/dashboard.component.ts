@@ -27,15 +27,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ConfigService } from './config.service';
 
-import { AppConfigService } from '../appConfig/appConfig.service';
 import { Subscription } from 'rxjs';
-import { StatusComponent } from './status.component';
-import { ConfigComponent } from './config.component';
-import { PackagesComponent } from './packages.component';
-import { CacheComponent } from './cache.component';
-import { LogsComponent } from './logs.component';
-import { SwaggerComponent } from './swagger/swagger.component';
+import { AppConfigService } from '../appConfig/appConfig.service';
 import { SideNavigationExtension } from '../side-navigation-view/side-navigation-view-interfaces';
+import { CacheComponent } from './cache.component';
+import { ConfigComponent } from './config.component';
+import { LogsComponent } from './logs.component';
+import { PackagesComponent } from './packages.component';
+import { PluginsComponent } from './plugins.component';
+import { StatusComponent } from './status.component';
+import { SwaggerComponent } from './swagger/swagger.component';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -77,12 +78,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
       caption: '#LDS#Packages',
     },
     {
+      instance: PluginsComponent,
+      data: {
+        TableName: 'Plugins',
+        Count: 0,
+      },
+      sortOrder: 4,
+      name: 'plugins',
+      caption: '#LDS#Plugins',
+    },
+    {
       instance: CacheComponent,
       data: {
         TableName: 'Caches',
         Count: 0,
       },
-      sortOrder: 4,
+      sortOrder: 5,
       name: 'caches',
       caption: '#LDS#Caches',
     },
@@ -92,7 +103,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         TableName: 'Logs',
         Count: 0,
       },
-      sortOrder: 5,
+      sortOrder: 6,
       name: 'logs',
       caption: '#LDS#Logs',
     },
@@ -102,7 +113,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         TableName: 'API documentation',
         Count: 0,
       },
-      sortOrder: 6,
+      sortOrder: 7,
       name: 'documentation',
       caption: '#LDS#API documentation',
     },
@@ -120,10 +131,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   documentationUiEnabled: boolean = true;
 
-  constructor(
-    private readonly appConfigService: AppConfigService,
-    private readonly configService: ConfigService
-  ) {}
+  constructor(private readonly appConfigService: AppConfigService, private readonly configService: ConfigService) {}
 
   async ngOnInit() {
     this.loadDocumentationUi();
@@ -133,7 +141,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   /**
    * Checks if the user has permission to use the API documentation
    */
-  private async loadDocumentationUi(): Promise<void>{
+  private async loadDocumentationUi(): Promise<void> {
     let state = await this.appConfigService.client.admin_apiconfigsingle_get('imx', 'ServerLevelConfig/ApiDocumentation');
     this.documentationUiEnabled = state == 'SwaggerUi';
   }

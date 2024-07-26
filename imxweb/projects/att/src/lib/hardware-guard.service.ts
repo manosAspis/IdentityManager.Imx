@@ -24,24 +24,29 @@
  *
  */
 
-import { Component, Input, OnInit } from '@angular/core';
-import { LoadedPlugin } from 'imx-api-qbm';
-import { AppConfigService } from '../appConfig/appConfig.service';
-import { SideNavigationComponent } from '../side-navigation-view/side-navigation-view-interfaces';
+import { Injectable } from '@angular/core';
+import { CanActivate, Router } from '@angular/router';
+import { SystemInfoService } from 'qbm';
+import { ProjectConfigurationService } from 'qer';
 
-@Component({
-  templateUrl: './plugins.component.html',
-  styleUrls: ['./shared.scss'],
-  selector: 'imx-plugins',
+@Injectable({
+  providedIn: 'root',
 })
-export class PluginsComponent implements OnInit, SideNavigationComponent {
-  @Input() public isAdmin: boolean;
-  plugins: LoadedPlugin[];
+export class HardwareGuardService implements CanActivate {
+  constructor(
+    private readonly projectConfig: ProjectConfigurationService,
+    private readonly systemInfo: SystemInfoService,
+    private readonly router: Router
+  ) {}
 
-  constructor(private readonly appConfigService: AppConfigService) {}
+  public async canActivate(): Promise<boolean> {
+    const preprops = (await this.systemInfo.get()).PreProps;
+    const hardware = (await this.projectConfig.getConfig()).DeviceConfig.VI_Hardware_Enabled;
+    if (hardware && preprops.includes('MAC')) {
+      return true;
+    }
 
-  async ngOnInit() {
-    const client = this.appConfigService.client;
-    this.plugins = await client.admin_systeminfo_plugins_get();
+    this.router.navigate(['']);
+    return false;
   }
 }

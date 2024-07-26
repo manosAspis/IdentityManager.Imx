@@ -56,11 +56,6 @@ export class ProductDetailsSidesheetComponent implements OnInit {
     this.properties = this.data.projectConfig.ITShopConfig.AccProductProperties;
   }
 
-  public getValue(column: string): string {
-    const value: string = this.data.item.GetEntity().GetColumn(column).GetValue();
-    return value;
-  }
-
   public getDisplay(column: string): string {
     const value: string = this.data.item.GetEntity().GetColumn(column).GetDisplayValue();
     return value;
@@ -84,5 +79,11 @@ export class ProductDetailsSidesheetComponent implements OnInit {
     }
     return found;
   }
+
+  private getValue(column: string): string {
+    const value: string = this.data.item.GetEntity().GetColumn(column).GetValue();
+    return value;
+  }
+
 
 }
