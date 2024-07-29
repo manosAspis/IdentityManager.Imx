@@ -49,7 +49,7 @@ export class DashboardPluginComponent implements OnInit {
   public pendingExplorerCases: any;
   private navigationState: AttestationDecisionLoadParameters;
   allCases: number;
-  DataExplorerPlusAttestations: string[];
+  DataExplorerPlusAttestations: any[];
 
   constructor(
     private readonly config: AppConfigService,
@@ -65,32 +65,48 @@ export class DashboardPluginComponent implements OnInit {
     let overlayRef: OverlayRef;
     setTimeout(() => overlayRef = this.busyService.show());
 
+    
+
     try {
-      this.DataExplorerPlusAttestations = await this.config.apiClient.processRequest<string[]>(this.GetDataExplorerPlusAttestations());
-      const params: AttestationDecisionLoadParameters = {
-        Escalation: this.attestationCases.isChiefApproval,
-        ...this.navigationState,
-      };
-      const OlddataSource = await this.attestationCases.get(params);
-      const filteredData  = OlddataSource.Data.filter((item: any) => { return !this.DataExplorerPlusAttestations.includes(item.UID_AttestationPolicy?.Column?.data?.Value) });
-      const dataSource = {
-        ...OlddataSource,
-        Data: filteredData,
-        totalCount: filteredData.length
-      };
-      this.allCases = OlddataSource.totalCount;
-      this.pendingExplorerCases = this.allCases - dataSource.totalCount;
-      this.pendingOtherCases = dataSource.totalCount;
+      this.pendingExplorerCases = await this.config.apiClient.processRequest<any>(this.GetDataExplorerPlusCountAttestations());
+      // this.DataExplorerPlusAttestations = await this.config.apiClient.processRequest<string[]>(this.GetDataExplorerPlusAttestations());
+      // const filters = this.DataExplorerPlusAttestations.map(attestation => ({
+      //   ColumnName: 'UID_AttestationPolicy',
+      //   Type: 0,
+      //   CompareOp: 0,
+      //   Value1: attestation,
+      // }));
+      // const params: AttestationDecisionLoadParameters = {
+      //   Escalation: this.attestationCases.isChiefApproval,
+      //   filter: filters,
+      //   ...this.navigationState,
+      // };     
+      // this.pendingExplorerCases = await (await this.attestationCases.get(params)).totalCount;
       this.pendingItems = await this.userModelSvc.getPendingItems();
+      this.pendingOtherCases = this.pendingItems?.OpenAttestation - this.pendingExplorerCases;
       this.attEnabled = (await this.attFeatureGuard.getAttestationConfig()).IsAttestationEnabled;
     } finally {
       setTimeout(() => this.busyService.hide(overlayRef));
     }
   }
 
-  private GetDataExplorerPlusAttestations(): MethodDescriptor<void> {
+  // private GetDataExplorerPlusAttestations(): MethodDescriptor<void> {
+  //   return {
+  //     path: `/portal/dataexplorerplus/attestations`,
+  //     parameters: [],
+  //     method: 'GET',
+  //     headers: {
+  //       'imx-timezone': TimeZoneInfo.get(),
+  //     },
+  //     credentials: 'include',
+  //     observe: 'response',
+  //     responseType: 'json',
+  //   };
+  // }
+
+  private GetDataExplorerPlusCountAttestations(): MethodDescriptor<void> {
     return {
-      path: `/portal/dataexplorerplus/attestations`,
+      path: `/portal/dataexplorerplus/countattestations`,
       parameters: [],
       method: 'GET',
       headers: {

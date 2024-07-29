@@ -190,8 +190,23 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
 
   public async initDataModel(): Promise<void> {
     this.dataModel = await this.attestationCases.getDataModel();
-
     this.filterOptions = this.dataModel.Filters;
+
+    if (this.filterOptions) {
+      this.filterOptions = this.filterOptions.map(optionGroup => {
+          if (optionGroup.Name === 'uidpolicy') {
+              return {
+                  ...optionGroup,
+                  Options: optionGroup.Options.filter(option => 
+                      !this.DataExplorerPlusAttestations.includes(option.Value)
+                  )
+              };
+          }
+          return optionGroup;
+      });
+
+      this.filterOptions = this.filterOptions.filter(item => item.Name !== 'type');
+  }
 
     this.groupData = createGroupData(
       this.dataModel,
@@ -205,6 +220,16 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
         }),
       []
     );
+
+    if (this.groupData && this.groupData.groupingCategories) {
+      this.groupData.groupingCategories = this.groupData.groupingCategories.filter(category => {
+          return !category.groups.some(group =>
+            this.DataExplorerPlusAttestations.some(niceValue => group.property.Value.includes(niceValue))
+          ) && !category.property.Options.some(option =>
+            this.DataExplorerPlusAttestations.some(niceValue => option.Value.includes(niceValue))
+          );
+      });
+    }
   }
 
   public ngOnDestroy(): void {
@@ -280,16 +305,19 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
       if (this.dataModel == null) {
         this.dataModel = await this.attestationCases.getDataModel();
       }
-      const OlddataSource = await this.attestationCases.get({
+      this.DataExplorerPlusAttestations = await this.config.apiClient.processRequest<string[]>(this.GetDataExplorerPlusAttestations());
+      const filters = this.DataExplorerPlusAttestations.map(attestation => ({
+        ColumnName: 'UID_AttestationPolicy',
+        Type: 0,
+        CompareOp: 1,
+        Value1: attestation,
+      }));
+      const params: AttestationDecisionLoadParameters = {
         Escalation: this.attestationCases.isChiefApproval,
+        filter: filters,
         ...this.navigationState,
-      });
-      const filteredData  = OlddataSource.Data.filter((item: any) => { return !this.DataExplorerPlusAttestations.includes(item.UID_AttestationPolicy?.Column?.data?.Value) });
-      const dataSource = {
-        ...OlddataSource,
-        Data: filteredData,
-        totalCount: filteredData.length
-      };
+      };     
+      const dataSource = await this.attestationCases.get(params);
       const entitySchema = this.attestationCases.attestationApproveSchema;
       this.dstSettings = {
         dataSource,
@@ -327,13 +355,20 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
     try {
       const groupedData = this.groupedData[groupKey];
       const navigationState = { ...groupedData.navigationState, Escalation: this.viewEscalation };
-      groupedData.data = await this.attestationCases.get(navigationState);
+      const OlddataSource = await this.attestationCases.get(navigationState);
+      const filteredData  = OlddataSource.Data.filter((item: any) => { return !this.DataExplorerPlusAttestations.includes(item.UID_AttestationPolicy?.Column?.data?.Value) });
+      const groupdataSource = {
+        ...OlddataSource,
+        Data: filteredData,
+        totalCount: filteredData.length
+      };
       groupedData.settings = {
         displayedColumns: this.dstSettings.displayedColumns,
-        dataSource: groupedData.data,
+        dataSource: groupdataSource,
         entitySchema: this.dstSettings.entitySchema,
         navigationState,
       };
+      
     } finally {
       setTimeout(() => this.busyService.hide(overlayRef));
     }

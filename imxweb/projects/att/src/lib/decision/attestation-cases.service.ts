@@ -38,7 +38,9 @@ import {
   TypedEntityCollectionData,
   EntitySchema,
   IReadValue,
-  FilterTreeData
+  FilterTreeData,
+  MethodDescriptor,
+  TimeZoneInfo
 } from 'imx-qbm-dbts';
 import {
   ApiClientMethodFactory,
@@ -67,6 +69,7 @@ export class AttestationCasesService {
   public isChiefApproval: boolean;
   private readonly historyBuilder = new TypedEntityBuilder(PortalAttestationCaseHistory);
   private readonly apiClientMethodFactory = new ApiClientMethodFactory();
+  DataExplorerPlusAttestations: string[];
 
   constructor(
     private readonly attClient: ApiService,
@@ -111,15 +114,35 @@ export class AttestationCasesService {
     return pendingAttestations?.totalCount ?? 0;
   }
 
+
+
   public async getDataModel(): Promise<DataModel> {
-    return this.attClient.client.portal_attestation_approve_datamodel_get(this.isChiefApproval, undefined, undefined);
+    this.DataExplorerPlusAttestations = await this.config.apiClient.processRequest<string[]>(this.GetDataExplorerPlusAttestations());
+    const filters = this.DataExplorerPlusAttestations.map(attestation => ({
+      ColumnName: 'UID_AttestationPolicy',
+      Type: 0,
+      CompareOp: 1,
+      Value1: attestation,
+    }));
+    console.log('DATAMOOOOOOOODEL', this.attClient.client.portal_attestation_approve_datamodel_get(this.isChiefApproval, undefined, filters));
+    return this.attClient.client.portal_attestation_approve_datamodel_get(this.isChiefApproval, undefined, filters);
   }
 
   public async getGroupInfo(parameters: { by?: string, def?: string } & CollectionLoadParameters = {}): Promise<GroupInfo[]> {
-    return this.attClient.client.portal_attestation_approve_group_get(
+    this.DataExplorerPlusAttestations = await this.config.apiClient.processRequest<string[]>(this.GetDataExplorerPlusAttestations());
+    const filters = this.DataExplorerPlusAttestations.map(attestation => ({
+      ColumnName: 'UID_AttestationPolicy',
+      Type: 0,
+      CompareOp: 1,
+      Value1: attestation,
+    }));
+    
+    const filter = [{ColumnName: 'UID_AttestationPolicy', Type: 0, CompareOp: 1, Values: this.DataExplorerPlusAttestations}];
+
+    const response = await this.attClient.client.portal_attestation_approve_group_get(
       parameters.by,
       parameters.def,
-      undefined, // filter
+      filter, // filter
       parameters.StartIndex,
       parameters.PageSize,
       true, // withcount
@@ -129,6 +152,15 @@ export class AttestationCasesService {
       undefined, // risk
       this.isChiefApproval
     );
+
+    console.log('FIRST RESPOOOOOOOOOOOOONSE', response);
+
+    if (Array.isArray(response)) {
+      return response.filter(group => {
+          return !group.Filters.some(filter => this.DataExplorerPlusAttestations.includes(filter.Value1));
+      });
+    }
+    return response;
   }
 
   public async getApprovers(
@@ -295,5 +327,19 @@ export class AttestationCasesService {
       parameters.ParentKey,
       parameters.diffData
     );
+  }
+
+  private GetDataExplorerPlusAttestations(): MethodDescriptor<void> {
+    return {
+      path: `/portal/dataexplorerplus/attestations`,
+      parameters: [],
+      method: 'GET',
+      headers: {
+        'imx-timezone': TimeZoneInfo.get(),
+      },
+      credentials: 'include',
+      observe: 'response',
+      responseType: 'json',
+    };
   }
 }
