@@ -24,11 +24,11 @@
  *
  */
 
-import { ColumnDependentReference } from './column-dependent-reference.interface';
-import { ValueStruct, IForeignKeyInfo, ValType, ValueConstraint, IValueMetadata } from 'imx-qbm-dbts';
-import { LimitedValuesContainer } from './limited-values-container';
-import { ValueWrapper } from '../value-wrapper/value-wrapper';
+import { IForeignKeyInfo, IValueMetadata, ValType, ValueConstraint, ValueStruct } from 'imx-qbm-dbts';
 import { Subscription } from 'rxjs';
+import { ValueWrapper } from '../value-wrapper/value-wrapper';
+import { ColumnDependentReference } from './column-dependent-reference.interface';
+import { LimitedValuesContainer } from './limited-values-container';
 
 /**
  * An implementation of the {@link ValueWrapper} interface.
@@ -113,6 +113,10 @@ export class EntityColumnContainer<T = any> implements ValueWrapper<T> {
     return this.cdr?.hint;
   }
 
+  public get showDisplayValue(): boolean {
+    return !!this.metaData?.CanSee();
+  }
+
   /**
    * An container, that wraps limited value functionality
    */
@@ -140,7 +144,6 @@ export class EntityColumnContainer<T = any> implements ValueWrapper<T> {
     // wrap in a rxjs subscription
     return new Subscription(() => subscription?.unsubscribe());
   }
-
 
   /**
    * Updates the value and puts it into the column

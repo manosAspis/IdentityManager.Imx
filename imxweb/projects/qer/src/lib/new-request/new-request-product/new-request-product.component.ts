@@ -58,6 +58,7 @@ export interface NewRequestCategoryNode {
   children?: NewRequestCategoryNode[];
   isLoading?: boolean;
   level?: number;
+  isSearchResult?: boolean;
 }
 
 @Component({
@@ -89,8 +90,8 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
   public selectedServiceItemUID: string;
 
   public categoryTreeControl = new FlatTreeControl<NewRequestCategoryNode>(
-    (leaf) => leaf.level,
-    (leaf) => leaf.entity.HasChildren.Column.GetValue()
+    (leaf) => leaf.level || 0,
+    (leaf) => leaf.entity?.HasChildren.Column.GetValue()
   );
   public apiControls: DynamicDataApiControls<NewRequestCategoryNode> = {
     setup: async () => {
@@ -191,18 +192,27 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
       root.children.push(...children);
       return children;
     },
+    abortSearch: () => {
+      this.orchestration.abortServiceCategoryCall();
+    },
     search: async (params: CollectionLoadParameters) => {
       const userParams = {
         UID_Person: this.orchestration.recipients
           ? MultiValue.FromString(this.orchestration.recipients.value).GetValues().join(',')
           : undefined,
       };
-      const response = await this.categoryApi.get({ ParentKey: '', ...params, ...userParams });
+      const parentKeyFilter = !!params.search?.length ? {} : { ParentKey: '' };
+      this.orchestration.abortServiceCategoryCall();
+      const response = await this.categoryApi.get({ ...parentKeyFilter, ...params, ...userParams });
+      if (!response?.Data) {
+        return;
+      }
       const searchNodes = response.Data.map((datum) => {
         const node: NewRequestCategoryNode = {
           entity: datum,
           isSelected: false,
           level: 1,
+          isSearchResult: !!params.search?.length,
         };
         return node;
       });
@@ -229,7 +239,7 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
   public isLoading = (node: NewRequestCategoryNode) => node.isLoading;
   // Here we can allow for the root to not be collapsable, but this breaks other functions like the 'collapse all' button
   public hasChild = (_: number, node: NewRequestCategoryNode) =>
-    (node.children && node.children.length > 0) || node.entity?.HasChildren.Column.GetValue();
+    !node.isSearchResult && ((node.children && node.children.length > 0) || node.entity?.HasChildren.Column.GetValue());
 
   public searchApi = () => {
     this.logger.trace(this, 'Search API: NewRequestProductComponent');

@@ -88,14 +88,18 @@ export class ApprovalsService {
   }
 
   public exportApprovalRequests(parameters: ApprovalsLoadParameters): DataSourceToolbarExportMethod {
+    const params: ApprovalsLoadParameters = {
+      Escalation: this.isChiefApproval,
+      ...parameters,
+    };
     const factory = new V2ApiClientMethodFactory();
     return {
       getMethod: (withProperties: string, PageSize?: number) => {
         let method: MethodDescriptor<EntityCollectionData>;
         if (PageSize) {
-          method = factory.portal_itshop_approve_requests_get({ ...parameters, withProperties, PageSize, StartIndex: 0 });
+          method = factory.portal_itshop_approve_requests_get({ ...params, withProperties, PageSize, StartIndex: 0 });
         } else {
-          method = factory.portal_itshop_approve_requests_get({ ...parameters, withProperties });
+          method = factory.portal_itshop_approve_requests_get({ ...params, withProperties });
         }
         return new MethodDefinition(method);
       },

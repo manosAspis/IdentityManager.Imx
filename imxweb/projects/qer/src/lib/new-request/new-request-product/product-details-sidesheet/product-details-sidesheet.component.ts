@@ -32,58 +32,68 @@ import { PortalServiceitems, QerProjectConfig } from 'imx-api-qer';
 @Component({
   selector: 'imx-product-details-sidesheet',
   templateUrl: './product-details-sidesheet.component.html',
-  styleUrls: ['./product-details-sidesheet.component.scss']
+  styleUrls: ['./product-details-sidesheet.component.scss'],
 })
 export class ProductDetailsSidesheetComponent implements OnInit {
   public hasEntitlements: boolean;
   public onEntitlements = false;
-  private properties: string[] = [];
+  /**
+   * A list of AccProduct properties, that can be customized in the Admin Portal:
+   * ServerConfig/ITShopConfig/AccProductProperties
+   */
+  protected accProductProperties: string[] = [];
+
+  /** A list of properties, that cannot be customized in the Admin Portal */
+  protected fixedProductProperties = ['ServiceCategoryFullPath', 'TableName', 'Tags'];
+
+  /** A mapping between properties/columns and a css class to visualize the property value */
+  private cssPropertyMapping = new Map<string, string>([
+    ['ServiceCategoryFullPath', 'link'],
+    ['TableName', 'bold'],
+    ['Tags', 'bold'],
+    ['ArticleCode', 'bold'],
+  ]);
 
   constructor(
-    @Inject(EUI_SIDESHEET_DATA) public data: {
-      item: PortalServiceitems,
+    @Inject(EUI_SIDESHEET_DATA)
+    public data: {
+      item: PortalServiceitems;
       orderStatus: {
-        statusIcon: string,
-        statusDisplay: string
-      } | null,
-      imageUrl: string,
-      projectConfig: QerProjectConfig
-    },
-  ) { }
+        statusIcon: string;
+        statusDisplay: string;
+      } | null;
+      imageUrl: string;
+      projectConfig: QerProjectConfig;
+    }
+  ) {}
 
   public ngOnInit(): void {
-    this.hasEntitlements = ['ESet', 'QERAssign'].includes(this.getValue('TableName'));  
-    this.properties = this.data.projectConfig.ITShopConfig.AccProductProperties;
-  }
-
-  public getDisplay(column: string): string {
-    const value: string = this.data.item.GetEntity().GetColumn(column).GetDisplayValue();
-    return value;
+    this.hasEntitlements = ['ESet', 'QERAssign'].includes(this.getValue('TableName'));
+    this.accProductProperties = this.data?.projectConfig?.ITShopConfig?.AccProductProperties ?? [];
   }
 
   public onTabChange(change: MatTabChangeEvent) {
     this.onEntitlements = change.index === 1;
   }
 
+  /** Returns the display value for the given property/column. */
+  public getDisplay(column: string): string {
+    const value: string = this.data.item.GetEntity().GetColumn(column).GetDisplayValue();
+    return value;
+  }
 
-  /**
-   * Returns true, if the given property name was found in the AccProductProperties or in the entity schema.
-   */
-  public propertyExists(name: string): boolean {
-    let found = this.properties.indexOf(name) > -1;
-    if (found) {
-      return true;
-    }
-    for (const key in this.data.item.GetEntity().GetSchema().Columns) {
-      found ||= key === name;
-    }
-    return found;
+  /** Returns the caption for the given property/column. */
+  protected getCaption(column: string): string {
+    return this.data.item.GetEntity().GetColumn(column).GetMetadata().GetDisplay();
+  }
+
+  /** Returns a special css class for the given property/column.  */
+  protected getCssClass(column: string): string {
+    return this.cssPropertyMapping.get(column) ?? '';
   }
 
   private getValue(column: string): string {
     const value: string = this.data.item.GetEntity().GetColumn(column).GetValue();
     return value;
   }
-
-
 }

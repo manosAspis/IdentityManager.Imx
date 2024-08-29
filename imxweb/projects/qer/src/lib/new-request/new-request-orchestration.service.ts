@@ -214,6 +214,8 @@ export class NewRequestOrchestrationService implements OnDestroy {
 
   //#region AbortController
   public abortController = new AbortController();
+
+  public serviceCategoryAbortController = new AbortController();
   //#endregion
 
   //#endregion
@@ -271,6 +273,11 @@ export class NewRequestOrchestrationService implements OnDestroy {
   public abortCall(): void {
     this.abortController.abort();
     this.abortController = new AbortController();
+  }
+
+  public abortServiceCategoryCall(): void {
+    this.serviceCategoryAbortController.abort();
+    this.serviceCategoryAbortController = new AbortController();
   }
 
   private async initRecipients(): Promise<void> {

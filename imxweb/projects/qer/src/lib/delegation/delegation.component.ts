@@ -112,7 +112,7 @@ export class DelegationComponent implements OnInit, OnDestroy {
   public roleClasses: PortalDelegationsGlobalRoleclasses[] = [];
 
   private subscriptions: Subscription[] = [];
-  private navigationState: CollectionLoadParameters = { PageSize: 20 };
+  public navigationState: CollectionLoadParameters = { PageSize: 20 };
   private projectConfig: QerProjectConfig;
 
   private get uidDelegator(): string {

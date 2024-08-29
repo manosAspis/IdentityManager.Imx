@@ -26,11 +26,11 @@
 
 import { OverlayRef } from '@angular/cdk/overlay';
 import { Component, Inject, OnInit } from '@angular/core';
-import { EuiLoadingService, EuiSidesheetRef, EUI_SIDESHEET_DATA } from '@elemental-ui/core';
+import { EUI_SIDESHEET_DATA, EuiLoadingService, EuiSidesheetRef } from '@elemental-ui/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { PortalAttestationFilterMatchingobjects } from 'imx-api-att';
-import { CollectionLoadParameters, DisplayColumns, ValType, EntitySchema } from 'imx-qbm-dbts';
+import { CollectionLoadParameters, DisplayColumns, EntitySchema, ValType } from 'imx-qbm-dbts';
 import {
   BusyService,
   ClassloggerService,
@@ -76,7 +76,7 @@ export class AttestationCasesComponent implements OnInit {
     private readonly settingsService: SettingsService,
     private readonly translate: TranslateService,
     private readonly ldsReplace: LdsReplacePipe,
-    private readonly logger: ClassloggerService,
+    private readonly logger: ClassloggerService
   ) {
     this.navigationState = { PageSize: settingsService.DefaultPageSize, StartIndex: 0, ParentKey: '' };
     this.entitySchemaPolicy = policyService.AttestationMatchingObjectsSchema;
@@ -135,7 +135,7 @@ export class AttestationCasesComponent implements OnInit {
   }
 
   public async createRun(data: PortalAttestationFilterMatchingobjects[]): Promise<void> {
-    const count = data.length > 0 ? data.length : this.dstSettings.dataSource.totalCount;
+    const count = data.length > 0 ? data.length : this.dstSettings?.dataSource.totalCount;
 
     if (count <= this.threshold || (await this.confirmCreation())) {
       let overlayRef: OverlayRef;

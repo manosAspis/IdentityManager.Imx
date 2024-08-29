@@ -36,6 +36,7 @@ export class DynamicDataApiControls<T> {
   getChildren: (node: T, onlyCheck?: boolean) => Promise<T[]>;
   loadMore?: (root: T) => Promise<T[]>;
   search?: (params: CollectionLoadParameters) => Promise<{ searchNodes: T[]; totalCount?: number; rootNode?: T }>;
+  abortSearch?: () => void;
   searchLoadMore?: (params: CollectionLoadParameters) => Promise<T[]>;
   changeSelection?: (data: T[], selectedNode: T) => T[];
 }
@@ -87,11 +88,10 @@ export class DynamicDataSource<T> {
       if (expandRoot) {
         this._treeControl.expand(this.rootNode);
         await this.toggleNode(this.rootNode, true);
-        this.dataChange.next(this.data);
+        this.nextData(this.data);
       }
     } finally {
       this.currentCount = this.data.length - 1; // Minus 1 to account for rootnode
-      this.initializingData = false;
     }
   }
 
@@ -119,6 +119,9 @@ export class DynamicDataSource<T> {
   }
 
   public async onSearch(): Promise<void> {
+    if (!this._apiControls.search || !this._apiControls.changeSelection) {
+      throw Error('No remote search functionality has been defined.');
+    }
     this.initializingData = true;
     this.dstSettings.navigationState.StartIndex = 0;
 
@@ -130,31 +133,40 @@ export class DynamicDataSource<T> {
         currentCount: this.currentCount,
       };
     }
-    try {
-      if (!this.isSearch && this.cachedData) {
-        // If we are not searching, and there is cached data, load cache and remove old data
-        this.totalCount = this.cachedData.totalCount;
-        this.currentCount = this.cachedData.currentCount;
-        this.rootNode = this.cachedData.data?.[0];
-        this.dataChange.next(this.cachedData.data);
-        this.cachedData = null;
-      } else {
-        // Proceed with normal search
-        const response = await this._apiControls.search(this.dstSettings.navigationState);
-        this.totalCount = response?.totalCount;
-        const nodes = this._apiControls.changeSelection(response.searchNodes, this.selectedNode);
-        this.currentCount = nodes.length;
-        if (nodes.length > 0) {
-          this.rootNode = response.rootNode || this.rootNode;
-          this.dataChange.next([this.rootNode, ...nodes]);
-          this._treeControl.expand(this.rootNode);
-        } else {
-          this.dataChange.next(nodes);
-        }
+    if (!this.isSearch && !!this.cachedData) {
+      // If we are not searching, and there is cached data, load cache and remove old data
+      this.totalCount = this.cachedData.totalCount;
+      this.currentCount = this.cachedData.currentCount;
+      this.rootNode = this.cachedData.data?.[0];
+      this.nextData(this.cachedData.data);
+      if (this._apiControls.abortSearch) this._apiControls?.abortSearch();
+      this.cachedData = null;
+    } else {
+      // Proceed with normal search
+      const response = await this._apiControls.search(this.dstSettings.navigationState);
+      if (!response) {
+        // Here the search was aborted, so we return nothing
+        return;
       }
-    } finally {
-      this.initializingData = false;
+      this.totalCount = response?.totalCount;
+      const nodes = this._apiControls.changeSelection(response.searchNodes, this.selectedNode);
+      this.currentCount = nodes.length;
+      if (nodes.length > 0) {
+        this.rootNode = response.rootNode || this.rootNode;
+        this.nextData([this.rootNode, ...nodes]);
+        this._treeControl.expand(this.rootNode);
+      } else {
+        this.nextData(nodes);
+      }
     }
+  }
+  /**
+   * Emits data and turns off the loading spinner
+   * @param data that will be emitted as the next data state
+   */
+  private nextData(data: T[]): void {
+    this.dataChange.next(data);
+    this.initializingData = false;
   }
 
   constructor(private _treeControl: FlatTreeControl<T>, private _apiControls: DynamicDataApiControls<T>) {}

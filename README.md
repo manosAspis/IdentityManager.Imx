@@ -4,6 +4,27 @@
 
 ## Change log
 
+### August 12, 2024
+- 459770: Fixed an issue where the request parameter validation result was not working on first input.
+- 462048: Fixed an issue with delegation search caching.
+- 461659: Fixed an issue regarding delegation or ESet requests on the Request History page.
+- 460151: Fixed an issue with the QueryWhereClause evaluation during the value check on updated parameter.
+- 460511: Fixed an issue that causes the side navigation on New Request to show search results twice.
+- 461414: Fixed the scrollability of the Operation Support Portal's Process view 
+- 462785: Fixed an UI issue regarding the alignment for the column "User account is disabled" and its data.
+
+
+### July 30, 2024
+
+The v92 branch has been updated with fixes for the following issues.
+
+- 459707: Fixed an issue on the New Request page, where only results up to the first child service category were returned.
+- 461733: Updated third-party package versions for security reasons.
+- 460431: Fixed the export of requests for the chief approval team.
+- 458431: Fixed the inconsistent handling of columns that were added/removed from the ServerConfig/ITShopConfig/AccProductProperties configuration.
+- 460184: Fixed an issue with starting attestation policies.
+- 453124: Fixed a translation issue on the "show selected" view on the New Request page.
+
 ### July 3, 2024
 
 We have added a [list of changes from v91 to v92](imxweb/changes/changesFrom9.1.1To9.2.0.md).

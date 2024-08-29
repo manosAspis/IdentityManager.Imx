@@ -1313,18 +1313,18 @@ export class DataSourceToolbarComponent implements OnChanges, OnInit, OnDestroy 
     this.columnOptions?.resetView();
 
     this.searchTerms = [];
-    if (this.settings.navigationState.search) {
+    if (this.settings.navigationState?.search) {
       this.searchControl.reset(null);
       delete this.settings.navigationState.search;
     }
-    if (this.settings.navigationState.OrderBy) {
+    if (this.settings.navigationState?.OrderBy) {
       delete this.settings.navigationState.OrderBy;
       this.clearSort(false);
     }
     if (this.settings?.groupData?.currentGrouping) {
       this.clearGroupedBy(false);
     }
-    delete this.settings.navigationState.filter;
+    delete this.settings.navigationState?.filter;
     if (this.filtersCurrentlyApplied) {
       this.clearFilters(false);
     }

@@ -111,7 +111,15 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
   /**
    * A list of possible candidates, that can be selected.
    */
-  public candidates: Candidate[];
+  private _candidates: Candidate[];
+
+  public get candidates(): Candidate[] {
+    return this._candidates;
+  }
+
+  public set candidates(value: Candidate[]) {
+    this._candidates = value;
+  }
 
   /**
    * Indicator that the component is loading data from the server.
@@ -211,7 +219,7 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
   public async onOpened(): Promise<void> {
     // Use the stashed values if we already have a selected value
     this.parameters = this.savedParameters ?? { PageSize: this.pageSize, StartIndex: 0 };
-    if ((this.savedCandidates?.length ?? 0) > 0) {
+    if (!!this.savedCandidates?.length) {
       this.candidates = this.savedCandidates;
     } else if (this.parameters.search || this.parameters.filter || this.control.value == null) {
       await this.updateCandidates({ search: undefined, filter: undefined, StartIndex: 0 }, false);
@@ -485,10 +493,10 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
         const multipleFkRelations = this.columnContainer.fkRelations && this.columnContainer.fkRelations.length > 1;
         const identityRelatedTable = this.selectedTable.TableName === 'Person';
 
-        const newCandidates = candidateCollection.Entities.map((entityData) => {
-          let key: string = null;
-          let detailValue: string = entityData.LongDisplay;
-          const defaultEmailColumn = entityData.Columns['DefaultEmailAddress'];
+        const newCandidates = candidateCollection.Entities?.map((entityData) => {
+          let key: string = '';
+          let detailValue: string = entityData.LongDisplay ?? '';
+          const defaultEmailColumn = entityData.Columns?.['DefaultEmailAddress'];
           /**
            * If the candidates data relate to identities (fkRelation Person table)
            * then we want to use the email address for the detail line (displayLong)
@@ -498,7 +506,7 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
           }
           if (multipleFkRelations) {
             this.logger.trace(this, 'dynamic foreign key');
-            const xObjectKeyColumn = entityData.Columns['XObjectKey'];
+            const xObjectKeyColumn = entityData.Columns?.['XObjectKey'];
             key = xObjectKeyColumn ? xObjectKeyColumn.Value : undefined;
           } else {
             this.logger.trace(this, 'foreign key');
@@ -510,7 +518,7 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
             } else {
               this.logger.trace(this, 'Use the primary key');
               const keys = entityData.Keys;
-              key = keys && keys.length ? keys[0] : undefined;
+              key = keys && keys.length ? keys[0] : '';
             }
           }
           return {
@@ -520,9 +528,11 @@ export class EditFkComponent implements CdrEditor, AfterViewInit, OnDestroy, OnI
           };
         });
         if (concatCandidates) {
-          this.candidates.push(...newCandidates);
+          this.candidates.push(...(newCandidates || []));          
+          this.savedCandidates = this.candidates;
         } else {
-          this.candidates = newCandidates;
+          this.candidates = newCandidates || [];
+          this.savedCandidates = this.candidates;
         }
       } finally {
         this.loading = false;
