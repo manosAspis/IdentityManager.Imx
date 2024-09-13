@@ -1,21 +1,36 @@
-<imx-badge-tile
-  data-imx-identifier="start-tile-att-approvals"
-  [caption]="'#LDS#Heading Pending Attestations' | translate"
-  *ngIf="attEnabled"
-  [value]="pendingItems?.OpenAttestation"
-  [identifier]="'att-approvals'"
-  (actionClick)="router.navigate(['attestation', 'decision'])"
->
-</imx-badge-tile>
-<!--<imx-badge-tile
+<div class="imx-flexible-tile-row">
+
+  <imx-badge-tile
+    data-imx-identifier="start-tile-att-approvals"
+    [caption]="'#LDS#Heading Pending Attestations' | translate"
+    *ngIf="attEnabled"
+    [value]="pendingOtherCases"
+    [identifier]="'att-approvals'"
+    (actionClick)="router.navigate(['attestation', 'decision'])"
+  >
+  </imx-badge-tile>
+  
+  <!--<imx-badge-tile
   data-imx-identifier="start-tile-att-inquiries"
   [caption]="'#LDS#Heading Attestation Inquiries' | translate"
-  *ngIf="attEnabled"
+  *ngIf="attEnabled && 0 < pendingItems?.OpenInquiriesAttestation"
   [value]="pendingItems?.OpenInquiriesAttestation"
   [identifier]="'att-inquiries'"
   (actionClick)="goToAttestationInquiries()"
 >
 </imx-badge-tile>-->
+
+  <imx-badge-tile
+    data-imx-identifier="start-tile-att-approvals"
+    [caption]="'#LDS#DataExplorer+ Attestations' | translate"
+    *ngIf="attEnabled && 0 < pendingExplorerCases"
+    [value]="pendingExplorerCases"
+    [identifier]="'att-dataexplorerplus-approvals'"
+    (actionClick)="router.navigate(['dataexplorerplus', {explorer: 'AttestationExplorer'}])"
+  >
+  </imx-badge-tile>
+  
+  </div>
 
 <!--
 TODO later:

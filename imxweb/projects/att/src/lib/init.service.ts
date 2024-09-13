@@ -163,7 +163,7 @@ export class InitService {
 
         return menu;
       },
-      /*function (preProps: string[], __: string[], projectConfig: QerProjectConfig & ProjectConfig) {
+      function (preProps: string[], __: string[], projectConfig: QerProjectConfig & ProjectConfig) {
         const deviceEnabled = projectConfig.DeviceConfig.VI_Hardware_Enabled;
         if (!preProps.includes('MAC') || !preProps.includes('ITSHOP') || ! deviceEnabled) {
           return null;
@@ -182,7 +182,7 @@ export class InitService {
             },
           ],
         };
-      }*/
+      }
     );
   }
 }
