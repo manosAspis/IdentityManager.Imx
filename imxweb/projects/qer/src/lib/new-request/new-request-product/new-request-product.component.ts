@@ -135,7 +135,7 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
       this.orchestration.disableSearch = totalCount < 1;
       const rootNode: NewRequestCategoryNode = {
         level: 0,
-        isSelected: true,
+        isSelected: false,
         children: children,
       };
       const dstSettingsDynamicDatasource = totalCount > 0 ? dstSettings : undefined;
@@ -217,7 +217,7 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
         return node;
       });
       const rootNode: NewRequestCategoryNode = {
-        isSelected: true,
+        isSelected: false,
         level: 0,
         children: searchNodes,
       };
@@ -351,7 +351,7 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
           firstIteration = false;
         } else {
           this.dynamicDataSource.setup(true);
-          this.getProductData(true);
+          /*this.getProductData(true);*/
         }
       })
     );
