@@ -126,7 +126,7 @@
 <div class="imx-button-bar" *ngIf="hasData">
   <imx-selected-elements [selectedElements]="selectedItems" [isLoading]="busyService.isBusy"></imx-selected-elements>
   <div class="imx-menu-spacer"></div>
-  <!--<button
+ <button
     mat-stroked-button
     data-imx-identifier="approvals-table-button-actions"
     title="{{ '#LDS#Actions you can perform for the selected requests' | translate }}"
@@ -135,7 +135,7 @@
   >
     <eui-icon icon="ellipsisvertical"></eui-icon>
     {{ '#LDS#Actions' | translate }}
-  </button>-->
+  </button>
 
   <button
     mat-raised-button
@@ -169,7 +169,7 @@
     >
       {{ '#LDS#Reroute approval' | translate }}
     </button>
-    <button
+    <!--<button
       mat-menu-item
       *ngIf="canAddApprover"
       data-imx-identifier="approvals-table-button-add-approvers"
@@ -177,7 +177,7 @@
       (click)="actionService.addAdditionalApprovers(selectedItems)"
     >
       {{ '#LDS#Add approver' | translate }}
-    </button>
+    </button>-->
     <button
       mat-menu-item
       *ngIf="canDelegateDecision"
@@ -196,7 +196,7 @@
     >
       {{ '#LDS#Reject approval' | translate }}
     </button>
-    <button
+    <!--<button
       mat-menu-item
       *ngIf="canWithdrawAdditionalApprover"
       data-imx-identifier="approvals-table-button-withdraw-additional-approver"
@@ -210,7 +210,7 @@
     </button>
     <button mat-menu-item data-imx-identifier="approvals-table-button-withdraw-inquiry" *ngIf="canRecallInquiry" (click)="actionService.recallInquiry(selectedItems)">
       {{ '#LDS#Withdraw inquiry' | translate }}
-    </button>
+    </button>-->
     <button mat-menu-item data-imx-identifier="approvals-table-button-reset-reservation" *ngIf="canResetReservation" (click)="actionService.resetReservation(selectedItems)">
       {{ '#LDS#Cancel reservation' | translate }}
     </button>

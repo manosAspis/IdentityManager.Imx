@@ -52,7 +52,7 @@
       (click)="actionService.addAdditionalApprovers([data.pwo])"
     >
       {{ '#LDS#Add approver' | translate }}
-    </button>
+    </button>-->
     <button
       mat-stroked-button
       *ngIf="data.pwo.canDelegateDecision(currentUserId)"
@@ -61,7 +61,7 @@
       (click)="actionService.delegateDecisions([data.pwo])"
     >
       {{ '#LDS#Delegate approval' | translate }}
-    </button>-->
+    </button>
     <button
       mat-stroked-button
       *ngIf="canDenyApproval()"
@@ -71,7 +71,7 @@
     >
       {{ '#LDS#Reject approval' | translate }}
     </button>
-    <button
+    <!--<button
       mat-stroked-button
       *ngIf="data.pwo.canWithdrawAdditionalApprover(currentUserId)"
       data-imx-identifier="approvals-sidesheet-button-withdraw--additional-approver"
@@ -79,7 +79,7 @@
       (click)="actionService.withDrawApprover([data.pwo])"
     >
       {{ '#LDS#Withdraw additional approver' | translate }}
-    </button>
+    </button>-->
 
     <!--<button
       mat-stroked-button
