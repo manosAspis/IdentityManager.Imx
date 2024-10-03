@@ -33,8 +33,9 @@ import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 
-import { CollectionLoadParameters, CompareOperator, DataModel, FilterType, TypedEntity, ValType } from 'imx-qbm-dbts';
+import { CollectionLoadParameters, CompareOperator, DataModel, FilterType, MethodDescriptor, TimeZoneInfo, TypedEntity, ValType } from 'imx-qbm-dbts';
 import {
+  AppConfigService,
   AuthenticationService,
   BusyService,
   DataSourceToolbarFilter,
@@ -74,6 +75,8 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
 
   public recApprove = RecommendationEnum.Approve;
   public recDeny = RecommendationEnum.Deny;
+  DataExplorerPlusAttestations: string[];
+  doublecall: boolean = false;
 
   public get canReRouteDecision(): boolean {
     return this.selectedCases.every((item) => item.canRerouteDecision(this.userUid));
@@ -126,6 +129,7 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
   private viewConfigPath = 'attestation/approve';
 
   constructor(
+    private readonly config: AppConfigService,
     public readonly attestationAction: AttestationActionService,
     private readonly attestationCases: AttestationCasesService,
     private readonly busyServiceElemental: EuiLoadingService,
@@ -187,6 +191,7 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
       isBusy = this.busyService.beginBusy();
     });
     try {
+      this.DataExplorerPlusAttestations = await this.config.apiClient.processRequest<string[]>(this.GetDataExplorerPlusAttestations());
       const config = await this.attService.client.portal_attestation_config_get();
       const pendingItems: PendingItemsType = await this.usermodelService.getPendingItems();
       this.hasInquiries = pendingItems.OpenInquiriesAttestation > 0;
@@ -302,7 +307,7 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
         Escalation: this.attestationCases.isChiefApproval,
         ...this.navigationState,
       };
-      const dataSource = await this.attestationCases.get(params,this.isUserEscalationApprover);
+      const dataSource = await this.attestationCases.get2(params,this.isUserEscalationApprover);
       const exportMethod = this.attestationCases.exportData(params);
       this.dstSettings = {
         dataSource,
@@ -341,21 +346,36 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
 
   public async onGroupingChange(groupKey: string): Promise<void> {
     const isBusy = this.busyService.beginBusy();
-
     try {
-      const groupedData = this.groupedData[groupKey];
-      const navigationState = { ...groupedData.navigationState, Escalation: this.viewEscalation };
-      groupedData.data = await this.attestationCases.get(navigationState,this.isUserEscalationApprover);
-      groupedData.settings = {
-        displayedColumns: this.dstSettings.displayedColumns,
-        dataModel: this.dstSettings.dataModel,
-        dataSource: groupedData.data,
-        entitySchema: this.dstSettings.entitySchema,
-        navigationState,
-      };
+  
+        const groupedData = this.groupedData[groupKey];
+        const navigationState = { ...groupedData.navigationState, Escalation: this.viewEscalation };
+ 
+        if (!navigationState.filter) {
+          return;
+        }
+
+        groupedData.data = await this.attestationCases.get(navigationState,this.isUserEscalationApprover);
+        if (groupKey.includes('risk')) {
+          groupedData.data = await this.attestationCases.get2(navigationState,this.isUserEscalationApprover);
+        }
+        
+        groupedData.settings = {
+          displayedColumns: this.dstSettings.displayedColumns,
+          dataModel: this.dstSettings.dataModel,
+          dataSource: groupedData.data,
+          entitySchema: this.dstSettings.entitySchema,
+          navigationState,
+        };
+      
+      
     } finally {
       isBusy.endBusy();
     }
+  }
+
+  public async changeFlag(): Promise<void> {
+    this.doublecall = false;
   }
 
   public onSelectionChanged(cases: AttestationCase[]): void {
@@ -456,6 +476,22 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
     }
 
     this.filterOptions = this.dataModel?.Filters ?? [];
+    if (this.filterOptions && this.DataExplorerPlusAttestations.length>0) {
+      this.filterOptions = this.filterOptions.map(optionGroup => {
+          if (optionGroup.Name === 'uidpolicy') {
+              return {
+                  ...optionGroup,
+                  Options: optionGroup.Options.filter(option => 
+                      !this.DataExplorerPlusAttestations.includes(option.Value)
+                  )
+              };
+          }
+          return optionGroup;
+      });
+
+      this.filterOptions = this.filterOptions.filter(item => item.Name !== 'type');
+  }
+
 
     this.groupData = createGroupData(
       this.dataModel,
@@ -469,6 +505,16 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
         }),
       []
     );
+
+    if (this.groupData && this.groupData.groupingCategories && this.DataExplorerPlusAttestations.length>0) {
+      this.groupData.groupingCategories = this.groupData.groupingCategories.filter(category => {
+          return !category.groups.some(group =>
+            this.DataExplorerPlusAttestations.some(niceValue => group.property.Value.includes(niceValue))
+          ) && !category.property.Options.some(option =>
+            this.DataExplorerPlusAttestations.some(niceValue => option.Value.includes(niceValue))
+          );
+      });
+    }
   }
 
   private async parseParams(): Promise<void> {
@@ -535,5 +581,19 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
         this.edit(this.dstSettings.dataSource.Data[0] as AttestationCase);
         break;
     }
+  }
+
+  private GetDataExplorerPlusAttestations(): MethodDescriptor<void> {
+    return {
+      path: `/portal/dataexplorerplus/attestations`,
+      parameters: [],
+      method: 'GET',
+      headers: {
+        'imx-timezone': TimeZoneInfo.get(),
+      },
+      credentials: 'include',
+      observe: 'response',
+      responseType: 'json',
+    };
   }
 }

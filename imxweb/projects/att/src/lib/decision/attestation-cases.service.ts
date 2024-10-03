@@ -40,6 +40,7 @@ import {
   IReadValue,
   FilterTreeData,
   MethodDescriptor,
+  TimeZoneInfo
 } from 'imx-qbm-dbts';
 import {
   ApiClientMethodFactory,
@@ -70,6 +71,7 @@ export class AttestationCasesService {
   public isChiefApproval: boolean;
   private readonly historyBuilder = new TypedEntityBuilder(PortalAttestationCaseHistory);
   private readonly apiClientMethodFactory = new ApiClientMethodFactory();
+  DataExplorerPlusAttestations: string[];
 
   constructor(
     private readonly attClient: ApiService,
@@ -89,6 +91,37 @@ export class AttestationCasesService {
   public async get(attDecisionParameters?: AttestationDecisionLoadParameters, isUserEscalationApprover= false): Promise<TypedEntityCollectionData<AttestationCase>> {
 
     const navigationState = { ...attDecisionParameters, Escalation: (attDecisionParameters.uid_attestationcase !== '' && isUserEscalationApprover) || attDecisionParameters.Escalation  };
+   
+    const collection = await this.attClient.typedClient.PortalAttestationApprove.Get(navigationState);
+    return {
+      tableName: collection.tableName,
+      totalCount: collection.totalCount,
+      Data: collection.Data.map((item: PortalAttestationApprove, index: number) => {
+        const parameterDataContainer = this.parameterDataService.createContainer(
+          item.GetEntity(),
+          { ...collection.extendedData, ...{ index } },
+          (parameters) => this.getParameterCandidates(parameters),
+          (treefilterparameter) => this.getFilterTree(treefilterparameter)
+        );
+
+        return new AttestationCase(item, this.isChiefApproval, parameterDataContainer, { ...collection.extendedData, ...{ index } });
+      }),
+    };
+  }
+
+  public async get2(attDecisionParameters?: AttestationDecisionLoadParameters, isUserEscalationApprover= false): Promise<TypedEntityCollectionData<AttestationCase>> {
+    this.DataExplorerPlusAttestations = await this.config.apiClient.processRequest<string[]>(this.GetDataExplorerPlusAttestations());
+    let filters = undefined;
+    if (this.DataExplorerPlusAttestations.length>0) {
+      filters = this.DataExplorerPlusAttestations.map(attestation => ({
+        ColumnName: 'UID_AttestationPolicy',
+        Type: 0,
+        CompareOp: 1,
+        Value1: attestation,
+      }));
+    }
+    
+    const navigationState = { ...attDecisionParameters, filter: filters, Escalation: (attDecisionParameters.uid_attestationcase !== '' && isUserEscalationApprover) || attDecisionParameters.Escalation  };
    
     const collection = await this.attClient.typedClient.PortalAttestationApprove.Get(navigationState);
     return {
@@ -132,12 +165,32 @@ export class AttestationCasesService {
   }
 
   public async getDataModel(): Promise<DataModel> {
-    return this.attClient.client.portal_attestation_approve_datamodel_get({ Escalation: this.isChiefApproval });
+    // this.DataExplorerPlusAttestations = await this.config.apiClient.processRequest<string[]>(this.GetDataExplorerPlusAttestations());
+    // let filters = undefined;
+    // if (this.DataExplorerPlusAttestations.length>0) {
+    //   filters = this.DataExplorerPlusAttestations.map(attestation => ({
+    //     ColumnName: 'UID_AttestationPolicy',
+    //     Type: 0,
+    //     CompareOp: 1,
+    //     Value1: attestation,
+    //   }));
+    // }
+    return this.attClient.client.portal_attestation_approve_datamodel_get({ Escalation: this.isChiefApproval});
   }
 
-  public getGroupInfo(parameters: { by?: string; def?: string } & CollectionLoadParameters = {}): Promise<GroupInfoData> {
+  public async getGroupInfo(parameters: { by?: string; def?: string } & CollectionLoadParameters = {}): Promise<GroupInfoData> {
+    this.DataExplorerPlusAttestations = await this.config.apiClient.processRequest<string[]>(this.GetDataExplorerPlusAttestations());
+    let filters = undefined;
+    if (this.DataExplorerPlusAttestations.length>0) {
+      filters = this.DataExplorerPlusAttestations.map(attestation => ({
+        ColumnName: 'UID_AttestationPolicy',
+        Type: 0,
+        CompareOp: 1,
+        Value1: attestation,
+      }));
+    }
     const { withProperties, OrderBy, search, ...params } = parameters;
-    return this.attClient.client.portal_attestation_approve_group_get({ ...params, withcount: true, Escalation: this.isChiefApproval });
+    return this.attClient.client.portal_attestation_approve_group_get({ ...params, filter: filters, withcount: true, Escalation: this.isChiefApproval });
   }
 
   public async getApprovers(
@@ -312,5 +365,19 @@ export class AttestationCasesService {
       parameters.diffData,
       parameter
     );
+  }
+
+  private GetDataExplorerPlusAttestations(): MethodDescriptor<void> {
+    return {
+      path: `/portal/dataexplorerplus/attestations`,
+      parameters: [],
+      method: 'GET',
+      headers: {
+        'imx-timezone': TimeZoneInfo.get(),
+      },
+      credentials: 'include',
+      observe: 'response',
+      responseType: 'json',
+    };
   }
 }
