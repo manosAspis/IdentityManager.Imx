@@ -178,6 +178,10 @@ export class RequestTableComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     this.navigationState = { PageSize: settingsService.DefaultPageSize, StartIndex: 0 };
+    if (this.filterPresets.ShowMyPending == '1') {
+      this.navigationState = { PageSize: settingsService.DefaultPageSize, StartIndex: 0, ShowMyPending: '1' };
+    }
+    //console.log('1', this.navigationState.ShowMyPending);
 
     this.subscriptions.push(
       this.actionService.applied.subscribe(async () => {
@@ -237,6 +241,10 @@ export class RequestTableComponent implements OnInit, OnDestroy, OnChanges {
     // Case: VI_BuildITShopLink_Show_for_Requester
     if (result['uid_personwantsorg']) {
       this.navigationState.uidpwo = result['uid_personwantsorg'];
+      if (this.filterPresets.ShowMyPending == '1') {
+        this.navigationState.ShowMyPending = '1';
+      }
+      //console.log('2', this.navigationState.ShowMyPending);
     }
 
     Object.keys(this.filterPresets).forEach(
@@ -287,19 +295,36 @@ export class RequestTableComponent implements OnInit, OnDestroy, OnChanges {
     if (newState) {
       this.navigationState = newState;
     }
+    if (this.filterPresets.ShowMyPending == '1') {
+      this.navigationState.ShowMyPending = '1';
+    }
+    //console.log('3', this.navigationState.ShowMyPending);
 
     try {
       const personUid = this.uidRecipientRequester || this.requestHistoryFilters?.selectedUid;
       if (personUid) {
         this.navigationState.UID_Person = personUid;
+        if (this.filterPresets.ShowMyPending == '1') {
+          this.navigationState.ShowMyPending = '1';
+        }
+        //console.log('4', this.navigationState.ShowMyPending);
 
         const personFilter = this.filterOptions.find((elem) => elem.Name === 'person')?.CurrentValue;
         this.navigationState.person = personFilter ?? '7';
+        if (this.filterPresets.ShowMyPending == '1') {
+          this.navigationState.ShowMyPending = '1';
+        }
+        //console.log('5', this.navigationState.ShowMyPending);
       }
       if (this.uidRecipient) {
         this.navigationState.uidpersonordered = this.uidRecipient;
         this.navigationState.uidpersoninserted = this.userUid;
+        if (this.filterPresets.ShowMyPending == '1') {
+          this.navigationState.ShowMyPending = '1';
+        }
+        //console.log('6', this.navigationState.ShowMyPending);
       }
+    
 
       // We check here if we have a default config, if so then we will skip the init data to save time
       let data: ExtendedTypedEntityCollection<ItshopRequest, PwoExtendedData>;
@@ -321,6 +346,10 @@ export class RequestTableComponent implements OnInit, OnDestroy, OnChanges {
         exportMethod.initialColumns = this.displayedColumns.map((col) => col.ColumnName);
       }
       if (data) {
+        if (this.filterPresets.ShowMyPending == '1') {
+          this.navigationState.ShowMyPending = '1';
+        }
+        //console.log('7', this.navigationState.ShowMyPending);
         const dstSettings: DataSourceToolbarSettings = {
           dataSource: {
             totalCount: data.totalCount,
