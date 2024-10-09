@@ -71,7 +71,7 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
   public selectedCases: AttestationCase[] = [];
   public userUid: string;
 
-  public hideToolbar:boolean = false;
+  public hideToolbar: boolean = false;
 
   public recApprove = RecommendationEnum.Approve;
   public recDeny = RecommendationEnum.Deny;
@@ -292,6 +292,7 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
   }
 
   public async search(search: string): Promise<void> {
+    this.attestationCases.abortCall();
     return this.getData({ ...this.navigationState, ...{ search } });
   }
 
@@ -391,18 +392,21 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
 
     try {
       attestationCaseWithPolicy = (
-        await this.attestationCases.get({
-          Escalation: this.viewEscalation,
-          uidpolicy: attestationCase.UID_AttestationPolicy.value,
-          filter: [
-            {
-              ColumnName: 'UID_AttestationCase',
-              Type: FilterType.Compare,
-              CompareOp: CompareOperator.Equal,
-              Value1: attestationCase.GetEntity().GetKeys()[0],
-            },
-          ],
-        },this.isUserEscalationApprover)
+        await this.attestationCases.get(
+          {
+            Escalation: this.viewEscalation,
+            uidpolicy: attestationCase.UID_AttestationPolicy.value,
+            filter: [
+              {
+                ColumnName: 'UID_AttestationCase',
+                Type: FilterType.Compare,
+                CompareOp: CompareOperator.Equal,
+                Value1: attestationCase.GetEntity().GetKeys()[0],
+              },
+            ],
+          },
+          this.isUserEscalationApprover
+        )
       ).Data[0];
       // Add additional violation data to this case
       attestationCaseWithPolicy.data.CanSeeComplianceViolations = attestationCase.data.CanSeeComplianceViolations;

@@ -4,6 +4,12 @@
 
 ## Change log
 
+### October 8, 2024
+- 465213: Fixes an infinite loop if the an invalid value is set on a basic CDR.
+- 466404: Fixes an issue with setting today's date as the start date of a delegation.
+- 464909: Fixes an issue with the removal of IT shop assignments from newly created applications.
+- 466217: Fixes timing issues that could cause the search result to become out of sync with the search term entered by the user.
+
 ### September 9, 2024
 - 463113: Fixes an issue, regarding the "Unsubscribed as from" property, that doesn't work as expected.
 - 462249: Fixes the "Property not found: UID_UNSRoot" error, when switching to tab "Child System Entitlements" on the Data Explorer's system Entitlements page.
