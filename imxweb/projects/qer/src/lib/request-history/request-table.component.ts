@@ -178,10 +178,6 @@ export class RequestTableComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     this.navigationState = { PageSize: settingsService.DefaultPageSize, StartIndex: 0 };
-    if (this.filterPresets.ShowMyPending == '1') {
-      this.navigationState = { PageSize: settingsService.DefaultPageSize, StartIndex: 0, ShowMyPending: '1' };
-    }
-    //console.log('1', this.navigationState.ShowMyPending);
 
     this.subscriptions.push(
       this.actionService.applied.subscribe(async () => {
@@ -244,7 +240,7 @@ export class RequestTableComponent implements OnInit, OnDestroy, OnChanges {
       if (this.filterPresets.ShowMyPending == '1') {
         this.navigationState.ShowMyPending = '1';
       }
-      //console.log('2', this.navigationState.ShowMyPending);
+      console.log('2', this.navigationState.ShowMyPending);
     }
 
     Object.keys(this.filterPresets).forEach(
@@ -299,7 +295,7 @@ export class RequestTableComponent implements OnInit, OnDestroy, OnChanges {
     if (this.filterPresets.ShowMyPending == '1') {
       this.navigationState.ShowMyPending = '1';
     }
-    //console.log('3', this.navigationState.ShowMyPending);
+    console.log('filtered data', this.navigationState.ShowMyPending);
 
     try {
       const personUid = this.uidRecipientRequester || this.requestHistoryFilters?.selectedUid;
@@ -308,14 +304,14 @@ export class RequestTableComponent implements OnInit, OnDestroy, OnChanges {
         if (this.filterPresets.ShowMyPending == '1') {
           this.navigationState.ShowMyPending = '1';
         }
-        //console.log('4', this.navigationState.ShowMyPending);
+        console.log('4', this.navigationState.ShowMyPending);
 
         const personFilter = this.filterOptions.find((elem) => elem.Name === 'person')?.CurrentValue;
         this.navigationState.person = personFilter ?? '7';
         if (this.filterPresets.ShowMyPending == '1') {
           this.navigationState.ShowMyPending = '1';
         }
-        //console.log('5', this.navigationState.ShowMyPending);
+        console.log('5', this.navigationState.ShowMyPending);
       }
       if (this.uidRecipient) {
         this.navigationState.uidpersonordered = this.uidRecipient;
@@ -323,7 +319,7 @@ export class RequestTableComponent implements OnInit, OnDestroy, OnChanges {
         if (this.filterPresets.ShowMyPending == '1') {
           this.navigationState.ShowMyPending = '1';
         }
-        //console.log('6', this.navigationState.ShowMyPending);
+        console.log('6', this.navigationState.ShowMyPending);
       }
     
 
@@ -347,10 +343,10 @@ export class RequestTableComponent implements OnInit, OnDestroy, OnChanges {
         exportMethod.initialColumns = this.displayedColumns.map((col) => col.ColumnName);
       }
       if (data) {
-        if (this.filterPresets.ShowMyPending == '1') {
+        /*if (this.filterPresets.ShowMyPending == '1') {
           this.navigationState.ShowMyPending = '1';
         }
-        //console.log('7', this.navigationState.ShowMyPending);
+        console.log('7', this.navigationState.ShowMyPending);*/
         const dstSettings: DataSourceToolbarSettings = {
           dataSource: {
             totalCount: data.totalCount,

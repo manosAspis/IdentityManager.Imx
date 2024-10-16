@@ -164,7 +164,7 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
     if (await this.qerPermissions.isPersonManager()) {
       this.reports = (
         await this.qerClient.typedClient.PortalPersonReports.Get({
-          OnlyDirect: true, // direct reports only
+          OnlyDirect: false, // direct reports only
           PageSize: 10000,
           isinactive: '0'
         })
