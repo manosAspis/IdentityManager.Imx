@@ -349,7 +349,7 @@ export class RequestTableComponent implements OnInit, OnDestroy, OnChanges {
         console.log('7', this.navigationState.ShowMyPending);*/
         const dstSettings: DataSourceToolbarSettings = {
           dataSource: {
-            totalCount: data.totalCount,
+            ...data,
             Data: data.Data ? this.sortChildrenAfterParents(data.Data) : undefined,
           },
           filters: this.filterOptions,

@@ -181,7 +181,9 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
     this.initDataModel();
   }
 
-  public switchEscalation(): Promise<void> {
+  public async switchEscalation(): Promise<void> {
+    this.attestationCases.isChiefApproval = !this.attestationCases.isChiefApproval;
+    await this.initDataModel();
     return this.getData();
   }
 
@@ -304,12 +306,12 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
     const isBusy = this.busyService.beginBusy();
 
     try {
-      const params: AttestationDecisionLoadParameters = {
-        Escalation: this.attestationCases.isChiefApproval,
+      this.navigationState = {
         ...this.navigationState,
+        Escalation: this.attestationCases.isChiefApproval,
       };
-      const dataSource = await this.attestationCases.get2(params,this.isUserEscalationApprover);
-      const exportMethod = this.attestationCases.exportData(params);
+      const dataSource = await this.attestationCases.get2(this.navigationState,this.isUserEscalationApprover);
+      const exportMethod = this.attestationCases.exportData(this.navigationState);
       this.dstSettings = {
         dataSource,
         entitySchema: this.entitySchema,
