@@ -30,8 +30,8 @@ import { EuiLoadingService, EuiSidesheetService } from '@elemental-ui/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { PortalSubscription } from 'imx-api-rps';
-import { CollectionLoadParameters, DisplayColumns, EntitySchema, ValType } from 'imx-qbm-dbts';
-import { ConfirmationService, DataSourceToolbarSettings, ClientPropertyForTableColumns, SnackBarService, BusyService } from 'qbm';
+import { CollectionLoadParameters, DisplayColumns, EntitySchema, ValType, MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
+import { ConfirmationService, DataSourceToolbarSettings, ClientPropertyForTableColumns, SnackBarService, BusyService, AppConfigService } from 'qbm';
 import { ReportSubscription } from './report-subscription/report-subscription';
 import { ReportSubscriptionService } from './report-subscription/report-subscription.service';
 import { ReportViewConfigComponent } from './report-view-config/report-view-config.component';
@@ -40,6 +40,14 @@ import { SubscriptionWizardComponent } from './subscription-wizard/subscription-
 import { SubscriptionsService } from './subscriptions.service';
 import { ListReportViewerSidesheetComponent } from './list-report-viewer-sidesheet/list-report-viewer-sidesheet.component';
 import { ListReportViewerService } from '../list-report-viewer/list-report-viewer.service';
+
+export interface SubscriptionLink {
+  message: string;
+}
+
+let link: SubscriptionLink = {
+  message:'#',
+}
 
 @Component({
   selector: 'imx-subscriptions',
@@ -51,8 +59,10 @@ export class SubscriptionsComponent implements OnInit {
   public readonly DisplayColumns = DisplayColumns;
   public dstSettings: DataSourceToolbarSettings;
   public canAddSubscription = false;
+  public subscriptionLink:SubscriptionLink = link;
 
   private readonly displayedColumns: ClientPropertyForTableColumns[];
+  
 
   private navigationState: CollectionLoadParameters = { PageSize: 25, StartIndex: 0 };
 
@@ -66,7 +76,8 @@ export class SubscriptionsComponent implements OnInit {
     private readonly snackbar: SnackBarService,
     private readonly translate: TranslateService,
     private readonly busyServiceElemental: EuiLoadingService,
-    private readonly listReportViewerService: ListReportViewerService
+    private readonly listReportViewerService: ListReportViewerService,
+    private readonly config: AppConfigService
   ) {
     this.entitySchema = subscriptionService.PortalSubscriptionSchema;
     this.displayedColumns = [
@@ -191,6 +202,8 @@ export class SubscriptionsComponent implements OnInit {
     }
   }
 
+  /*OOTB FUNCTION REPLACED WITH A CUSTOM REDIRECTION LINK
+  ========================================================
   public async createSubscription(): Promise<void> {
     const sidesheetRef = this.sideSheet.open(SubscriptionWizardComponent, {
       title: await this.translate.get('#LDS#Heading Add Report Subscription').toPromise(),
@@ -205,6 +218,10 @@ export class SubscriptionsComponent implements OnInit {
 
       return this.navigate();
     }
+  }*/
+
+  public async createSubscription(): Promise<void> {
+    window.open(this.subscriptionLink.message, '_blank');
   }
 
   public async viewReport(): Promise<void> {
@@ -225,6 +242,8 @@ export class SubscriptionsComponent implements OnInit {
   private async navigate(): Promise<void> {
     const isBusy = this.busyService.beginBusy();
     try {
+      this.redirectionLinkValue();
+
       const subscriptions = await this.subscriptionService.getSubscriptions(this.navigationState);
 
       this.dstSettings = {
@@ -235,6 +254,29 @@ export class SubscriptionsComponent implements OnInit {
       };
     } finally {
       isBusy.endBusy();
+      console.log(this.subscriptionLink)
     }
   }
+
+  public async redirectionLinkValue(): Promise<SubscriptionLink> {
+    const data = await this.config.apiClient.processRequest(this.getSubscriptionLink());
+    link = data;
+    this.subscriptionLink = link;
+    return;
+  }
+
+  private getSubscriptionLink(): MethodDescriptor<SubscriptionLink> {
+      const parameters = [];
+      return {
+        path: `/portal/AddSubscriptionLink`,
+        parameters,
+        method: 'GET',
+        headers: {
+          'imx-timezone': TimeZoneInfo.get(),
+        },
+        credentials: 'include',
+        observe: 'response',
+        responseType: 'json',
+      };
+    }
 }

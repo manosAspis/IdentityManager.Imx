@@ -37,9 +37,9 @@ export class MaintenanceBannerComponent {
     maintenanceText = data;
     this.bannerText = maintenanceText;
     return data;
-   }
+  }
   
-   private getMaintenanceFeatureData(): MethodDescriptor<MaintenanceElement> {
+  private getMaintenanceFeatureData(): MethodDescriptor<MaintenanceElement> {
     const parameters = [];
     return {
       path: `/portal/MaintenanceMessage`,
