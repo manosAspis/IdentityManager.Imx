@@ -149,8 +149,6 @@ export class ApprovalWorkflowConstantsService {
             color: this.colorService.colorValues.Text,
             'text-valign': 'center',
             'text-halign': 'center',
-           
-            
           },
         },
         {
@@ -163,7 +161,6 @@ export class ApprovalWorkflowConstantsService {
             'text-valign': 'top',
             "text-margin-y": 20,
             "text-halign": 'center',
-            
             'text-max-width': (node: NodeSingular) => node.width().toString(),
             'text-wrap': 'ellipsis',
             "font-weight": 'bold',
