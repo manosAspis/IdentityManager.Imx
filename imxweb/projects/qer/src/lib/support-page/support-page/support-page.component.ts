@@ -12,7 +12,7 @@ export interface PeriodicElement {
 }
 
 let ELEMENT_DATA: PeriodicElement[] = [
-  {headCoe: '', contactInfo: '', serviceNow: '', confluence: ''},
+  { contactInfo: '', serviceNow: '', confluence: '', headCoe: ''},
 
 ];
 
@@ -24,7 +24,7 @@ let ELEMENT_DATA: PeriodicElement[] = [
 
 export class SupportPageComponent implements OnInit {
 
-  displayedColumns: string[] = ['headCoe', 'contactInfo', 'serviceNow', 'confluence'];
+  displayedColumns: string[] = ['contactInfo', 'serviceNow', 'confluence', 'headCoe', ];
   dataSource = ELEMENT_DATA;
   hyperlinks: ContactInterface[] = [];
 
