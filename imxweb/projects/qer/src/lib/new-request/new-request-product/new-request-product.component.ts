@@ -28,6 +28,7 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PortalServicecategories, PortalShopServiceitems } from 'imx-api-qer';
+import { TranslateService } from '@ngx-translate/core';
 import { CollectionLoadParameters, CompareOperator, DisplayColumns, IClientProperty, IWriteValue, MultiValue } from 'imx-qbm-dbts';
 import {
   Busy,
@@ -36,7 +37,9 @@ import {
   DynamicDataApiControls,
   DataSourceToolbarSettings,
   DataSourceToolbarComponent,
+  FkAdvancedPickerComponent,
   ClassloggerService,
+  MultiValueService
 } from 'qbm';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { first, skip } from 'rxjs/operators';
@@ -50,6 +53,10 @@ import { SelectedProductSource } from '../new-request-selected-products/selected
 import { ProductDetailsService } from './product-details-sidesheet/product-details.service';
 import { NewRequestSelectionService } from '../new-request-selection.service';
 import { CurrentProductSource } from '../current-product-source';
+
+import { FKAdvancedPickerResponse } from './fk-advanced-picker-response';
+import { EuiSidesheetService } from '@elemental-ui/core';
+import { RecipientsApiService } from '../new-request-header/new-request-recipients/recipients-api.service'
 
 export interface NewRequestCategoryNode {
   isSelected?: boolean;
@@ -93,6 +100,39 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
     (leaf) => leaf.level || 0,
     (leaf) => leaf.entity?.HasChildren.Column.GetValue()
   );
+
+  public async openSidesheet(): Promise<void> {
+    const idList = MultiValue.FromString(this.orchestration.recipients.Column.GetValue()).GetValues();
+    const response: FKAdvancedPickerResponse = await this.sidesheetService
+      .open(FkAdvancedPickerComponent, {
+        title: await this.translateService.get('#LDS#Heading Select Recipients').toPromise(),
+        icon: 'user',
+        width: 'max(600px, 50%)',
+        padding: '0px',
+        disableClose: true,
+        testId: 'new-requests-recipients-sidesheet',
+        data: {
+          displayValue: '',
+          isRequired: true,
+          fkRelations: this.recipientsApi.getFKRelations(),
+          isMultiValue: true,
+          idList,
+        },
+      })
+      .afterClosed()
+      .toPromise();
+
+    if (response && response?.candidates.length > 0) {
+      const recipients = {
+        DataValue: this.multiValueProvider.getMultiValue(response.candidates.map((v) => v.DataValue)),
+        DisplayValue: this.multiValueProvider.getMultiValue(response.candidates.map((v) => v.DisplayValue)),
+        
+      };
+      this.dst.clearSelection();
+      await this.orchestration.setRecipients(recipients);
+    }
+  }
+
   public apiControls: DynamicDataApiControls<NewRequestCategoryNode> = {
     setup: async () => {
       // We only expect a single root node
@@ -259,7 +299,11 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
     private readonly productDetailsService: ProductDetailsService,
     private readonly cd: ChangeDetectorRef,
     private readonly busyService: BusyService,
-    private readonly route: ActivatedRoute
+    private readonly route: ActivatedRoute,
+    private sidesheetService: EuiSidesheetService,
+    private translateService: TranslateService,
+    private recipientsApi: RecipientsApiService,
+    private readonly multiValueProvider: MultiValueService,
   ) {
     this.orchestration.selectedView = SelectedProductSource.AllProducts;
     this.orchestration.searchApi$.next(this.searchApi);
@@ -330,6 +374,8 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
     this.productNavigationState = { StartIndex: 0 };
     this.orchestration.selectedCategory = null;
     this.updateDisplayedColumns(this.displayedProductColumns);
+    
+    this.openSidesheet();
 
     const queryParams = await this.route.queryParams.pipe(first()).toPromise();
     const productSearchString = queryParams['ProductSearchString'];
