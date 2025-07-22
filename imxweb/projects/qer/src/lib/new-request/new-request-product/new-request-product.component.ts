@@ -375,7 +375,7 @@ export class NewRequestProductComponent implements OnInit, OnDestroy {
     this.orchestration.selectedCategory = null;
     this.updateDisplayedColumns(this.displayedProductColumns);
     
-    this.openSidesheet();
+    //this.openSidesheet();
 
     const queryParams = await this.route.queryParams.pipe(first()).toPromise();
     const productSearchString = queryParams['ProductSearchString'];
