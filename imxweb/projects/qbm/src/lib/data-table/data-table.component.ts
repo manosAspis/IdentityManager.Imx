@@ -421,8 +421,17 @@ export class DataTableComponent<T> implements OnInit, OnChanges, AfterViewInit, 
 
   public isSelectable(item: TypedEntity): boolean {
     const isEnabled = this.dst?.itemStatus?.enabled(item);
-    const hasStatus = !!item.GetEntity().GetColumn('OrderableStatus')?.GetValue();
-    return isEnabled && !hasStatus;
+
+    let hasOrderableStatusValue = false;
+
+    try {
+        hasOrderableStatusValue = !!item.GetEntity().GetColumn('OrderableStatus')?.GetValue();
+    } catch {
+        // Column does not exist on this entity, treat as "no value"
+        hasOrderableStatusValue = false;
+    }
+
+    return isEnabled && !hasOrderableStatusValue;
   }
 
 
