@@ -93,6 +93,20 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
   public get canEscalateDecisions(): boolean {
     return this.selectedCases.every((item) => item.canEscalateDecision(this.userUid));
   }
+  public get canSendInquiry(): boolean {
+    return this.selectedCases.every((item) => item.canAskAQuestion);
+  }
+  public get canRecallInquiry(): boolean {
+    return this.selectedCases.every((item) => item.IsReserved.value && item.hasAskedLastQuestion(this.userUid));
+  }
+  public get canCancelReservation(): boolean {
+    return (
+      !this.canRecallInquiry &&
+      this.selectedCases.every(
+        (item) => item.IsReserved.value && (item.hasAskedLastQuestion(this.userUid) || this.isUserEscalationApprover)
+      )
+    );
+  }
 
   public get canPerformActions(): boolean {
     return (
@@ -268,6 +282,7 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
       return;
     }
     // There are losses, show them
+    this.lossPreview.Case = undefined;
     this.lossPreview.LossPreviewItems = this.allLossPreviewItems;
     const selection = await this.dialog
       .open(LossPreviewDialogComponent, {
@@ -348,9 +363,7 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
     try {
       const groupedData = this.groupedData[groupInfo.key];
       const navigationState = { ...groupedData.navigationState, Escalation: this.viewEscalation };
-      groupedData.data = groupInfo.isInitial
-        ? { totalCount: 0, Data: [] }
-        : await this.attestationCases.get(navigationState);
+      groupedData.data = groupInfo.isInitial ? { totalCount: 0, Data: [] } : await this.attestationCases.get(navigationState);
       groupedData.settings = {
         displayedColumns: this.dstSettings.displayedColumns,
         dataModel: this.dstSettings.dataModel,
