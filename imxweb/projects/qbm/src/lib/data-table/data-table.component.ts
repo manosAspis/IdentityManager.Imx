@@ -419,19 +419,25 @@ export class DataTableComponent<T> implements OnInit, OnChanges, AfterViewInit, 
     this.subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
-  public isSelectable(item: TypedEntity): boolean {
+  public isSelectable(item: TypedEntity): boolean | null {
     const isEnabled = this.dst?.itemStatus?.enabled(item);
 
     let hasOrderableStatusValue = false;
+    let isResuable = true;
+    let isResuableWithUnsubscribe = false;
 
     try {
         hasOrderableStatusValue = !!item.GetEntity().GetColumn('OrderableStatus')?.GetValue();
+        isResuable = !!item.GetEntity().GetColumn('IsReusable')?.GetValue();
+        isResuableWithUnsubscribe = !!item.GetEntity().GetColumn('IsReusableWithUnsubscribe')?.GetValue();
     } catch {
         // Column does not exist on this entity, treat as "no value"
         hasOrderableStatusValue = false;
+        isResuable = true || null;
+        isResuableWithUnsubscribe = false || null;
     }
 
-    return isEnabled && !hasOrderableStatusValue;
+    return isEnabled && !hasOrderableStatusValue || (hasOrderableStatusValue && isResuable && !isResuableWithUnsubscribe);
   }
 
 
