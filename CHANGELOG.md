@@ -1,4 +1,31 @@
-### May, 7, 2025
+### August 8, 2025
+- 502690: Fixes an issue with server-side error messages on request properties that contain a list of permitted values.
+- 502805: Fixes a display issue with entitlement loss for a single attestation case, although multiple are selected.
+
+### July 29, 2025
+- 502448: Fixes an issue with the Slovenian date format on the date control.
+- 503133: Adds missing paginator on the request history details side sheet (entitlements tab).
+
+### July 11, 2025
+- 496637: Fixes an issue with missing renewal dates on the Pending Attestations page.
+- 496242: Fixes an issue with the sorting in the history view.
+- 496025: Fixes an issue regarding error messages on multi-line component dependent reference editors, whenever a server error occurs.
+- 496653: Adds support for decimal range report parameters.
+- 494430: Fixes an issue with displaying display names after re-opening an active filter.
+- 499014: Fixes an additional issue with a missing cancel reservation button on the request information side sheet.
+
+### June 13, 2025
+- 494248 (main work item 486606): Fixes an issue with submitting requests while a validation is ongoing.
+- 495884: Fixes an exception while opening the Edit Product Bundle side sheet.
+- 492390: Fixes an issue with a missing cancel reservation button on the request information side sheet.
+- 494298: Fixes an issue with rearranging added column to the show report view setting.
+- 484186: Fixes an exception when deciding a request as a member of the chief approval team.
+- 489130: Fixes an issue with the Product Bundle paginator.
+- 491726: Fixes an issue with saving a view on the Responsibility -> System Roles page.
+- 485683: Fixes an issue with a read-only toggle, that is not disabled in the Edit Identity UI.
+- 490276: fixes an issue with the risk index analysis for DEC functions.
+
+### May 7, 2025
 - 483102: Fixes an issue with deep links in the mail body of send inquiries.
 - 486602: Fixes an issue with editing old-style request property values by an approver.
 - 489974: Fixes an issue with the editing of request properties that contains at least on read-only property (Github issue).
