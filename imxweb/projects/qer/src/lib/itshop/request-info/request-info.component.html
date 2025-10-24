@@ -6,6 +6,7 @@
     </div>
     <mat-card class="imx-request-properties">
       <imx-cdr-editor *ngFor="let cdr of propertyInfo" [cdr]="cdr"></imx-cdr-editor>
+      <imx-cdr-editor *ngFor="let cdr of cdrListserviceItemDescription" [cdr]="cdr"></imx-cdr-editor>
       <imx-cdr-editor *ngFor="let cdr of parameters" [cdr]="cdr"></imx-cdr-editor>
     </mat-card>
     <mat-accordion class="imx-additional-info mat-elevation-z0" *ngIf="serviceItem" >

@@ -26,8 +26,8 @@
 
 import { OverlayRef } from '@angular/cdk/overlay';
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';import { Subscription } from 'rxjs';
-
-import { BaseReadonlyCdr, BusyService, ClassloggerService, ColumnDependentReference, ExtService, IExtension } from 'qbm';
+import { CdrFactoryService, ColumnDependentReference, ConfirmationService, SnackBarService } from "qbm";
+import { BaseReadonlyCdr, BusyService, ClassloggerService, ExtService, IExtension } from 'qbm';
 import { ProjectConfigurationService } from '../../project-configuration/project-configuration.service';
 import { ApproverContainer } from './approver-container';
 import { ItshopService } from '../itshop.service';
@@ -35,6 +35,7 @@ import { RequestParameterDataEntity } from './request-parameter-data-entity.inte
 import { WorkflowHistoryItemWrapper } from './workflow-history-item-wrapper';
 import { DecisionHistoryService } from '../decision-history.service';
 import { PortalItshopApproveHistory, PortalShopServiceitems, PwoData, QerProjectConfig } from 'imx-api-qer';
+import { DisplayColumns } from 'imx-qbm-dbts';
 
 
 @Component({
@@ -61,13 +62,16 @@ export class RequestInfoComponent implements OnInit, OnDestroy {
 
   private busyService = new BusyService();
   private subscriptions: Subscription[] = [];
+  serviceItemDescription: PortalShopServiceitems;
+  cdrListserviceItemDescription: ColumnDependentReference[];
 
   constructor(
     private readonly projectConfigService: ProjectConfigurationService,
     private readonly logger: ClassloggerService,
     private readonly itshopService: ItshopService,
     private readonly decisionHistory: DecisionHistoryService,
-    private readonly ext: ExtService
+    private readonly ext: ExtService,
+    private readonly cdrFactoryService: CdrFactoryService,
   ) {
     this.extensions = this.ext.Registry[this.ruleViolationDetailId];
 
@@ -85,7 +89,9 @@ export class RequestInfoComponent implements OnInit, OnDestroy {
       this.projectConfig = await this.projectConfigService.getConfig();
       this.propertyInfo =
         this.request == null || this.request.propertyInfo == null ? [] : this.request.propertyInfo.filter((elem) => this.isForView(elem));
-
+      let columns = ['Description'];
+      this.serviceItemDescription = await this.itshopService.getServiceItem(this.request.UID_AccProduct.value);
+      this.cdrListserviceItemDescription = this.cdrFactoryService.buildCdrFromColumnList(this.serviceItemDescription.GetEntity(), columns, true);
       this.parameters = this.request.parameterColumns.map((column) => new BaseReadonlyCdr(column));
 
       this.approverContainer = new ApproverContainer(
