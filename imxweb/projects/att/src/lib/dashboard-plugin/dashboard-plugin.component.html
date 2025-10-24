@@ -26,7 +26,7 @@
     *ngIf="attEnabled && 0 < pendingExplorerCases"
     [value]="pendingExplorerCases"
     [identifier]="'att-dataexplorerplus-approvals'"
-    (actionClick)="router.navigate(['dataexplorerplus', {explorer: 'AttestationExplorer'}])"
+    (actionClick)="router.navigate(['dataexplorerplus', { explorer: 'AttestationExplorer', name: 'Applications' }])"
   >
   </imx-badge-tile>
   
