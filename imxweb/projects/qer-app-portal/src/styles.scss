@@ -116,3 +116,302 @@ imx-data-explorer-accounts {
   }
 }
 
+
+//**** NKI THEME ****//
+
+$ga_orange : orange;
+$corbin-orange: #9A0036;
+$corbin-pastel: green;
+$corbin-shade: yellow;
+
+body .mat-icon-button.mat-primary,
+.mat-button.mat-primary,
+.eui-search-icon,
+.eui-alert-type--info .eui-alert-icon,
+.mat-focus-indicator.mat-icon-button.mat-button.mat-button-base,
+.colored-icon,
+.imx-content > span,
+.imx-product-bundle-list-header .imx-product-bundle-list-header-text,
+.imx-timeline-content .imx-timeline-events-group,
+.eui-light-theme .expression-container-header,
+.eui-light-theme .selected-logical-op,
+.data-explorer-card-header .data-explorer-card-header-bg .eui-icon,
+li.imx-event.imx-info:before,
+.imx-tree-root > eui-icon,
+.eui-sidesheet-actions .help-icon,
+.eui-light-theme .primary-text,
+.selectable-ancestor,
+.above-card--search  h3 {
+    color: $corbin-orange !important;
+}
+
+.data-explorer .data-explorer-card-header .data-explorer-card-header-bg .eui-icon{
+    color: rgba(227, 106, 0, 0.6) !important;
+}
+
+body a{
+    color: $corbin-orange !important;
+    &:hover{
+        color: #a65300 !important; //$color-orange-80
+    }
+}
+
+.imx-loginButtonpanel button {
+  
+    color: $corbin-orange !important;
+    &:hover {
+      background-color: $corbin-orange !important;
+      color: #fff !important;
+      border: 1px solid #fff !important;
+    }
+}
+
+body .mat-primary .mat-option.mat-selected:not(.mat-option-disabled),
+body .mat-form-field.mat-focused.mat-primary .mat-select-arrow,
+.mat-active,
+body .mat-expansion-indicator:after,
+body .mat-button.mat-primary,
+body .mat-icon-button.mat-primary, 
+body .mat-stroked-button.mat-primary,
+body .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick,
+body .mat-form-field.mat-focused .mat-form-field-label {
+    color: $corbin-orange;
+}
+
+.imx-loginPage,
+.eui-masthead,
+.eui-masthead-inner>.mat-toolbar,
+.snavigation .mat-sidenav-container .mat-sidenav .snavigation-side .snavigation-side-content .snavigation-item.snavigation-item--selected,
+.splash-screen-container {
+    background-color: $corbin-orange !important;
+}
+
+.eui-masthead,
+.eui-masthead-inner>.mat-toolbar {
+    background-color: $ga_orange !important;
+}
+
+body .mat-form-field.mat-focused .mat-form-field-ripple,
+body .mat-flat-button.mat-primary,
+body .mat-raised-button.mat-primary,
+body .mat-fab.mat-primary,
+body .mat-mini-fab.mat-primary,
+body .mat-slide-toggle.mat-primary.mat-checked .mat-slide-toggle-thumb,
+body .mat-button.mat-primary .mat-button-focus-overlay,
+body .mat-icon-button.mat-primary .mat-button-focus-overlay,
+body .mat-stroked-button.mat-primary .mat-button-focus-overlay,
+body .mat-tab-group.mat-primary .mat-ink-bar,
+body .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+    background-color: $corbin-orange;
+}
+
+imx-data-table{
+    background-color: #fff9f2 !important; //$color-orange-10
+}
+
+.imx-timeline-content .imx-timeline-events-group .imx-timeline-separator-connector,
+.data-explorer .data-explorer-card-header .data-explorer-card-header-bg,
+.data-explorer-card-header .data-explorer-card-header-bg,
+.mat-row:hover,
+.eui-alert-type--info,
+.eui-alert-colored{
+    background-color: $corbin-pastel !important;
+}
+
+.snavigation .mat-sidenav-container .mat-sidenav .snavigation-side .snavigation-side-content .snavigation-item:hover:not(.snavigation-item--selected){
+    background-color: $corbin-tint !important;
+}
+
+.eui-sidesheet .mat-toolbar{
+    background-color: $corbin-shade !important;
+}
+
+body .cdk-keyboard-focused .mat-calendar-body-active > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical),
+body .cdk-program-focused .mat-calendar-body-active > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical){
+    background-color: rgba(227, 106, 0, 0.3);
+}
+
+body .mat-slide-toggle.mat-primary.mat-checked .mat-slide-toggle-bar{
+    background-color: rgba(227, 106, 0, 0.53);
+}
+
+body .mat-tab-group.mat-primary .mat-tab-label.cdk-keyboard-focused:not(.mat-tab-disabled),
+body .mat-tab-group.mat-primary .mat-tab-label.cdk-program-focused:not(.mat-tab-disabled), 
+body .mat-tab-group.mat-primary .mat-tab-link.cdk-keyboard-focused:not(.mat-tab-disabled), 
+body .mat-tab-group.mat-primary .mat-tab-link.cdk-program-focused:not(.mat-tab-disabled), 
+body .mat-tab-nav-bar.mat-primary .mat-tab-label.cdk-keyboard-focused:not(.mat-tab-disabled), 
+body .mat-tab-nav-bar.mat-primary .mat-tab-label.cdk-program-focused:not(.mat-tab-disabled), 
+body .mat-tab-nav-bar.mat-primary .mat-tab-link.cdk-keyboard-focused:not(.mat-tab-disabled), 
+body .mat-tab-nav-bar.mat-primary .mat-tab-link.cdk-program-focused:not(.mat-tab-disabled) {
+    background-color: rgba(237, 190, 142, 0.3);
+}
+
+@media(hover:hover){
+    body .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical){
+        background-color: rgba(227, 106, 0, 0.3);
+    }
+}
+
+.mat-button.mat-primary {
+    &:hover{
+        background-color: $corbin-pastel !important;
+    }    
+}
+
+.eui-clickable:focus.eui-clickable--primary, 
+.eui-clickable:focus.eui-clickable--primary .eui-badge-content, 
+.eui-clickable.eui-badge:focus.eui-clickable--primary, 
+.eui-clickable.eui-badge:focus.eui-clickable--primary .eui-badge-content {
+    background-image: linear-gradient(rgba(227, 106, 0, 0.12) 0 0);
+}
+
+body .mat-expansion-panel .mat-expansion-panel-header.cdk-keyboard-focused:not([aria-disabled=true]), 
+body .mat-expansion-panel .mat-expansion-panel-header.cdk-program-focused:not([aria-disabled=true]), 
+body .mat-expansion-panel:not(.mat-expanded) .mat-expansion-panel-header:hover:not([aria-disabled=true]){
+    background: #fff9f2; //$color-orange-10 
+}
+
+
+body .mat-badge-content{
+    background: $corbin-orange;
+}
+
+li.imx-event.imx-info{
+    background: linear-gradient($corbin-orange, $corbin-orange) no-repeat scroll 9px 0 transparent !important;
+    background-size: 2px 1000px !important;
+}
+
+.eui-light-theme .expression-container:hover{
+    border-color: $corbin-orange !important;
+}
+
+.imx-table-container{
+    border-color: $corbin-pastel !important;
+}
+
+.imx-timeline-content .imx-timeline-events-group .imx-timeline-separator-marker{
+    border: 2px solid $corbin-orange !important;
+}
+
+.data-explorer .data-explorer-card-header,
+.data-explorer-card-header{
+    border: 1px solid rgba(227, 106, 0, 0.6) !important;
+}
+
+.mat-tree-node--selected{
+    border: 1px solid $corbin-tint !important;
+}
+.imx-card:hover{
+    border: 1px solid $corbin-orange !important;
+}
+
+.eui-top-navigation-desktop .eui-top-navigation .eui-top-navigation-item-active .mat-button, 
+.eui-top-navigation-desktop .eui-top-navigation .mat-button.eui-top-navigation-item-active, 
+.eui-top-navigation-desktop .eui-top-navigation .eui-top-navigation-item-active-link .mat-button, 
+.eui-top-navigation-desktop .eui-top-navigation .mat-button.eui-top-navigation-item-active-link {
+    border-bottom: 2px solid $corbin-orange !important;
+}
+
+.eui-top-navigation-item-active, 
+.mat-tab-group.mat-primary, 
+.mat-ink-bar{
+    border-bottom: 2px solid $corbin-orange;
+}
+
+.imx-timeline-content{
+    border: 1px solid $corbin-pastel !important;
+    background-color: #fff9f2 !important; //$color-orange-10
+}
+
+.eui-light-theme .expression-container:hover .expression-container-header,
+.mat-raised-button.mat-primary:not(.mat-button-disabled),
+.mat-step-icon-state-edit, 
+.eui-badge,
+.eui-badge-content, 
+.eui-badge-color--primary, 
+.mat-chip-selected{
+    background-color: $corbin-orange !important;
+    color: white !important;
+}
+
+.imx-button:focus {
+    background-color: #f28b07 !important;
+    color: white !important;
+}
+
+.imx-generic-tile-content > div:first-child {
+    background-color: $corbin-pastel !important;
+    color: $corbin-orange !important;
+}
+
+body .mat-step-header .mat-step-icon-selected,
+body .mat-step-header .mat-step-icon-state-done,
+body .mat-step-header .mat-step-icon-state-edit {
+    background-color: $corbin-orange;
+    color: #f9fbfc;
+}
+
+.eui-light-theme .list-header {
+    color: $corbin-orange !important;
+    border-bottom: 2px solid $corbin-orange !important;
+}
+
+.mat-sidenav:not(.snavigation-side--expanded) .expand-control-button,
+.snavigation-side-content {
+    background-color: #fff9f2 !important; //$color-orange-10
+    border: 1px solid $corbin-pastel !important;
+}
+
+.mat-input-element {
+    caret-color: $corbin-orange !important;
+}
+
+img.ng-star-inserted,
+.mat-tab-body.mat-tab-body-active.ng-star-inserted img{
+    filter: hue-rotate(180deg);
+}
+
+imx-about eui-logo>svg{
+    fill: $corbin-orange !important;
+}
+//in case more logos than above (1) need to be colored, below is a list of those that need to remain white
+// .eui-masthead-inner>eui-logo>svg,
+// imx-login eui-logo>svg,
+// eui-splash-screen eui-logo>svg{
+//     fill: white !important;
+// }
+
+body .mat-progress-bar,
+body .mat-progress-bar-fill::after{
+    fill: $corbin-orange !important;
+    background: $corbin-orange !important;
+}
+body .mat-progress-bar-background,
+body .mat-progress-bar-buffer{
+    fill: #f7e4d0 !important;
+    background: #f7e4d0 !important;
+}
+
+.product-owner-datasource-container .help-icon {
+    color: $corbin-orange !important;
+    font-size: 16px !important;
+    margin-left: 5px !important;
+}
+
+imx-statistics-cards .area-card {
+    background-color: $corbin-orange !important;
+    border: 1px solid #a65300 !important; //$color-orange-80
+    color: #fff !important;
+}
+
+body .mat-progress-spinner,
+body .mat-spinner {
+    circle {
+          stroke: $corbin-orange;
+    }  
+}
+
+.splash-screen-container .ss-spinner .mat-spinner circle {
+    stroke: #FFF !important;
+}
+
