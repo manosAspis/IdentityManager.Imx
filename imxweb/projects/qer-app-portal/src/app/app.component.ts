@@ -60,6 +60,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public showPageContent = true;
   private routerStatus: EventType;
   private readonly subscriptions: Subscription[] = [];
+  private readonly hiddenHeaderMenuIds = new Set(['ROOT_Setup']);
   private profileSettings: ProfileSettings;
 
   constructor(
@@ -110,7 +111,8 @@ export class AppComponent implements OnInit, OnDestroy {
             await this.translationProvider.init(browserCulture);
           }
 
-          this.menuItems = await menuService.getMenuItems(systemInfo.PreProps, features, true, config, groups);
+          this.menuItems = (await menuService.getMenuItems(systemInfo.PreProps, features, true, config, groups))
+            .filter((item) => !this.hiddenHeaderMenuIds.has((item as EuiTopNavigationItem & { id?: string }).id ?? ''));
 
           ieWarningService.showIe11Banner();
 

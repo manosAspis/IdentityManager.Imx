@@ -35,6 +35,7 @@ import { DataExplorerRegistryService } from './data-explorer-registry.service';
   styleUrls: ['./data-explorer-view.component.scss'],
 })
 export class DataExplorerViewComponent implements OnInit {
+  private readonly hiddenNavItems = new Set(['department', 'profitcenter']);
   public isAdmin = true;
   public baseUrl = 'admin/dataexplorer';
   public componentName = 'data-explorer-view';
@@ -57,7 +58,9 @@ export class DataExplorerViewComponent implements OnInit {
     const systemInfo = await this.systemInfoService.get();
     const features = (await this.userModelService.getFeatures()).Features;
     const groups = (await this.userModelService.getGroups()).map((group) => group.Name || '');
-    this.navItems = this.dataExplorerRegistryService.getNavItems(systemInfo.PreProps, features, undefined, groups);
+    this.navItems = this.dataExplorerRegistryService
+      .getNavItems(systemInfo.PreProps, features, undefined, groups)
+      .filter((elem) => !this.hiddenNavItems.has(elem.name));
     this.cdref.detectChanges();
   }
 }

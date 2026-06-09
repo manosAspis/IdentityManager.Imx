@@ -38,6 +38,7 @@ import { QerProjectConfig } from 'imx-api-qer';
   styleUrls: ['./my-responsibilities-view.component.scss'],
 })
 export class MyResponsibilitiesViewComponent implements OnInit {
+  private readonly hiddenNavItems = new Set(['Department', 'ProfitCenter']);
   public isAdmin = false;
   public baseUrl = 'myresponsibilities';
   public componentName = 'my-responsibilities-view';
@@ -62,7 +63,13 @@ export class MyResponsibilitiesViewComponent implements OnInit {
     const config: QerProjectConfig & ProjectConfig = await this.projectConfig.getConfig();
     this.navItems = this.myResponsibilitiesRegistryService
       .getNavItems(systemInfo.PreProps, features, config)
-      .filter((elem) => elem.name === 'identities' || elem.name === 'devices' || userConfig.Ownerships.find(own => own.TableName === elem.name)?.Count > 0);
+      .filter(
+        (elem) =>
+          !this.hiddenNavItems.has(elem.name) &&
+          (elem.name === 'identities' ||
+            elem.name === 'devices' ||
+            userConfig.Ownerships.find((own) => own.TableName === elem.name)?.Count > 0)
+      );
     this.cdref.detectChanges();
   }
 }

@@ -80,7 +80,8 @@ export class MenuService {
     for (const menuItem of menuItems) {
       const hasSubItems = menuItem.items && menuItem.items.length > 0;
       const caption = await this.translate.get(menuItem.title).toPromise();
-      const navItem: EuiTopNavigationItem = {
+      const navItem: EuiTopNavigationItem & { id?: string } = {
+        id: menuItem.id,
         type: hasSubItems ? EuiTopNavigationItemType.Menu : EuiTopNavigationItemType.RouterLink,
         text: caption,
         routerLinkActiveOptions: {

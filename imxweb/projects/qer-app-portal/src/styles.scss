@@ -119,10 +119,10 @@ imx-data-explorer-accounts {
 
 //**** NKI THEME ****//
 
-$ga_orange : orange;
+$ga_orange : #9A0036;
 $corbin-orange: #9A0036;
-$corbin-pastel: green;
-$corbin-shade: yellow;
+$corbin-pastel: rgba(154, 0, 54, 0.02);
+$corbin-shade:#9A0036;
 
 body .mat-icon-button.mat-primary,
 .mat-button.mat-primary,
@@ -146,13 +146,13 @@ li.imx-event.imx-info:before,
 }
 
 .data-explorer .data-explorer-card-header .data-explorer-card-header-bg .eui-icon{
-    color: rgba(227, 106, 0, 0.6) !important;
+    color: $corbin-orange !important;
 }
 
 body a{
     color: $corbin-orange !important;
     &:hover{
-        color: #a65300 !important; //$color-orange-80
+        color: #660024 !important; //$color-orange-80
     }
 }
 
@@ -188,7 +188,7 @@ body .mat-form-field.mat-focused .mat-form-field-label {
 
 .eui-masthead,
 .eui-masthead-inner>.mat-toolbar {
-    background-color: $ga_orange !important;
+    background-color: $corbin-orange !important;
 }
 
 body .mat-form-field.mat-focused .mat-form-field-ripple,
@@ -206,7 +206,7 @@ body .mat-tab-nav-bar.mat-primary .mat-ink-bar {
 }
 
 imx-data-table{
-    background-color: #fff9f2 !important; //$color-orange-10
+    background-color:$corbin-pastel !important; //$color-orange-10
 }
 
 .imx-timeline-content .imx-timeline-events-group .imx-timeline-separator-connector,
@@ -295,11 +295,11 @@ li.imx-event.imx-info{
 
 .data-explorer .data-explorer-card-header,
 .data-explorer-card-header{
-    border: 1px solid rgba(227, 106, 0, 0.6) !important;
+    border: 1px solid $corbin-orange !important;
 }
 
 .mat-tree-node--selected{
-    border: 1px solid $corbin-tint !important;
+    border: 1px solid $corbin-orange !important;
 }
 .imx-card:hover{
     border: 1px solid $corbin-orange !important;
@@ -320,7 +320,7 @@ li.imx-event.imx-info{
 
 .imx-timeline-content{
     border: 1px solid $corbin-pastel !important;
-    background-color: #fff9f2 !important; //$color-orange-10
+    background-color: $corbin-pastel!important; //$color-orange-10
 }
 
 .eui-light-theme .expression-container:hover .expression-container-header,
@@ -335,7 +335,7 @@ li.imx-event.imx-info{
 }
 
 .imx-button:focus {
-    background-color: #f28b07 !important;
+    background-color: $corbin-orange !important;
     color: white !important;
 }
 
@@ -358,7 +358,7 @@ body .mat-step-header .mat-step-icon-state-edit {
 
 .mat-sidenav:not(.snavigation-side--expanded) .expand-control-button,
 .snavigation-side-content {
-    background-color: #fff9f2 !important; //$color-orange-10
+    background-color: $corbin-pastel !important; //$color-orange-10
     border: 1px solid $corbin-pastel !important;
 }
 
@@ -414,4 +414,15 @@ body .mat-spinner {
 .splash-screen-container .ss-spinner .mat-spinner circle {
     stroke: #FFF !important;
 }
+
+body .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background,
+body .mat-radio-button.mat-accent .mat-radio-inner-circle,
+body .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+    background-color: $corbin-orange !important;
+}
+
+body .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+    border-color: $corbin-orange !important;
+}
+
 
