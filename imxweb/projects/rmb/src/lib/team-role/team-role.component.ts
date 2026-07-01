@@ -63,7 +63,7 @@ export class TeamRoleComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    if (await this.permissionService.isPersonManager()) {
+    if (await this.permissionService.isPersonAdmin()) {
       this.showTeamRole = true;
       await this.getTeamRole();
     }
