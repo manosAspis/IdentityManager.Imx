@@ -66,11 +66,11 @@
         <imx-mail-subscriptions [uidPerson]="userUid" [mailInfo]="mailInfo"></imx-mail-subscriptions>
       </ng-template>
     </mat-tab>
-    <mat-tab #passwordQuestionTab label="{{ '#LDS#Heading Password Questions' | translate }}" data-imx-identifier="profile-password-questions" *ngIf="canManagePasswordQuestions">
+    <!--<mat-tab #passwordQuestionTab label="{{ '#LDS#Heading Password Questions' | translate }}" data-imx-identifier="profile-password-questions" *ngIf="canManagePasswordQuestions">
       <ng-template matTabContent>
         <imx-password-questions [passwordQuestionType]="'portal'"></imx-password-questions>
       </ng-template>
-    </mat-tab>
+    </mat-tab>-->
     <mat-tab label="{{ '#LDS#Heading Security Keys' | translate }}" data-imx-identifier="profile-security-keys" *ngIf="canManageSecurityKeys">
       <ng-template matTabContent>
         <imx-security-keys></imx-security-keys>
