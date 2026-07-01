@@ -23,7 +23,7 @@
 
 <!-- List-Tile -->
 <imx-tile
-  *ngIf="viewReady && qerPermissions.isPersonManager && allReportsCount > 0"
+  *ngIf="viewReady && isPersonManager && allReportsCount > 0"
   data-imx-identifier="businessowner-chartsummary-tile-my-direct-reports"
   [identifier]="'my-direct-reports'"
   [size]="'Dashboard'"
@@ -65,7 +65,7 @@
 <!-- Show Create identities button if the user has no direct and indirect reports -->
 <imx-tile
   class="imx-create-identity-tile"
-  *ngIf="viewReady && qerPermissions.isPersonManager && allReportsCount === 0"
+  *ngIf="viewReady && isPersonManager && isPersonAdmin && allReportsCount === 0"
   data-imx-identifier="businessowner-chartsummary-tile-my-direct-reports-create-identity"
   [identifier]="'my-direct-reports-create-identity'"
   size="Custom-Tile"

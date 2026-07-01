@@ -50,7 +50,9 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
   public get viewReady(): boolean {
     return !this.dashboardService.isBusy;
   }
-  public allReportsCount: number;
+  public allReportsCount = 0;
+  public isPersonAdmin = false;
+  public isPersonManager = false;
 
   private projectConfig: ProjectConfig;
 
@@ -73,6 +75,8 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
     try {
       const userConfig = await this.userModelService.getUserConfig();
       this.ownerships = userConfig.Ownerships;
+      this.isPersonAdmin = await this.qerPermissions.isPersonAdmin();
+      this.isPersonManager = await this.qerPermissions.isPersonManager();
 
       this.projectConfig = await this.configService.getConfig();
 

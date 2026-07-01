@@ -76,6 +76,7 @@ export class ViewDevicesComponent implements OnInit, OnDestroy, SideNavigationCo
   public currentUser: string;
   public isManagerForPersons: boolean;
   public isAuditor: boolean;
+  public canCreateDevices = false;
   private sessionResponse$: Subscription;
 
   constructor(
@@ -87,7 +88,7 @@ export class ViewDevicesComponent implements OnInit, OnDestroy, SideNavigationCo
     private readonly authService: AuthenticationService,
     private readonly identitiesService: IdentitiesService,
     private readonly helpContextualService: HelpContextualService,
-    qerPermissionService: QerPermissionsService
+    private readonly qerPermissionService: QerPermissionsService
   ) {
     this.entitySchema = this.viewDevicesService.devicesSchema;
 
@@ -95,8 +96,8 @@ export class ViewDevicesComponent implements OnInit, OnDestroy, SideNavigationCo
 
     this.sessionResponse$ = this.authService.onSessionResponse.subscribe(async (session) => {
       if (session.IsLoggedIn) {
-        (this.currentUser = session.UserUid), (this.isManagerForPersons = await qerPermissionService.isPersonManager());
-        this.isAuditor = await qerPermissionService.isStructStatistics();
+        (this.currentUser = session.UserUid), (this.isManagerForPersons = await this.qerPermissionService.isPersonManager());
+        this.isAuditor = await this.qerPermissionService.isStructStatistics();
       }
     });
 
@@ -114,6 +115,7 @@ export class ViewDevicesComponent implements OnInit, OnDestroy, SideNavigationCo
   public async ngOnInit(): Promise<void> {
     const isBusy = this.busyService.beginBusy();
     try {
+      this.canCreateDevices = await this.qerPermissionService.isPersonAdmin();
       this.managerId = (await this.identitiesService.getPerson(this.currentUser)).UID_PersonHead.Column.GetEntity().GetKeys()[0];
 
       if (this.deviceConfig == null) {
@@ -224,6 +226,10 @@ export class ViewDevicesComponent implements OnInit, OnDestroy, SideNavigationCo
   }
 
   public async createNewDevice(key: string, index: number): Promise<void> {
+    if (!this.canCreateDevices) {
+      return;
+    }
+
     let deviceEntityConfig = this.deviceConfig['VI_Hardware_Fields_Default'];
     const hardwareBasicTypeListElement = this.hardwareBasicTypeList.find((hardwareType) => hardwareType.key === key);
     if (hardwareBasicTypeListElement) {

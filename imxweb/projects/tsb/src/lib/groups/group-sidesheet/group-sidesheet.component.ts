@@ -51,6 +51,7 @@ import { GroupSidesheetData } from '../groups.models';
 import { GroupsReportsService } from '../groups-reports.service';
 import { GroupMembersComponent } from './group-members/group-members.component';
 import { DbObjectKeyBase } from '../../target-system/db-object-key-wrapper.interface';
+import { TsbPermissionsService } from '../../admin/tsb-permissions.service';
 
 @Component({
   selector: 'imx-group-sidesheet',
@@ -97,6 +98,7 @@ export class GroupSidesheetComponent implements OnInit {
     private readonly sidesheetRef: EuiSidesheetRef,
     private readonly tabService: ExtService,
     private readonly confirmation: ConfirmationService,
+    private readonly permissionService: TsbPermissionsService,
   ) {
 
     this.sidesheetRef.closeClicked().subscribe(async () => {
@@ -128,8 +130,6 @@ export class GroupSidesheetComponent implements OnInit {
         objectuid: this.unsGroupDbObjectKey.Keys[0]
       };
     }
-    this.canCreateServiceItem = !sidesheetData.group.GetEntity().GetColumn('XReadOnlyMemberships')?.GetValue();
-
     this.buttonBarExtensionReferrer = {
       type: this.sidesheetData.unsGroupDbObjectKey.TableName,
       uidGroup: this.sidesheetData.group.GetEntity().GetKeys()[0],
@@ -138,6 +138,10 @@ export class GroupSidesheetComponent implements OnInit {
   }
 
   public async ngOnInit(): Promise<void> {
+    this.canCreateServiceItem =
+      (await this.permissionService.isTsbNameSpaceAdminBase()) &&
+      !this.sidesheetData.group.GetEntity().GetColumn('XReadOnlyMemberships')?.GetValue();
+
     this.setup();
   }
 
@@ -165,6 +169,10 @@ export class GroupSidesheetComponent implements OnInit {
   }
 
   public async createServiceItem(): Promise<void> {
+    if (!this.canCreateServiceItem) {
+      return;
+    }
+
     this.sidesheetData.group.extendedData = {
       CreateServiceItem: true
     };

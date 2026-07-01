@@ -38,7 +38,14 @@
 </mat-card>
 <div class="imx-button-bar">
   <span class="imx-spacer"></span>
-  <button mat-raised-button color="primary" [matMenuTriggerFor]="menu" class="imx-create-device-button" data-imx-identifier="button-create-device">
+  <button
+    *ngIf="canCreateDevices"
+    mat-raised-button
+    color="primary"
+    [matMenuTriggerFor]="menu"
+    class="imx-create-device-button"
+    data-imx-identifier="button-create-device"
+  >
     <eui-icon icon="add"></eui-icon>
     {{ '#LDS#Create device' | translate }}
   </button>

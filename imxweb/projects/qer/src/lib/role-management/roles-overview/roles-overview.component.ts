@@ -63,7 +63,12 @@ import { NewRoleComponent } from '../new-role/new-role.component';
 import { IRoleRestoreHandler } from '../restore/restore-handler';
 import { RestoreComponent } from '../restore/restore.component';
 import { RoleDetailComponent } from '../role-detail/role-detail.component';
-import { RoleService } from '../role.service';
+import {
+  RoleManagementDepartmentTag,
+  RoleManagementLocalityTag,
+  RoleManagementProfitCenterTag,
+  RoleService,
+} from '../role.service';
 import { TreeDatabaseAdaptorService } from './tree-database-adaptor.service';
 
 @Component({
@@ -92,6 +97,7 @@ export class RolesOverviewComponent implements OnInit, OnDestroy, SideNavigation
   public busyService = new BusyService();
 
   private isStructureAdmin: boolean;
+  private isRoleAdmin: boolean;
   private dataModel: DataModel;
   private exportMethod: DataSourceToolbarExportMethod;
   private subscription: Subscription;
@@ -129,6 +135,7 @@ export class RolesOverviewComponent implements OnInit, OnDestroy, SideNavigation
     try {
       await this.metadataProvider.updateNonExisting([this.ownershipInfo.TableName]);
       this.isStructureAdmin = await this.permission.isStructAdmin();
+      this.isRoleAdmin = await this.permission.isRoleAdmin();
     } catch (error) {
       this.navigateToStartPage(error);
     }
@@ -156,9 +163,7 @@ export class RolesOverviewComponent implements OnInit, OnDestroy, SideNavigation
     const isBusy = this.busyService.beginBusy();
     this.hasHierarchy = (await this.roleService.getEntitiesForTree(this.ownershipInfo.TableName, { PageSize: -1 }))?.Hierarchy != null;
     this.useTree = this.isAdmin && this.hasHierarchy;
-    this.canCreate =
-      ((this.isAdmin && this.isStructureAdmin) || !this.isAdmin) &&
-      this.roleService.canCreate(this.ownershipInfo.TableName, this.isAdmin, this.canCreateAeRole);
+    this.canCreate = this.canCreateAsAdmin() && this.roleService.canCreate(this.ownershipInfo.TableName, this.isAdmin, this.canCreateAeRole);
 
     this.navigationState = this.useTree
       ? {
@@ -280,6 +285,12 @@ export class RolesOverviewComponent implements OnInit, OnDestroy, SideNavigation
 
   public getChildCreationText(): string {
     return this.roleService.getRoleTranslateKeys(this.ownershipInfo.TableName)?.createChild ?? '#LDS#Create child object';
+  }
+
+  private canCreateAsAdmin(): boolean {
+    return [RoleManagementDepartmentTag, RoleManagementLocalityTag, RoleManagementProfitCenterTag].includes(this.ownershipInfo.TableName)
+      ? this.isStructureAdmin
+      : this.isRoleAdmin;
   }
 
   private navigateToStartPage(error?: any): void {
